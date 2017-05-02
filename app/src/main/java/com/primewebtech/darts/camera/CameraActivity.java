@@ -34,7 +34,7 @@ public class CameraActivity extends AppCompatActivity {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
                     .show();
         } else {
-            cameraId = findFrontFacingCamera();
+            cameraId = findBackFacingCamera();
             if (cameraId < 0) {
                 Toast.makeText(this, "No front facing camera found.",
                         Toast.LENGTH_LONG).show();
@@ -48,9 +48,15 @@ public class CameraActivity extends AppCompatActivity {
                         // no permission so request and return
                         return;
                     }
+                    Log.d(TAG, "onCreate:openingCamera");
                     mCamera = Camera.open(cameraId);
+                    Log.d(TAG, "onCreate:openingCamera:done");
+                } else {
+                    Log.d(TAG, "onCreate:OLD_VERSION:openingCamera");
+                    mCamera = Camera.open(cameraId);
+                    Log.d(TAG, "onCreate:OLD_VERSION:openingCamera:done");
                 }
-                mCamera = Camera.open(cameraId);
+
             }
         }
 
@@ -60,11 +66,13 @@ public class CameraActivity extends AppCompatActivity {
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
+
     }
 
     public void onClick(View view) {
         Log.d(TAG, "onCLick:startingPreview");
-        mPreview.surfaceCreated();
+        mCamera.startPreview();
+
     }
 
     @Override
@@ -127,6 +135,21 @@ public class CameraActivity extends AppCompatActivity {
             Camera.CameraInfo info = new Camera.CameraInfo();
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                Log.d(TAG, "Camera found");
+                cameraId = i;
+                break;
+            }
+        }
+        return cameraId;
+    }
+    private int findBackFacingCamera() {
+        int cameraId = -1;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 Log.d(TAG, "Camera found");
                 cameraId = i;
                 break;
