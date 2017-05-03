@@ -26,16 +26,60 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
     </android.support.constraint.ConstraintLayout>
+
+
     <ImageButton
-        android:id="@+id/button_capture"
+        android:id="@+id/button_take_photo"
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_gravity="center"
         android:layout_marginBottom="41dp"
-        android:onClick="onClick"
         android:background="@drawable/take_photo_button"
+        android:onClick="onTakePhotoClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button_save_image"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="41dp"
+        android:background="@drawable/save_photo_button"
+        android:onClick="onSavePhotoClick"
+        android:src="@drawable/save_image_button_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button_previous"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:onClick="onClick"
+        android:background="@color/colorBlack"
+        android:layout_marginRight="54dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintLeft_toRightOf="@+id/button_save_image"
+        android:layout_marginLeft="8dp" />
+
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@color/colorBlack"
+        android:onClick="onClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintRight_toLeftOf="@+id/button_save_image"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
+        app:layout_constraintHorizontal_bias="0.442" />
 
 </android.support.constraint.ConstraintLayout>

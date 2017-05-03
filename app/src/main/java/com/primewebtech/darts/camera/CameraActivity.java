@@ -2,13 +2,17 @@ package com.primewebtech.darts.camera;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.primewebtech.darts.R;
@@ -19,6 +23,12 @@ public class CameraActivity extends AppCompatActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private int cameraId = 0;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private ImageButton mPreviousImageThumbnail;
+    private ImageButton mSaveImageButton;
+    private ImageButton mBackButton;
+    private ImageButton mTakePhotoButton;
+
 
 
     @Override
@@ -34,7 +44,7 @@ public class CameraActivity extends AppCompatActivity {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
                     .show();
         } else {
-            cameraId = findBackFacingCamera();
+            cameraId = Util.findBackFacingCamera();
             if (cameraId < 0) {
                 Toast.makeText(this, "No front facing camera found.",
                         Toast.LENGTH_LONG).show();
@@ -66,14 +76,47 @@ public class CameraActivity extends AppCompatActivity {
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
+        mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
+        mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+        mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
+        mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mSaveImageButton.setVisibility(View.GONE);
+        mBackButton.setVisibility(View.GONE);
+        mTakePhotoButton.setVisibility(View.VISIBLE);
+
 
     }
 
-    public void onClick(View view) {
+    public void onTakePhotoClick(View view) {
         Log.d(TAG, "onCLick:startingPreview");
         mCamera.startPreview();
+//        dispatchTakePictureIntent();
+        mCamera.takePicture(null, null, jpegCallback);
+//        mCamera.takePicture(null, null,
+//                        new PhotoHandler(getApplicationContext()));
 
     }
+    public void onSavePhotoClick(View view) {
+        Log.d(TAG, "onCLick:sSaving photo");
+    }
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mPreviousImageThumbnail.setImageBitmap(imageBitmap);
+        }
+    }
+
+
+
 
     @Override
     protected void onPause() {
@@ -92,6 +135,33 @@ public class CameraActivity extends AppCompatActivity {
             mCamera.release();
         }
 
+    }
+
+    Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+        public void onShutter() {
+            //			 Log.d(TAG, "onShutter'd");
+        }
+    };
+
+    Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
+        public void onPictureTaken(byte[] data, Camera camera) {
+            //			 Log.d(TAG, "onPictureTaken - raw");
+        }
+    };
+
+    Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
+        public void onPictureTaken(byte[] data, Camera camera) {
+//            new SaveImageTask().execute(data);
+//            resetCam();
+            Log.d(TAG, "onPictureTaken - jpeg");
+            mSaveImageButton.setVisibility(View.VISIBLE);
+            mBackButton.setVisibility(View.VISIBLE);
+            mTakePhotoButton.setVisibility(View.GONE);
+        }
+    };
+
+    private void resetCam() {
+        mCamera.startPreview();
     }
 
     private void releaseCamera(){
@@ -115,7 +185,7 @@ public class CameraActivity extends AppCompatActivity {
     public Camera getCameraInstance(){
         Camera c = null;
         try {
-            cameraId = findFrontFacingCamera();
+            cameraId = Util.findFrontFacingCamera();
             c = Camera.open(); // attempt to get a Camera instance
             Log.d(TAG, "getCameraInstance:success");
 
@@ -127,34 +197,6 @@ public class CameraActivity extends AppCompatActivity {
         return c; // returns null if camera is unavailable
     }
 
-    private int findFrontFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                Log.d(TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
-    private int findBackFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                Log.d(TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
+
+
 }
