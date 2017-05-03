@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.primewebtech.darts.R;
+
+import java.io.ByteArrayInputStream;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -98,6 +101,19 @@ public class CameraActivity extends AppCompatActivity {
     }
     public void onSavePhotoClick(View view) {
         Log.d(TAG, "onCLick:sSaving photo");
+        mCamera.startPreview();
+        mSaveImageButton.setVisibility(View.GONE);
+        mBackButton.setVisibility(View.GONE);
+        mTakePhotoButton.setVisibility(View.VISIBLE);
+
+    }
+    public void onBackButtonClick(View view) {
+        Log.d(TAG, "onBackButtonClick:resetting camera");
+        mCamera.startPreview();
+        mSaveImageButton.setVisibility(View.GONE);
+        mBackButton.setVisibility(View.GONE);
+        mTakePhotoButton.setVisibility(View.VISIBLE);
+
     }
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -157,11 +173,31 @@ public class CameraActivity extends AppCompatActivity {
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
             mTakePhotoButton.setVisibility(View.GONE);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+            Bitmap imageBitmap = BitmapFactory.decodeStream(inputStream);
+            mPreviousImageThumbnail.setImageBitmap(imageBitmap);
+            saveImage(data);
         }
     };
 
     private void resetCam() {
         mCamera.startPreview();
+    }
+
+    private void saveImage(byte[] data) {
+//        File pictureFileDir = this.getDir();
+
+//        if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
+//
+//            Log.d(TAG, "Can't create directory to save image.");
+//            Toast.makeText(this, "Can't create directory to save image.",
+//                    Toast.LENGTH_LONG).show();
+//            return;
+//
+//        }
+
+
+
     }
 
     private void releaseCamera(){
