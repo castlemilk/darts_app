@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,7 @@ public class CameraActivity extends AppCompatActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private int cameraId = 0;
+    private int THUMBSIZE = 100;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private ImageButton mPreviousImageThumbnail;
     private ImageButton mSaveImageButton;
@@ -173,9 +176,14 @@ public class CameraActivity extends AppCompatActivity {
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
             mTakePhotoButton.setVisibility(View.GONE);
+
+
             ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            Bitmap imageBitmap = BitmapFactory.decodeStream(inputStream);
-            mPreviousImageThumbnail.setImageBitmap(imageBitmap);
+            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeStream(inputStream), THUMBSIZE, THUMBSIZE);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            Bitmap rotatedThumbImage = Bitmap.createBitmap(thumbImage, 0, 0, THUMBSIZE, THUMBSIZE, matrix, true);
+            mPreviousImageThumbnail.setImageBitmap(rotatedThumbImage);
             saveImage(data);
         }
     };
