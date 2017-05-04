@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +38,17 @@ public class CameraActivity extends AppCompatActivity {
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
     private ImageButton mTakePhotoButton;
+    private CustomPagerAdapter mCustomPagerAdapter;
+    private ViewPager mViewPager;
+
+    private int[] mResources = {
+            R.drawable.first,
+            R.drawable.second,
+            R.drawable.third,
+            R.drawable.fourth,
+            R.drawable.fifth,
+            R.drawable.sixth
+    };
 
 
 
@@ -76,8 +91,6 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
 
-
-
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -89,6 +102,10 @@ public class CameraActivity extends AppCompatActivity {
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
+
+        mCustomPagerAdapter = new CustomPagerAdapter(this, mResources);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mCustomPagerAdapter);
 
 
     }
@@ -178,15 +195,55 @@ public class CameraActivity extends AppCompatActivity {
             mTakePhotoButton.setVisibility(View.GONE);
 
 
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeStream(inputStream), THUMBSIZE, THUMBSIZE);
-            Matrix matrix = new Matrix();
-            matrix.postRotate(90);
-            Bitmap rotatedThumbImage = Bitmap.createBitmap(thumbImage, 0, 0, THUMBSIZE, THUMBSIZE, matrix, true);
-            mPreviousImageThumbnail.setImageBitmap(rotatedThumbImage);
+            Bitmap thumbNail = getThumbNail(data);
+            Log.d(TAG + ":getCurrentItem()", Integer.toString(mViewPager.getCurrentItem()));
+            Log.d(TAG + ":mResources[0]", Integer.toString(mResources[0]));
+            Drawable d = getResources().getDrawable(mResources[mViewPager.getCurrentItem()]);
+            Bitmap selectedIcon = drawableToBitmap(d);
+            Bitmap thumbCombined = addSelectedIcon(thumbNail, selectedIcon);
+            mPreviousImageThumbnail.setImageBitmap(thumbCombined);
+
             saveImage(data);
         }
     };
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    private Bitmap getThumbNail(byte[] data) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeStream(inputStream), THUMBSIZE, THUMBSIZE);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedThumbImage = Bitmap.createBitmap(thumbImage, 0, 0, THUMBSIZE, THUMBSIZE, matrix, true);
+        return rotatedThumbImage;
+    }
+    private Bitmap addSelectedIcon(Bitmap picture, Bitmap icon) {
+        Bitmap combinedImg = null;
+        int pictureWidth = picture.getWidth();
+        int pictureHeight = picture.getHeight();
+        float iconFloatLeft = pictureWidth - 50;
+        float iconFloatTop = pictureHeight - 50;
+
+        combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(combinedImg);
+
+        comboImage.drawBitmap(picture, 0f, 0f, null);
+        comboImage.drawBitmap(icon, iconFloatLeft, iconFloatTop, null);
+
+        return combinedImg;
+    }
 
     private void resetCam() {
         mCamera.startPreview();
