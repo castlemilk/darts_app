@@ -1,7 +1,8 @@
 package com.primewebtech.darts.camera;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,12 +12,17 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
+import android.location.Location;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -25,6 +31,7 @@ import android.widget.Toast;
 import com.primewebtech.darts.R;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -34,12 +41,37 @@ public class CameraActivity extends AppCompatActivity {
     private int cameraId = 0;
     private int THUMBSIZE = 100;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private MediaSaver mMediaSaver;
     private ImageButton mPreviousImageThumbnail;
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
     private ImageButton mTakePhotoButton;
     private CustomPagerAdapter mCustomPagerAdapter;
+    private Camera.Parameters mParameters;
+    private int mDisplayOrientation;
+    private int mLayoutOrientation;
     private ViewPager mViewPager;
+    private Bitmap mThumbNail;
+    private byte[] mJPEGdata;
+    private Location mLocation;
+    private NamedImages mNamedImages;
+    private ContentResolver mContentResolver;
+    private Camera.CameraInfo mCameraInfo;
+    public long mCaptureStartTime;
+    private ArrayList permissionsToRequest;
+    private ArrayList permissionsRejected = new ArrayList();
+    private ArrayList permissions = new ArrayList();
+    private final static int ALL_PERMISSIONS_RESULT = 107;
+
+    private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
+        @Override
+        public void onMediaSaved(Uri uri) {
+            if (uri != null) {
+                Log.d(TAG + "onMediaSaved:uri:", uri.toString());
+            }
+        }
+    };
+
 
     private int[] mResources = {
             R.drawable.first,
@@ -57,6 +89,11 @@ public class CameraActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        Util.initialize(this);
+        mContentResolver = this.getContentResolver();
+        mNamedImages = new NamedImages();
+        mMediaSaver = new MediaSaver(mContentResolver);
+        Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
         // Create an instance of Camera
         Log.d(TAG, "onCreate:starting");
         // do we have a camera?
@@ -81,17 +118,20 @@ public class CameraActivity extends AppCompatActivity {
                     }
                     Log.d(TAG, "onCreate:openingCamera");
                     mCamera = Camera.open(cameraId);
+                    Camera.getCameraInfo(cameraId, mCameraInfo);
+                    mParameters = mCamera.getParameters();
                     Log.d(TAG, "onCreate:openingCamera:done");
                 } else {
                     Log.d(TAG, "onCreate:OLD_VERSION:openingCamera");
                     mCamera = Camera.open(cameraId);
                     Log.d(TAG, "onCreate:OLD_VERSION:openingCamera:done");
+                    mParameters = mCamera.getParameters();
+                    Camera.getCameraInfo(cameraId, mCameraInfo);
                 }
 
             }
         }
-
-        // Create our Preview view and set it as the content of our activity.
+        determineDisplayOrientation();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
@@ -106,6 +146,7 @@ public class CameraActivity extends AppCompatActivity {
         mCustomPagerAdapter = new CustomPagerAdapter(this, mResources);
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mCustomPagerAdapter);
+        mViewPager.setVisibility(View.GONE);
 
 
     }
@@ -120,18 +161,56 @@ public class CameraActivity extends AppCompatActivity {
 
     }
     public void onSavePhotoClick(View view) {
-        Log.d(TAG, "onCLick:sSaving photo");
+        Log.d(TAG, "onCLick:Saving photo");
         mCamera.startPreview();
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
+        mViewPager.setVisibility(View.GONE);
+        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
+        String title = mNamedImages.getTitle();
+        long date = mNamedImages.getDate();
+        Camera.Size s = mParameters.getPictureSize();
+        int width, height;
+        int orientation = mDisplayOrientation;
+        Drawable d = getResources().getDrawable(mResources[mViewPager.getCurrentItem()]);
+        Bitmap selectedIcon = drawableToBitmap(d);
+        boolean result = Util.checkPermission(CameraActivity.this);
+        if ((orientation == 90)) {
+            width = s.width;
+            height = s.height;
+        } else {
+            width = s.height;
+            height = s.width;
+
+        }
+
+        if (title == null) {
+            Log.e(TAG, "Unbalanced name/data pair");
+        } else {
+            if (date == -1) date = mCaptureStartTime;
+            if (result) {
+                Log.e(TAG, "attempting async save");
+//                Bitmap combinedImage = addSelectedIcon(mJPEGdata, selectedIcon);
+//                Util.saveImage(combinedImage); //TODO make a async task
+                mMediaSaver.addImage(mJPEGdata, selectedIcon, title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
+
+            }
+        }
+
+        Bitmap thumbCombined = addSelectedIcon(mThumbNail, selectedIcon);
+        mPreviousImageThumbnail.setImageBitmap(thumbCombined);
+
+
 
     }
+
     public void onBackButtonClick(View view) {
         Log.d(TAG, "onBackButtonClick:resetting camera");
         mCamera.startPreview();
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
 
     }
@@ -157,7 +236,13 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        releaseCamera();              // release the camera immediately on pause event
+//        releaseCamera();              // release the camera immediately on pause event
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCamera.startPreview();
+
     }
 
     @Override
@@ -173,37 +258,23 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
-    Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
-        public void onShutter() {
-            //			 Log.d(TAG, "onShutter'd");
-        }
-    };
-
-    Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
-        public void onPictureTaken(byte[] data, Camera camera) {
-            //			 Log.d(TAG, "onPictureTaken - raw");
-        }
-    };
-
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
         public void onPictureTaken(byte[] data, Camera camera) {
 //            new SaveImageTask().execute(data);
 //            resetCam();
             Log.d(TAG, "onPictureTaken - jpeg");
+            mCaptureStartTime = System.currentTimeMillis();
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
+            mViewPager.setVisibility(View.VISIBLE);
             mTakePhotoButton.setVisibility(View.GONE);
+            mThumbNail = getThumbNail(data);
+            mJPEGdata = data;
 
 
-            Bitmap thumbNail = getThumbNail(data);
-            Log.d(TAG + ":getCurrentItem()", Integer.toString(mViewPager.getCurrentItem()));
-            Log.d(TAG + ":mResources[0]", Integer.toString(mResources[0]));
-            Drawable d = getResources().getDrawable(mResources[mViewPager.getCurrentItem()]);
-            Bitmap selectedIcon = drawableToBitmap(d);
-            Bitmap thumbCombined = addSelectedIcon(thumbNail, selectedIcon);
-            mPreviousImageThumbnail.setImageBitmap(thumbCombined);
 
-            saveImage(data);
+
+
         }
     };
     public static Bitmap drawableToBitmap (Drawable drawable) {
@@ -234,36 +305,45 @@ public class CameraActivity extends AppCompatActivity {
         int pictureHeight = picture.getHeight();
         float iconFloatLeft = pictureWidth - 50;
         float iconFloatTop = pictureHeight - 50;
+        Double iconSize = pictureWidth*0.2;
+        int iconSizeInt = iconSize.intValue();
 
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(combinedImg);
 
         comboImage.drawBitmap(picture, 0f, 0f, null);
-        comboImage.drawBitmap(icon, iconFloatLeft, iconFloatTop, null);
+        comboImage.drawBitmap(Util.getResizedBitmap(icon, iconSizeInt, iconSizeInt), iconFloatLeft, iconFloatTop, null);
 
         return combinedImg;
     }
+
 
     private void resetCam() {
         mCamera.startPreview();
     }
 
-    private void saveImage(byte[] data) {
-//        File pictureFileDir = this.getDir();
-
-//        if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
-//
-//            Log.d(TAG, "Can't create directory to save image.");
-//            Toast.makeText(this, "Can't create directory to save image.",
-//                    Toast.LENGTH_LONG).show();
-//            return;
-//
-//        }
-
-
-
+    public boolean hasPermission(String permission) {
+        if (canMakeSmores()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+            }
+        }
+        return true;
     }
+    private boolean canMakeSmores() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
 
     private void releaseCamera(){
         if (mCamera != null){
@@ -272,30 +352,81 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            Log.d(TAG, "checkCameraHardware:found");
-            return true;
-        } else {
-            // no camera on this device
-            Log.d(TAG, "checkCameraHardware:not found");
-            return false;
+    private static class NamedImages {
+        private ArrayList<NamedEntity> mQueue;
+        private boolean mStop;
+        private NamedEntity mNamedEntity;
+        public NamedImages() {
+            mQueue = new ArrayList<NamedEntity>();
         }
-    }
-    public Camera getCameraInstance(){
-        Camera c = null;
-        try {
-            cameraId = Util.findFrontFacingCamera();
-            c = Camera.open(); // attempt to get a Camera instance
-            Log.d(TAG, "getCameraInstance:success");
+        public void nameNewImage(ContentResolver resolver, long date) {
+            NamedEntity r = new NamedEntity();
+            r.title = Util.createJpegName(date);
+            r.date = date;
+            mQueue.add(r);
+            Log.d(TAG +"nameNewImage:title:", r.title);
+            Log.d(TAG +"nameNewImage:date:", Float.toString(r.date));
 
         }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-            Log.d(TAG, "getCameraInstance:failed");
+        public String getTitle() {
+            if (mQueue.isEmpty()) {
+                Log.d(TAG,"getTitle:mQqueu:empty");
+                mNamedEntity = null;
+                return null;
+            }
+            mNamedEntity = mQueue.get(0);
+            mQueue.remove(0);
+            return mNamedEntity.title;
         }
-        return c; // returns null if camera is unavailable
+        // Must be called after getTitle().
+        public long getDate() {
+            if (mNamedEntity == null) return -1;
+            return mNamedEntity.date;
+        }
+        private static class NamedEntity {
+            String title;
+            long date;
+        }
+    }
+
+    public void determineDisplayOrientation() {
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, cameraInfo);
+
+        int rotation = this.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees  = 0;
+
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int displayOrientation;
+
+        if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            displayOrientation = (cameraInfo.orientation + degrees) % 360;
+            displayOrientation = (360 - displayOrientation) % 360;
+        } else {
+            displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
+        }
+
+        mDisplayOrientation = displayOrientation;
+        mLayoutOrientation  = degrees;
+
+        mCamera.setDisplayOrientation(displayOrientation);
     }
 
 

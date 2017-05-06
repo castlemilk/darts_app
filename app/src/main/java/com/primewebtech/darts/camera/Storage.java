@@ -3,6 +3,7 @@ package com.primewebtech.darts.camera;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by benebsworth on 2/5/17.
@@ -23,12 +26,17 @@ public class Storage {
     private static final String TAG = "CameraStorage";
     public static final String DCIM =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+    public static final String DIRECTORY_PICTURES = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES).toString();
     public static final String DIRECTORY = DCIM + "/Camera";
+    public static final String APP_DIRECTORY = DIRECTORY_PICTURES + "/Darts";
     public static final String BUCKET_ID =
             String.valueOf(DIRECTORY.toLowerCase().hashCode());
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
     public static final long LOW_STORAGE_THRESHOLD= 50000000;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -55,13 +63,26 @@ public class Storage {
 
     // Save the image and add it to media store.
     public static Uri addImage(ContentResolver resolver, String title,
-                               long date, Location location, int orientation, byte[] jpeg,
-                               int width, int height) {
+                                long date, Location location, int orientation, byte[] jpeg,
+                                int width, int height) {
         // Save the image.
-        String path = generateFilepath(title);
+//        String path = generateFilepath(title);
+        String path = getOutputMediaFile(MEDIA_TYPE_IMAGE).getPath();
         writeFile(path, jpeg);
         return addImage(resolver, title, date, location, orientation,
                 jpeg.length, path, width, height);
+    }
+    public static Uri addImage(ContentResolver resolver, String title,
+                               long date, Location location, int orientation, Bitmap jpeg,
+                               int width, int height) {
+        // Save the image.
+//        String path = generateFilepath(title);
+        Util.BitMapToByteArray(jpeg);
+        byte[] jpegBytes = Util.BitMapToByteArray(jpeg);
+        String path = getOutputMediaFile(MEDIA_TYPE_IMAGE).getPath();
+        writeFile(path, Util.BitMapToByteArray(jpeg));
+        return addImage(resolver, title, date, location, orientation,
+                jpegBytes.length, path, width, height);
     }
 
     // Add the image to media store.
@@ -127,7 +148,7 @@ public class Storage {
     }
 
     public static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+        return APP_DIRECTORY + '/' + title + ".jpg";
     }
     /**
      * OSX requires plugged-in USB storage to have path /DCIM/NNNAAAAA to be
@@ -138,5 +159,38 @@ public class Storage {
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
+    }
+
+    private static File getOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Darts");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("Darts", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else if(type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
     }
 }

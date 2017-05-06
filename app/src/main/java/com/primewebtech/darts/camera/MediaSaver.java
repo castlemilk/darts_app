@@ -1,6 +1,7 @@
 package com.primewebtech.darts.camera;
 
 import android.content.ContentResolver;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
@@ -34,10 +35,11 @@ public class MediaSaver extends Thread {
         return (mQueue.size() >= SAVE_QUEUE_LIMIT);
     }
     // Runs in main thread
-    public void addImage(final byte[] data, String title, long date, Location loc,
+    public void addImage(final byte[] data, Bitmap icon,  String title, long date, Location loc,
                          int width, int height, int orientation, OnMediaSavedListener l) {
         SaveRequest r = new SaveRequest();
         r.data = data;
+        r.icon = icon;
         r.date = date;
         r.title = title;
         r.loc = (loc == null) ? null : new Location(loc);  // make a copy
@@ -57,6 +59,7 @@ public class MediaSaver extends Thread {
             notifyAll();  // Tell saver thread there is new work to do.
         }
     }
+
 
     // Runs in saver thread
     @Override
@@ -80,7 +83,8 @@ public class MediaSaver extends Thread {
                 r = mQueue.remove(0);
                 notifyAll();  // the main thread may wait in addImage
             }
-            Uri uri = storeImage(r.data, r.title, r.date, r.loc, r.width, r.height,
+
+            Uri uri = storeImage(Util.BitMapToByteArray(Util.addSelectedIcon(r.data, r.icon)), r.title, r.date, r.loc, r.width, r.height,
                     r.orientation);
             r.listener.onMediaSaved(uri);
         }
@@ -105,10 +109,17 @@ public class MediaSaver extends Thread {
                 orientation, data, width, height);
         return uri;
     }
+    private Uri storeImage(final Bitmap data, String title, long date,
+                           Location loc, int width, int height, int orientation) {
+        Uri uri = Storage.addImage(mContentResolver, title, date, loc,
+                orientation, data, width, height);
+        return uri;
+    }
 
     // Each SaveRequest remembers the data needed to save an image.
     private static class SaveRequest {
         byte[] data;
+        Bitmap icon;
         String title;
         long date;
         Location loc;
@@ -116,4 +127,5 @@ public class MediaSaver extends Thread {
         int orientation;
         OnMediaSavedListener listener;
     }
+
 }
