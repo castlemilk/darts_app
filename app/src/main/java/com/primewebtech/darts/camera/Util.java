@@ -18,7 +18,6 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.util.Log;
 
 import com.primewebtech.darts.R;
@@ -58,6 +57,7 @@ public class Util {
             return sImageFileNamer.generateName(dateTaken);
         }
     }
+
     public static void broadcastNewPicture(Context context, Uri uri) {
         context.sendBroadcast(new Intent(ACTION_NEW_PICTURE, uri));
         // Keep compatibility
@@ -79,28 +79,12 @@ public class Util {
         }
         return cameraId;
     }
-    public static int findBackFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                Log.d(TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
+
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean checkPermission(final Context context)
-    {
+    public static boolean checkPermission(final Context context) {
         int currentAPIVersion = Build.VERSION.SDK_INT;
-        if(currentAPIVersion>=android.os.Build.VERSION_CODES.M)
-        {
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
@@ -128,15 +112,34 @@ public class Util {
         }
     }
 
+    protected static int byteSizeOf(Bitmap data) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
+            return data.getRowBytes() * data.getHeight();
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return data.getByteCount();
+        } else {
+            return data.getAllocationByteCount();
+        }
+    }
+
     public static Bitmap addSelectedIcon(byte[] picture, Bitmap icon) {
+        final long t0 = System.currentTimeMillis();
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
+        Log.d(TAG, String.format("created bitmap in %dms", System.currentTimeMillis() - t0));
+        final long t1 = System.currentTimeMillis();
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
-        Bitmap rotatedImg = Bitmap.createBitmap(pictureImg, 0,0, pictureImg.getWidth(), pictureImg.getHeight(), matrix, true);
+
+        Bitmap rotatedImg = Bitmap.createBitmap(pictureImg, 0, 0, pictureImg.getWidth(), pictureImg.getHeight(), matrix, true);
+        Log.d(TAG, String.format("rotated img in %dms", System.currentTimeMillis() - t1));
+        final long t2 = System.currentTimeMillis();
         Bitmap combinedImg = null;
+
         int pictureWidth = rotatedImg.getWidth();
         int pictureHeight = rotatedImg.getHeight();
-        Double iconSize = pictureWidth*0.2;
+//        int pictureWidth = pictureImg.getWidth();
+//        int pictureHeight = pictureImg.getHeight();
+        Double iconSize = pictureWidth * 0.2;
         int iconSizeInt = iconSize.intValue();
         float iconFloatLeft = pictureWidth - iconSizeInt - 50;
         float iconFloatTop = pictureHeight - iconSizeInt - 50;
@@ -147,23 +150,17 @@ public class Util {
         Log.d("bytes:iconSize", Integer.toString(iconSizeInt));
 
 
-
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(combinedImg);
 
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
+//        comboImage.drawBitmap(pictureImg, 0f, 0f, null);
         comboImage.drawBitmap(Bitmap.createScaledBitmap(icon, iconSizeInt, iconSizeInt, false), iconFloatLeft, iconFloatTop, null);
+        Log.d(TAG, String.format("addSelectedIcon took %dms", System.currentTimeMillis() - t2));
 
         return combinedImg;
     }
-
-
-
-
-
-
-
 
 
     private static class ImageFileNamer {
@@ -172,9 +169,11 @@ public class Util {
         private long mLastDate;
         // Number of names generated for the same second.
         private int mSameSecondCount;
+
         public ImageFileNamer(String format) {
             mFormat = new SimpleDateFormat(format);
         }
+
         public String generateName(long dateTaken) {
             Date date = new Date(dateTaken);
             String result = mFormat.format(date);
@@ -191,22 +190,22 @@ public class Util {
         }
     }
 
-    private static Uri getOutputMediaFileUri(int type){
+    private static Uri getOutputMediaFileUri(int type) {
         return Uri.fromFile(getOutputMediaFile(type));
     }
 
     public static void saveImage(Bitmap image) {
         File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-        if (pictureFile == null){
+        if (pictureFile == null) {
             Log.d(TAG, "Error creating media file, check storage permissions: ");
             return;
         }
 
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
-            Log.d(TAG+"URI:", pictureFile.toURI().toString());
+            Log.d(TAG + "URI:", pictureFile.toURI().toString());
             image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            Log.d(TAG,"Image saved");
+            Log.d(TAG, "Image saved");
             fos.close();
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
@@ -217,6 +216,7 @@ public class Util {
     }
 
     public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        final long t0 = System.currentTimeMillis();
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = ((float) newWidth) / width;
@@ -230,6 +230,7 @@ public class Util {
         Bitmap resizedBitmap = Bitmap.createBitmap(
                 bm, 0, 0, width, height, matrix, false);
 //        bm.recycle();
+        Log.d(TAG, String.format("getResizedBitmap took %dms", System.currentTimeMillis() - t0));
         return resizedBitmap;
     }
 
@@ -237,29 +238,28 @@ public class Util {
      * @param bitmap
      * @return converting bitmap and return a string
      */
-    public static byte[] BitMapToByteArray(Bitmap bitmap){
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
+    public static byte[] BitMapToByteArray(Bitmap bitmap) {
+
+//        int width, height;
+//
+//        final long t0 = System.currentTimeMillis();
+//        int bytes = byteSizeOf(bitmap);
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes);
+//        bitmap.copyPixelsToBuffer(byteBuffer);
+//        byte[] byteArray = byteBuffer.array();
+//        Log.d(TAG, String.format("BitMapToByteArray[buffer based] took %dms", System.currentTimeMillis() - t0));
+//        return byteArray;
+        final long t0 = System.currentTimeMillis();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        byte[] b = baos.toByteArray();
+        bitmap.recycle();
+        Log.d(TAG, String.format("BitMapToByteArray took %dms", System.currentTimeMillis() - t0));
         return b;
     }
 
-    /**
-     * @param encodedString
-     * @return bitmap (from given string)
-     */
-    public static Bitmap StringToBitMap(String encodedString){
-        try{
-            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
-            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        }catch(Exception e){
-            e.getMessage();
-            return null;
-        }
-    }
 
-    private static File getOutputMediaFile(int type){
+    private static File getOutputMediaFile(int type) {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
@@ -269,8 +269,8 @@ public class Util {
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
                 Log.d("Darts", "failed to create directory");
                 return null;
             }
@@ -279,16 +279,76 @@ public class Util {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
+        if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
+                    "IMG_" + timeStamp + ".jpg");
+        } else if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
+                    "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }
 
         return mediaFile;
+    }
+
+    public Camera openFrontFacingCamera() {
+
+//        if (mCamera != null) {
+//            mCamera.release();
+//            mCamera = null;}
+
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            Log.d(TAG, "Camera Info: " + cameraInfo.facing);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                try {
+                    return Camera.open(camIdx);
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        return null;
+    }
+    public static int findBackFacingCamera() {
+        int cameraId = -1;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                Log.d(TAG, "Camera found");
+                cameraId = i;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
+    public static Camera openBackFacingCamera() {
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            Log.d(TAG, "Camera Info: " + cameraInfo.facing);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                try {
+                    return Camera.open(camIdx);
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        return null;
     }
 }

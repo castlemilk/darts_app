@@ -83,9 +83,10 @@ public class MediaSaver extends Thread {
                 r = mQueue.remove(0);
                 notifyAll();  // the main thread may wait in addImage
             }
-
+            final long t0 = System.currentTimeMillis();
             Uri uri = storeImage(Util.BitMapToByteArray(Util.addSelectedIcon(r.data, r.icon)), r.title, r.date, r.loc, r.width, r.height,
                     r.orientation);
+            Log.d(TAG, String.format("storeImage took %dms", System.currentTimeMillis() - t0));
             r.listener.onMediaSaved(uri);
         }
         if (!mQueue.isEmpty()) {
@@ -109,12 +110,12 @@ public class MediaSaver extends Thread {
                 orientation, data, width, height);
         return uri;
     }
-    private Uri storeImage(final Bitmap data, String title, long date,
-                           Location loc, int width, int height, int orientation) {
-        Uri uri = Storage.addImage(mContentResolver, title, date, loc,
-                orientation, data, width, height);
-        return uri;
-    }
+//    private Uri storeImage(final Bitmap data, String title, long date,
+//                           Location loc, int width, int height, int orientation) {
+//        Uri uri = Storage.addImage(mContentResolver, title, date, loc,
+//                orientation, data, width, height);
+//        return uri;
+//    }
 
     // Each SaveRequest remembers the data needed to save an image.
     private static class SaveRequest {

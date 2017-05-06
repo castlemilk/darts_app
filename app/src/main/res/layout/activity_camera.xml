@@ -82,7 +82,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:background="@color/colorBlack"
-        android:onClick="onClick"
+        android:onClick="onReviewLatestPhotoClick"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         android:layout_marginTop="15dp"
         android:layout_marginRight="55dp"

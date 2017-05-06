@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,7 +19,6 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +32,10 @@ import android.widget.Toast;
 import com.primewebtech.darts.R;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -43,15 +47,18 @@ public class CameraActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private MediaSaver mMediaSaver;
     private ImageButton mPreviousImageThumbnail;
+    private String mRecentlySavedImageFilePath;
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
     private ImageButton mTakePhotoButton;
     private CustomPagerAdapter mCustomPagerAdapter;
     private Camera.Parameters mParameters;
+    static final String LATEST_PICTRUE = "LATEST_PICTURE";
     private int mDisplayOrientation;
     private int mLayoutOrientation;
     private ViewPager mViewPager;
     private Bitmap mThumbNail;
+    private Uri mRecentlySavedImageURI;
     private byte[] mJPEGdata;
     private Location mLocation;
     private NamedImages mNamedImages;
@@ -62,12 +69,31 @@ public class CameraActivity extends AppCompatActivity {
     private ArrayList permissionsRejected = new ArrayList();
     private ArrayList permissions = new ArrayList();
     private final static int ALL_PERMISSIONS_RESULT = 107;
+    private FrameLayout preview;
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
         @Override
         public void onMediaSaved(Uri uri) {
             if (uri != null) {
-                Log.d(TAG + "onMediaSaved:uri:", uri.toString());
+                mRecentlySavedImageURI = uri;
+                if (uri != null && "content".equals(uri.getScheme())) {
+                    Cursor cursor = getContentResolver().query(uri, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+                    cursor.moveToFirst();
+                    mRecentlySavedImageFilePath = cursor.getString(0);
+                    cursor.close();
+                } else {
+                    mRecentlySavedImageFilePath = uri.getPath();
+                }
+
+                Log.d(TAG ,"onMediaSaved:getFilePath:"+mRecentlySavedImageFilePath);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
+                                THUMBSIZE, THUMBSIZE));
+                    }
+                });
+
             }
         }
     };
@@ -88,6 +114,9 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
+        }
         setContentView(R.layout.activity_camera);
         Util.initialize(this);
         mContentResolver = this.getContentResolver();
@@ -116,27 +145,38 @@ public class CameraActivity extends AppCompatActivity {
                         // no permission so request and return
                         return;
                     }
-                    Log.d(TAG, "onCreate:openingCamera");
-                    mCamera = Camera.open(cameraId);
-                    Camera.getCameraInfo(cameraId, mCameraInfo);
-                    mParameters = mCamera.getParameters();
                     Log.d(TAG, "onCreate:openingCamera:done");
                 } else {
-                    Log.d(TAG, "onCreate:OLD_VERSION:openingCamera");
-                    mCamera = Camera.open(cameraId);
                     Log.d(TAG, "onCreate:OLD_VERSION:openingCamera:done");
-                    mParameters = mCamera.getParameters();
-                    Camera.getCameraInfo(cameraId, mCameraInfo);
+
                 }
 
             }
         }
-        determineDisplayOrientation();
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+
+        if (Integer.parseInt(Build.VERSION.SDK) >= 8)
+            setDisplayOrientation(mCamera, 90);
+        else
+        {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            {
+                mParameters.set("orientation", "portrait");
+                mParameters.set("rotation", 90);
+            }
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            {
+                mParameters.set("orientation", "landscape");
+                mParameters.set("rotation", 90);
+            }
+        }
+
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
         mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+        if (mRecentlySavedImageFilePath != null) {
+            mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
+                    THUMBSIZE, THUMBSIZE));
+        }
         mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
         mBackButton = (ImageButton) findViewById(R.id.button_back);
         mSaveImageButton.setVisibility(View.GONE);
@@ -148,13 +188,76 @@ public class CameraActivity extends AppCompatActivity {
         mViewPager.setAdapter(mCustomPagerAdapter);
         mViewPager.setVisibility(View.GONE);
 
+        mCamera = openBackFacingCamera();
+        mPreview = new CameraPreview(this, mCamera);
+        mCamera.startPreview();
+        mParameters = mCamera.getParameters();
+        Camera.getCameraInfo(cameraId, mCameraInfo);
+        mCamera.setDisplayOrientation(90);
+        mCamera.setParameters(mParameters);
+        determineDisplayOrientation();
+        preview.addView(mPreview);
 
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString(LATEST_PICTRUE,mRecentlySavedImageFilePath);
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            Log.d(TAG, "onResume");
+            if (mCamera == null) {
+                setContentView(R.layout.activity_camera);
+                mCamera = openBackFacingCamera();
+                mPreview = new CameraPreview(this, mCamera);
+                FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+                preview.addView(mPreview);
+                mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
+                mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+                mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
+                mBackButton = (ImageButton) findViewById(R.id.button_back);
+                mSaveImageButton.setVisibility(View.GONE);
+                mBackButton.setVisibility(View.GONE);
+                mTakePhotoButton.setVisibility(View.VISIBLE);
+                mViewPager.setVisibility(View.GONE);
+                if (mRecentlySavedImageFilePath != null) {
+                    mPreviousImageThumbnail.setVisibility(View.VISIBLE);
+                    mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
+                            THUMBSIZE, THUMBSIZE));
+                }
+
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+        }
+
+    }
+    @Override
+    protected void onPause() {
+
+        try {
+            Log.d(TAG, "onPause");
+            if(mCamera != null){
+                mCamera.release();
+                mCamera = null;
+                Log.d(TAG, "onPause:complete");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onPause();
     }
 
     public void onTakePhotoClick(View view) {
         Log.d(TAG, "onCLick:startingPreview");
         mCamera.startPreview();
-//        dispatchTakePictureIntent();
         mCamera.takePicture(null, null, jpegCallback);
 //        mCamera.takePicture(null, null,
 //                        new PhotoHandler(getApplicationContext()));
@@ -191,15 +294,10 @@ public class CameraActivity extends AppCompatActivity {
             if (date == -1) date = mCaptureStartTime;
             if (result) {
                 Log.e(TAG, "attempting async save");
-//                Bitmap combinedImage = addSelectedIcon(mJPEGdata, selectedIcon);
-//                Util.saveImage(combinedImage); //TODO make a async task
                 mMediaSaver.addImage(mJPEGdata, selectedIcon, title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
 
             }
         }
-
-        Bitmap thumbCombined = addSelectedIcon(mThumbNail, selectedIcon);
-        mPreviousImageThumbnail.setImageBitmap(thumbCombined);
 
 
 
@@ -214,11 +312,11 @@ public class CameraActivity extends AppCompatActivity {
         mTakePhotoButton.setVisibility(View.VISIBLE);
 
     }
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
+    public void onReviewLatestPhotoClick(View view) {
+        Intent galleryIntent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setDataAndType(mRecentlySavedImageURI, "image/*");
+        galleryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(galleryIntent);
     }
 
     @Override
@@ -233,30 +331,26 @@ public class CameraActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        releaseCamera();              // release the camera immediately on pause event
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mCamera.startPreview();
 
+    private void initialise() {
+        Log.d(TAG, "initialise:");
+
+        Log.d(TAG, "initialise:completed");
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopCamera();
-    }
-    private void stopCamera() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-            mCamera.release();
-        }
 
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        stopCamera();
+//    }
+//    private void stopCamera() {
+//        if (mCamera != null) {
+//            mCamera.stopPreview();
+//            mCamera.release();
+//        }
+//
+//    }
 
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -428,6 +522,31 @@ public class CameraActivity extends AppCompatActivity {
 
         mCamera.setDisplayOrientation(displayOrientation);
     }
+
+    protected void setDisplayOrientation(Camera camera, int angle){
+        Method downPolymorphic;
+        try
+        {
+            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
+            if (downPolymorphic != null)
+                downPolymorphic.invoke(camera, new Object[] { angle });
+        }
+        catch (Exception e1)
+        {
+        }
+    }
+
+    public static Camera getCameraInstance(){
+
+        Camera c = null;
+        try {
+            c = Camera.open();
+        } catch (Exception e){
+        }
+        return c;
+    }
+
+
 
 
 

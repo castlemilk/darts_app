@@ -3,7 +3,6 @@ package com.primewebtech.darts.camera;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -47,15 +46,18 @@ public class Storage {
     }
 
     public static void writeFile(String path, byte[] data) {
+        final long t0 = System.currentTimeMillis();
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(path);
             out.write(data);
+
         } catch (Exception e) {
             Log.e(TAG, "Failed to write data", e);
         } finally {
             try {
                 out.close();
+                Log.d(TAG, String.format("wrote file in %dms", System.currentTimeMillis() - t0));
             } catch (Exception e) {
             }
         }
@@ -67,29 +69,37 @@ public class Storage {
                                 int width, int height) {
         // Save the image.
 //        String path = generateFilepath(title);
+        final long t1 = System.currentTimeMillis();
+        final long t0 = System.currentTimeMillis();
         String path = getOutputMediaFile(MEDIA_TYPE_IMAGE).getPath();
+        Log.d(TAG, String.format("getOutputMediafile took %dms", System.currentTimeMillis() - t0));
+        Log.d(TAG, "addImage:path:"+path);
         writeFile(path, jpeg);
+        Log.d(TAG, String.format("writeFile took %dms", System.currentTimeMillis() - t0));
         return addImage(resolver, title, date, location, orientation,
                 jpeg.length, path, width, height);
     }
-    public static Uri addImage(ContentResolver resolver, String title,
-                               long date, Location location, int orientation, Bitmap jpeg,
-                               int width, int height) {
-        // Save the image.
-//        String path = generateFilepath(title);
-        Util.BitMapToByteArray(jpeg);
-        byte[] jpegBytes = Util.BitMapToByteArray(jpeg);
-        String path = getOutputMediaFile(MEDIA_TYPE_IMAGE).getPath();
-        writeFile(path, Util.BitMapToByteArray(jpeg));
-        return addImage(resolver, title, date, location, orientation,
-                jpegBytes.length, path, width, height);
-    }
+//    public static Uri addImage(ContentResolver resolver, String title,
+//                               long date, Location location, int orientation, Bitmap jpeg,
+//                               int width, int height) {
+//        // Save the image.
+////        String path = generateFilepath(title);
+//        final long t0 = System.currentTimeMillis();
+//        Util.BitMapToByteArray(jpeg);
+//        byte[] jpegBytes = Util.BitMapToByteArray(jpeg);
+//        String path = getOutputMediaFile(MEDIA_TYPE_IMAGE).getPath();
+//        writeFile(path, Util.BitMapToByteArray(jpeg));
+//        Log.d(TAG, String.format("addImageBitmap took %dms", System.currentTimeMillis() - t0));
+//        return addImage(resolver, title, date, location, orientation,
+//                jpegBytes.length, path, width, height);
+//    }
 
     // Add the image to media store.
     public static Uri addImage(ContentResolver resolver, String title,
                                long date, Location location, int orientation, int jpegLength,
                                String path, int width, int height) {
         // Insert into MediaStore.
+        final long t0 = System.currentTimeMillis();
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
         values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
@@ -107,6 +117,7 @@ public class Storage {
         Uri uri = null;
         try {
             uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            Log.d(TAG, String.format("addImage took %dms", System.currentTimeMillis() - t0));
         } catch (Throwable th)  {
             // This can happen when the external volume is already mounted, but
             // MediaScanner has not notify MediaProvider to add that volume.
