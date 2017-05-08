@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.location.Location;
+import android.media.MediaScannerConnection;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.primewebtech.darts.R;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -40,6 +42,7 @@ import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private static final String TAG = CameraActivity.class.getSimpleName();
+
     private Camera mCamera;
     private CameraPreview mPreview;
     private int cameraId = 0;
@@ -84,8 +87,10 @@ public class CameraActivity extends AppCompatActivity {
                 } else {
                     mRecentlySavedImageFilePath = uri.getPath();
                 }
-
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,Uri.fromFile(new File(mRecentlySavedImageFilePath))));
                 Log.d(TAG ,"onMediaSaved:getFilePath:"+mRecentlySavedImageFilePath);
+                MediaScannerConnection.scanFile(getApplicationContext(), new String[]{mRecentlySavedImageFilePath}, new String[]{"image/jpeg"}, null);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -222,10 +227,12 @@ public class CameraActivity extends AppCompatActivity {
                 mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
                 mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
                 mBackButton = (ImageButton) findViewById(R.id.button_back);
+                mViewPager = (ViewPager) findViewById(R.id.pager);
+                mViewPager.setAdapter(mCustomPagerAdapter);
+                mViewPager.setVisibility(View.GONE);
                 mSaveImageButton.setVisibility(View.GONE);
                 mBackButton.setVisibility(View.GONE);
                 mTakePhotoButton.setVisibility(View.VISIBLE);
-                mViewPager.setVisibility(View.GONE);
                 if (mRecentlySavedImageFilePath != null) {
                     mPreviousImageThumbnail.setVisibility(View.VISIBLE);
                     mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),

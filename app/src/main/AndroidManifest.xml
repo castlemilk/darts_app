@@ -17,6 +17,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Black.NoActionBar">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.primewebtech.darts.fileprovider"
+            android:enabled="true"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="com.primewebtech.darts.fileprovider.READ"
+            android:writePermission="com.primewebtech.darts.fileprovider.WRITE">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <activity android:name=".homepage.HomePageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +38,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".scoring.ScoringActivity" />
-        <activity android:name=".camera.CameraActivity"
+        <activity
+            android:name=".camera.CameraActivity"
             android:theme="@style/AppTheme.Black.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,10 +47,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".gallery.GalleryActivity2" />
         <activity
-            android:name=".camera.ReviewActivity"
-            android:label="@string/title_activity_review"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".gallery.GalleryActivity"
+            android:label="@string/title_activity_gallery"
+            android:theme="@style/AppTheme.Black.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.primewebtech.darts.homepage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -10,10 +11,16 @@ import android.widget.ImageButton;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.camera.CameraActivity;
+import com.primewebtech.darts.gallery.GalleryActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
+
+import java.io.File;
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = HomePageActivity.class.getSimpleName();
+    public static final String APP_DIRECTORY = Environment.getExternalStorageDirectory().getPath()+"/Pictures/Darts/";
+    private File[] allFiles ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         Intent scoringIntent = new Intent(HomePageActivity.this, ScoringActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
+        Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
         switch (view.getId()) {
             case R.id.darts1:
                 // route to darts1 based scoring
@@ -75,8 +83,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 Log.d(TAG, "stats:selected");
                 break;
             case R.id.gallery_button:
-                // route to gallery based scoring
-                Log.d(TAG, "gallery:selected");
+                startActivity(galleryIntent);
                 break;
             case R.id.camera_button:
                 // route to camera based scoring

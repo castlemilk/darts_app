@@ -27,10 +27,10 @@ public class Storage {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
     public static final String DIRECTORY_PICTURES = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_PICTURES).toString();
+
     public static final String DIRECTORY = DCIM + "/Camera";
     public static final String APP_DIRECTORY = DIRECTORY_PICTURES + "/Darts";
-    public static final String BUCKET_ID =
-            String.valueOf(DIRECTORY.toLowerCase().hashCode());
+    public static final String BUCKET_ID = String.valueOf(APP_DIRECTORY.toLowerCase().hashCode());
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
@@ -51,6 +51,7 @@ public class Storage {
         try {
             out = new FileOutputStream(path);
             out.write(data);
+
 
         } catch (Exception e) {
             Log.e(TAG, "Failed to write data", e);
@@ -102,6 +103,7 @@ public class Storage {
         final long t0 = System.currentTimeMillis();
         ContentValues values = new ContentValues(9);
         values.put(ImageColumns.TITLE, title);
+        values.put(ImageColumns.BUCKET_ID, BUCKET_ID);
         values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
         values.put(ImageColumns.DATE_TAKEN, date);
         values.put(ImageColumns.MIME_TYPE, "image/jpeg");
