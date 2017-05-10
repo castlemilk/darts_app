@@ -1,6 +1,8 @@
 package com.primewebtech.darts.gallery;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +27,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     private static final int COUNT = 100;
     private File pictureDirectory;
     private List<File> sortedFiles;
+    private int THUMBSIZE_W = 90;
+    private int THUMBSIZE_H = 130;
 
     private final Context mContext;
     private final List<GalleryItem> mItems;
@@ -45,6 +49,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
 
     public SimpleAdapter(Context context) {
         mContext = context;
+        mItems = new ArrayList<>(COUNT);
         /*
         The adapter will initialise with 100 items. The sectionViewAdapter will then be responsible
         for sectioning these items according to the firstPosition????
@@ -53,13 +58,17 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
 
         sortedFiles = Util.sortByLastModified(pictureDirectory);
+        int index = 0;
         for ( File file : sortedFiles) {
             Log.d(TAG, ":file:"+file.getPath());
+            addItem(new GalleryItem(index, file));
+            index++;
         }
-        mItems = new ArrayList<GalleryItem>(COUNT);
-        for (int i = 0; i < COUNT; i++) {
-            addItem(new GalleryItem(i, null));
-        }
+
+
+//        for (int i = 0; i < COUNT; i++) {
+//            addItem(new GalleryItem(i, null));
+//        }
     }
 
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,6 +80,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     public void onBindViewHolder(SimpleViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder:"+Integer.toString(mItems.get(position).mPosition));
         holder.title.setText(Integer.toString(mItems.get(position).mPosition));
+        holder.thumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mItems.get(position).mItemPath.getPath()),
+                THUMBSIZE_W, THUMBSIZE_H));
     }
 
     public void addItem(GalleryItem item) {
