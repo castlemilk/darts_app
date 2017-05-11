@@ -1,8 +1,6 @@
 package com.primewebtech.darts.gallery;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -65,10 +63,6 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
             index++;
         }
 
-
-//        for (int i = 0; i < COUNT; i++) {
-//            addItem(new GalleryItem(i, null));
-//        }
     }
 
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -80,7 +74,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     public void onBindViewHolder(SimpleViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder:"+Integer.toString(mItems.get(position).mPosition));
         holder.title.setText(Integer.toString(mItems.get(position).mPosition));
-        holder.thumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mItems.get(position).mItemPath.getPath()),
+        holder.thumbnail.setImageBitmap(Util.decodeSampledBitmapFromFile(mItems.get(position).mItemPath.getPath(),
                 THUMBSIZE_W, THUMBSIZE_H));
     }
 
