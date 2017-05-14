@@ -47,7 +47,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".gallery.GalleryActivity2" />
+        <!--<activity android:name=".gallery.GalleryActivityNew"-->
+            <!--android:label="@string/title_activity_gallery"-->
+            <!--android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">-->
+        <!--</activity>-->
         <activity
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"

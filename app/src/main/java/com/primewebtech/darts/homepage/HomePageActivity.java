@@ -57,7 +57,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         Intent scoringIntent = new Intent(HomePageActivity.this, ScoringActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
-        Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
+//        Intent galleryIntent;
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
+//        } else {
+//            galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
+//        }
+
         switch (view.getId()) {
             case R.id.darts1:
                 // route to darts1 based scoring

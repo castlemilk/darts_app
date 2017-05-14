@@ -29,7 +29,7 @@ import java.util.List;
  */
 
 public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleViewHolder> {
-    private static final String TAG = GalleryActivity.class.getSimpleName();
+    private static final String TAG = SimpleAdapter.class.getSimpleName();
     private static final int COUNT = 100;
     private File pictureDirectory;
     private List<File> sortedFiles;
@@ -102,7 +102,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
             @Override
             public void onClick(View view) {
                 GalleryActivity activity = (GalleryActivity) mContext;
-                if (activity.actionMode == null) {
+                if (activity.mActionMode == null) {
                     Log.d(TAG, "onClick:mItems:mPosition:"+mItems.get(position).mPosition);
                     Log.d(TAG, "onClick:onBIndViewHolder:position:"+position);
                     Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -113,7 +113,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     mContext.startActivity(intent);
-                } else if (activity.actionMode != null) {
+                } else if (activity.mActionMode != null) {
                     Log.d(TAG, "actionMenu:onClick:mItems:mPosition:"+mItems.get(position).mPosition);
                     Log.d(TAG, "actionMenu:onClick:onBIndViewHolder:position:"+position);
                     toggleSelection(position, holder);
@@ -152,7 +152,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
                 holder.thumbnail.setImageBitmap(loadedImage);
             }
         });
-        if (activity.actionMode != null) {
+        if (activity.mActionMode != null) {
             if (selectedItems.get(position, false)) {
                 holder.selected.setVisibility(View.VISIBLE);
                 holder.unselected.setVisibility(View.GONE);
@@ -174,8 +174,14 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     }
 
     public void removeItem(int position) {
+        Log.d(TAG, "removeItem:position:"+Integer.toString(position));
         mItems.remove(position);
+        Log.d(TAG, "removeItem:mItems:");
+        for ( GalleryItem item : mItems) {
+            Log.d(TAG, "mItems:position:"+item.mPosition+":path:"+item.mItemPath.toString());
+        }
         notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -242,6 +248,37 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
                 new ArrayList<Integer>(selectedItems.size());
         for (int i = 0; i < selectedItems.size(); i++) {
             items.add(selectedItems.keyAt(i));
+        }
+        return items;
+    }
+    public boolean deleteSelectedFiles() {
+        try {
+            for (int i = 0; i < selectedItems.size(); i++) {
+                int position = mItems.get(selectedItems.keyAt(i)).mPosition;
+                File file = mItems.get(selectedItems.keyAt(i)).mItemPath;
+                Log.d(TAG, "deleteSelectedFiles:position:"+position);
+                Log.d(TAG, "deleteSelectedFiles:position:"+file.getPath());
+                Log.d(TAG, "deleteSelectedFiles:DELETING:"+file.toString());
+                removeItem(selectedItems.keyAt(i));
+                file.delete();
+                notifyItemRangeChanged(selectedItems.keyAt(i), selectedItems.size());
+
+
+            }
+            notifyItemRangeChanged(selectedItems.keyAt(0), selectedItems.size());
+            return true;
+        } catch ( Exception e )  {
+            return false;
+
+        }
+
+
+    }
+    public List<File> getSelectedFiles() {
+        List<File> items =
+                new ArrayList<File>(selectedItems.size());
+        for (int i = 0; i < selectedItems.size(); i++) {
+            items.add(mItems.get(selectedItems.keyAt(i)).getItemPath());
         }
         return items;
     }

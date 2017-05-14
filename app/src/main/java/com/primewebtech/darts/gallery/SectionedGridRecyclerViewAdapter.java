@@ -216,9 +216,6 @@ public class SectionedGridRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
         public int getItemCount() {
             return (mValid ? mBaseAdapter.getItemCount() + mSections.size() : 0);
         }
-        public void onActionMode() {
-
-        }
 
 
 
