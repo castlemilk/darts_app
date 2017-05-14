@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="130dp"
     >
@@ -12,9 +14,53 @@
         android:textColor="#999999"
         android:textStyle="bold"
         android:textSize="22sp"
-        android:background="@drawable/item_background">
+        android:background="@drawable/item_background"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.0">
 
     </ImageView>
+    <ImageView
+        android:id="@+id/selected"
+        android:visibility="gone"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:gravity="center"
+        android:textColor="#999999"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:background="@drawable/selector_button_selected"
+        android:src="@drawable/selector_button_selected_image"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </ImageView>
+    <ImageView
+        android:id="@+id/unselected"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:gravity="center"
+        android:textColor="#999999"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:background="@drawable/selector_button_unselected"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </ImageView>
+
 
 </android.support.constraint.ConstraintLayout>
 

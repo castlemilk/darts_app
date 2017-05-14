@@ -7,5 +7,7 @@
     <string name="_2_dart">2 dart</string>
     <string name="_3_dart">3 dart</string>
     <string name="image_file_name_format" translatable="false">"'IMG'_yyyyMMdd_HHmmss"</string>
-    <string name="title_activity_gallery">GalleryActivity</string>
+    <string name="title_activity_gallery">Gallery</string>
+    <string name="delete">Delete</string>
+    <string name="selected_count">%1$d selected</string>
 </resources>

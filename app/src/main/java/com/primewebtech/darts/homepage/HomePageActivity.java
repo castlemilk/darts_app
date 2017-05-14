@@ -1,8 +1,12 @@
 package com.primewebtech.darts.homepage;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +24,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private static final String TAG = HomePageActivity.class.getSimpleName();
     public static final String APP_DIRECTORY = Environment.getExternalStorageDirectory().getPath()+"/Pictures/Darts/";
     private File[] allFiles ;
+    private final int GALLERY_STORAGE_REQUEST = 101;
 
 
     @Override
@@ -83,7 +88,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 Log.d(TAG, "stats:selected");
                 break;
             case R.id.gallery_button:
-                startActivity(galleryIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==
+                            PackageManager.PERMISSION_GRANTED) {
+                        startActivity(galleryIntent);
+
+                    } else {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                               GALLERY_STORAGE_REQUEST);
+                    }
+                }
+
                 break;
             case R.id.camera_button:
                 // route to camera based scoring
@@ -92,5 +107,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == GALLERY_STORAGE_REQUEST && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
+            startActivity(galleryIntent);
+        }
     }
 }

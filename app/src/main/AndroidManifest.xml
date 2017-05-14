@@ -51,7 +51,7 @@
         <activity
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:theme="@style/AppTheme.Black.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"></activity>
     </application>
 
 </manifest>
