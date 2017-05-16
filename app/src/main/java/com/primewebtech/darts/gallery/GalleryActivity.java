@@ -52,10 +52,7 @@ public class GalleryActivity
 //        Util.getHeaderIndexes(pictureDirectory);
         mDateOrganiser = new Util.DateOrganiser(pictureDirectory);
         mDateOrganiser.todaysFiles();
-        mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this,4));
-        mAdapter = new SimpleAdapter(this);
+
         mSelectedAll = false;
         generateGalleryGrouping();
 
@@ -159,16 +156,25 @@ public class GalleryActivity
         return shareIntent;
     }
     private void generateGalleryGrouping() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new SimpleAdapter(this);
         List<SectionedGridRecyclerViewAdapter.Section> sections =
                 new ArrayList<SectionedGridRecyclerViewAdapter.Section>();
         List<Map.Entry<Integer, String>> indices = mDateOrganiser.getDayIndices();
+        int sections_count = 0;
         for ( Map.Entry<Integer, String> index : indices) {
             if (index.getKey() == 0) {
                 sections.add(new SectionedGridRecyclerViewAdapter.Section(0,"Today"));
+                sections_count++;
+
             } else {
                 sections.add(new SectionedGridRecyclerViewAdapter.Section(index.getKey(), index.getValue()));
+                sections_count++;
             }
         }
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         SectionedGridRecyclerViewAdapter.Section[] dummy = new SectionedGridRecyclerViewAdapter.Section[sections.size()];
         mSectionedAdapter = new
                 SectionedGridRecyclerViewAdapter(this,R.layout.section,R.id.section_text,mRecyclerView,mAdapter);
@@ -351,8 +357,29 @@ public class GalleryActivity
                     Log.d(TAG, "onActionItemClicked:menu_delete:");
                     List<File> selectedFiles = mAdapter.getSelectedFiles();
                     Log.d(TAG, "menu_delete_new:"+selectedFiles.toString());
-                    mAdapter.deleteSelectedFiles();
+                    for (Integer galleryItem : mAdapter.getSelectedItems()) {
+                        Log.d(TAG, "galleryItem:"+galleryItem.toString());
+
+
+//                        mRecyclerView.removeViewAt(galleryItem);
+                        File file = mAdapter.getSelectedItemFile(galleryItem);
+                        file.delete();
+                        mAdapter.removeItem(galleryItem);
+
+//                        mAdapter.notifyItemRemoved(galleryItem);
+
+
+
+
+                    }
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount());
+//                    mAdapter.notifyDataSetChanged(
+//                    mRecyclerView.invalidate();
+//                    generateGalleryGrouping();
                     mActionMode.finish();
+
+//                    mAdapter.deleteSelectedFiles();
+//                    mActionMode.finish();
 //                    generateGalleryGrouping();
                     break;
                 case R.id.menu_select_all:

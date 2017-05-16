@@ -93,10 +93,15 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     }
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        Log.d(TAG, "onBindViewHolder:"+Integer.toString(mItems.get(position).mPosition));
-//        holder.title.setText(Integer.toString(mItems.get(position).mPosition));
         GalleryActivity activity = (GalleryActivity) mContext;
         final int adjustedPosition = activity.mSectionedAdapter.positionToSectionedPosition(position);
+        Log.d(TAG, "onBindViewHolder:adjustedPosition:"+Integer.toString(adjustedPosition));
+        Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
+        Log.d(TAG, "onBindViewHolder:position:"+Integer.toString(position));
+        Log.d(TAG, "onBindViewHolder:mItems(position):mPosition"+Integer.toString(mItems.get(position).mPosition));
+        Log.d(TAG, "onBindViewHolder:mItems(holder.getAdapterPosition):mPosition"+Integer.toString(mItems.get(position).mPosition));
+//        holder.title.setText(Integer.toString(mItems.get(position).mPosition));
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -105,6 +110,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
                 if (activity.mActionMode == null) {
                     Log.d(TAG, "onClick:mItems:mPosition:"+mItems.get(position).mPosition);
                     Log.d(TAG, "onClick:onBIndViewHolder:position:"+position);
+                    Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
                     Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     Uri photoURI = FileProvider.getUriForFile(mContext,
                             mContext.getApplicationContext().getPackageName() + ".fileprovider",
@@ -249,31 +255,33 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         for (int i = 0; i < selectedItems.size(); i++) {
             items.add(selectedItems.keyAt(i));
         }
+        Log.d(TAG, "getSelectedItems():selected_items::"+selectedItems.toString());
+        Log.d(TAG, "getSelectedItems():items_idexes:"+items.toString());
         return items;
     }
-    public boolean deleteSelectedFiles() {
-        try {
-            for (int i = 0; i < selectedItems.size(); i++) {
-                int position = mItems.get(selectedItems.keyAt(i)).mPosition;
-                File file = mItems.get(selectedItems.keyAt(i)).mItemPath;
-                Log.d(TAG, "deleteSelectedFiles:position:"+position);
-                Log.d(TAG, "deleteSelectedFiles:position:"+file.getPath());
-                Log.d(TAG, "deleteSelectedFiles:DELETING:"+file.toString());
-                removeItem(selectedItems.keyAt(i));
-                file.delete();
-                notifyItemRangeChanged(selectedItems.keyAt(i), selectedItems.size());
-
-
-            }
-            notifyItemRangeChanged(selectedItems.keyAt(0), selectedItems.size());
-            return true;
-        } catch ( Exception e )  {
-            return false;
-
-        }
-
-
-    }
+//    public boolean deleteSelectedFiles() {
+//        try {
+//            for (int i = 0; i < selectedItems.size(); i++) {
+//                int position = mItems.get(selectedItems.keyAt(i)).mPosition;
+//                File file = mItems.get(selectedItems.keyAt(i)).mItemPath;
+//                Log.d(TAG, "deleteSelectedFiles:position:"+position);
+//                Log.d(TAG, "deleteSelectedFiles:position:"+file.getPath());
+//                Log.d(TAG, "deleteSelectedFiles:DELETING:"+file.toString());
+//                removeItem(selectedItems.keyAt(i));
+//                file.delete();
+//                notifyItemRangeChanged(selectedItems.keyAt(i), selectedItems.size());
+//
+//
+//            }
+//            notifyItemRangeChanged(selectedItems.keyAt(0), selectedItems.size());
+//            return true;
+//        } catch ( Exception e )  {
+//            return false;
+//
+//        }
+//
+//
+//    }
     public List<File> getSelectedFiles() {
         List<File> items =
                 new ArrayList<File>(selectedItems.size());
@@ -281,6 +289,15 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
             items.add(mItems.get(selectedItems.keyAt(i)).getItemPath());
         }
         return items;
+    }
+    public int getSelectedItemPosition(int pos) {
+        return mItems.get(selectedItems.keyAt(pos)).mPosition;
+    }
+    public File getSelectedItemFile(int pos) {
+        Log.d(TAG, "getSelectedItemFile:pos:"+Integer.toString(pos));
+        Log.d(TAG, "getSelectedItemFile:galleryItem:file"+mItems.get(pos).mItemPath.toString());
+        Log.d(TAG, "getSelectedItemFile:galleryItem:position"+Integer.toString(mItems.get(pos).mPosition));
+        return mItems.get(pos).mItemPath;
     }
 
 

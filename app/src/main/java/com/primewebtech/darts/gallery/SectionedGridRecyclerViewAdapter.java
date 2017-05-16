@@ -104,6 +104,7 @@ public class SectionedGridRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             if (isSectionHeaderPosition(position)) {
                 ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
             }else{
+//                mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
                 mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
             }
 
