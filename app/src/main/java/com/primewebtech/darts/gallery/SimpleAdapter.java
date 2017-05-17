@@ -22,7 +22,9 @@ import com.primewebtech.darts.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by benebsworth on 7/5/17.
@@ -39,7 +41,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     private final ImageLoaderConfiguration mConfig;
 
     private final Context mContext;
-    private final List<GalleryItem> mItems;
+//    private final List<GalleryItem> mItems;
+    private final HashMap<Integer, GalleryItem> mItems;
     private int mCurrentItemId = 0;
     private SparseBooleanArray selectedItems;
 
@@ -64,7 +67,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     public SimpleAdapter(Context context) {
         mContext = context;
 
-        mItems = new ArrayList<>(COUNT);
+        mItems = new HashMap<>();
+//        mItems = new ArrayList<>(COUNT);
         mConfig = new ImageLoaderConfiguration.Builder(mContext).build();
         ImageLoader.getInstance().init(mConfig);
         selectedItems = new SparseBooleanArray();
@@ -79,7 +83,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         int index = 0;
         for ( File file : sortedFiles) {
             Log.d(TAG, ":file:"+file.getPath());
-            addItem(new GalleryItem(index, file));
+            addItem(index, new GalleryItem(index, file));
             index++;
         }
 
@@ -98,6 +102,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         Log.d(TAG, "onBindViewHolder:adjustedPosition:"+Integer.toString(adjustedPosition));
         Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
         Log.d(TAG, "onBindViewHolder:position:"+Integer.toString(position));
+        Log.d(TAG, "mItems:"+mItems.toString());
         Log.d(TAG, "onBindViewHolder:mItems(position):mPosition"+Integer.toString(mItems.get(position).mPosition));
         Log.d(TAG, "onBindViewHolder:mItems(holder.getAdapterPosition):mPosition"+Integer.toString(mItems.get(position).mPosition));
 //        holder.title.setText(Integer.toString(mItems.get(position).mPosition));
@@ -173,21 +178,23 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         }
     }
 
-    public void addItem(GalleryItem item) {
+    public void addItem(int index, GalleryItem item) {
         final int id = mCurrentItemId++;
-        mItems.add(item);
+//        mItems.add(item);
+        mItems.put(index, item);
         notifyItemInserted(item.getPosition());
     }
 
     public void removeItem(int position) {
         Log.d(TAG, "removeItem:position:"+Integer.toString(position));
         mItems.remove(position);
-        Log.d(TAG, "removeItem:mItems:");
-        for ( GalleryItem item : mItems) {
-            Log.d(TAG, "mItems:position:"+item.mPosition+":path:"+item.mItemPath.toString());
-        }
         notifyItemRemoved(position);
-        notifyDataSetChanged();
+        Log.d(TAG, "removeItem:mItems:");
+        for (Map.Entry<Integer, GalleryItem> item : mItems.entrySet()) {
+            Log.d(TAG, "mItems:position:"+item.getValue().mPosition+":path:"+item.getValue().mItemPath.toString());
+        }
+
+//        notifyDataSetChanged();
     }
 
     @Override
@@ -234,10 +241,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
 //        notifyItemChanged(pos);
     }
     public void selectAll() {
-        int index = 0;
-        for ( GalleryItem item : mItems ) {
-            selectedItems.put(index, true);
-            index++;
+        for ( Map.Entry<Integer, GalleryItem> item : mItems.entrySet() ) {
+            selectedItems.put(item.getKey(), true);
         }
 //        notifyItemChanged(pos);
     }
@@ -285,6 +290,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     public List<File> getSelectedFiles() {
         List<File> items =
                 new ArrayList<File>(selectedItems.size());
+
         for (int i = 0; i < selectedItems.size(); i++) {
             items.add(mItems.get(selectedItems.keyAt(i)).getItemPath());
         }
