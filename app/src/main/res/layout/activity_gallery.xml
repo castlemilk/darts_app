@@ -13,5 +13,10 @@
         tools:layout_editor_absoluteY="8dp"
         tools:layout_editor_absoluteX="8dp" />
 
+    <include layout="@layout/empty_view"/>
+
+
+    <include layout="@layout/fast_scroller"/>
+
 
 </android.support.design.widget.CoordinatorLayout>

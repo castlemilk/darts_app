@@ -52,7 +52,7 @@
             <!--android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">-->
         <!--</activity>-->
         <activity
-            android:name=".gallery.GalleryActivity"
+            android:name=".gallery2.GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"></activity>
     </application>

@@ -54,6 +54,7 @@ public class GalleryActivity
         mDateOrganiser.todaysFiles();
 
         mSelectedAll = false;
+
         generateGalleryGrouping();
 
             //Sections
@@ -163,15 +164,12 @@ public class GalleryActivity
         List<SectionedGridRecyclerViewAdapter.Section> sections =
                 new ArrayList<SectionedGridRecyclerViewAdapter.Section>();
         List<Map.Entry<Integer, String>> indices = mDateOrganiser.getDayIndices();
-        int sections_count = 0;
         for ( Map.Entry<Integer, String> index : indices) {
             if (index.getKey() == 0) {
                 sections.add(new SectionedGridRecyclerViewAdapter.Section(0,"Today"));
-                sections_count++;
 
             } else {
                 sections.add(new SectionedGridRecyclerViewAdapter.Section(index.getKey(), index.getValue()));
-                sections_count++;
             }
         }
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
@@ -357,6 +355,9 @@ public class GalleryActivity
                     Log.d(TAG, "onActionItemClicked:menu_delete:");
                     List<File> selectedFiles = mAdapter.getSelectedFiles();
                     Log.d(TAG, "menu_delete_new:"+selectedFiles.toString());
+                    Log.d(TAG, "menu_delete_mew:items:mAdapter:before:count:"+mAdapter.getItemCount());
+                    Log.d(TAG, "menu_delete_mew:items:mSectionedAdapter:before:count:"+mSectionedAdapter.getItemCount());
+
                     for (Integer galleryItem : mAdapter.getSelectedItems()) {
                         Log.d(TAG, "galleryItem:"+galleryItem.toString());
 
@@ -365,14 +366,34 @@ public class GalleryActivity
                         File file = mAdapter.getSelectedItemFile(galleryItem);
                         file.delete();
                         mAdapter.removeItem(galleryItem);
-
-//                        mAdapter.notifyItemRemoved(galleryItem);
+                        mAdapter.notifyItemRemoved(galleryItem);
+                        mAdapter.notifyItemRangeChanged(galleryItem, mAdapter.getItemCount());
+                        mSectionedAdapter.notifyItemRangeChanged(galleryItem, mAdapter.getItemCount());
+                        mSectionedAdapter.notifyItemRemoved(galleryItem);
 
 
 
 
                     }
+                    mSectionedAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount());
                     mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount());
+//                    List<SectionedGridRecyclerViewAdapter.Section> sections =
+//                            new ArrayList<SectionedGridRecyclerViewAdapter.Section>();
+//                    List<Map.Entry<Integer, String>> indices = mDateOrganiser.getDayIndices();
+//                    for ( Map.Entry<Integer, String> index : indices) {
+//                        if (index.getKey() == 0) {
+//                            sections.add(new SectionedGridRecyclerViewAdapter.Section(0,"Today"));
+//
+//                        } else {
+//                            sections.add(new SectionedGridRecyclerViewAdapter.Section(index.getKey(), index.getValue()));
+//                        }
+//                    }
+//                    SectionedGridRecyclerViewAdapter.Section[] dummy = new SectionedGridRecyclerViewAdapter.Section[sections.size()];
+//                    mSectionedAdapter.setSections(sections.toArray(dummy));
+//                    mRecyclerView.setAdapter(mSectionedAdapter);
+                    Log.d(TAG, "menu_delete_mew:items:mAdapter:after:count:"+mAdapter.getItemCount());
+                    Log.d(TAG, "menu_delete_mew:items:mSectionedAdapter:after:count:"+mSectionedAdapter.getItemCount());
+
 //                    mAdapter.notifyDataSetChanged(
 //                    mRecyclerView.invalidate();
 //                    generateGalleryGrouping();

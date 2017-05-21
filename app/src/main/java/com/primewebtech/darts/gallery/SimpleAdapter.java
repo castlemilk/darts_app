@@ -22,9 +22,8 @@ import com.primewebtech.darts.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by benebsworth on 7/5/17.
@@ -32,7 +31,7 @@ import java.util.Map;
 
 public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleViewHolder> {
     private static final String TAG = SimpleAdapter.class.getSimpleName();
-    private static final int COUNT = 100;
+//    private static final int COUNT = 100;
     private File pictureDirectory;
     private List<File> sortedFiles;
     private int THUMBSIZE_W = 30;
@@ -41,16 +40,17 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
     private final ImageLoaderConfiguration mConfig;
 
     private final Context mContext;
-//    private final List<GalleryItem> mItems;
-    private final HashMap<Integer, GalleryItem> mItems;
+    private final List<GalleryItem> mItems;
+//    private final HashMap<Integer, GalleryItem> mItems;
     private int mCurrentItemId = 0;
     private SparseBooleanArray selectedItems;
 
-    public static class SimpleViewHolder extends RecyclerView.ViewHolder {
+    public class SimpleViewHolder extends RecyclerView.ViewHolder {
 //        public final TextView title;
         public final ImageView thumbnail;
         public final ImageView selected;
         public final ImageView unselected;
+
 
         public SimpleViewHolder(View view) {
             // initialises the viewholder for view hydration.
@@ -59,15 +59,15 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
             thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             selected = (ImageView) view.findViewById(R.id.selected);
             unselected = (ImageView) view.findViewById(R.id.unselected);
-
-
         }
+
     }
 
     public SimpleAdapter(Context context) {
         mContext = context;
 
-        mItems = new HashMap<>();
+//        mItems = new HashMap<>();
+        mItems = new ArrayList<>();
 //        mItems = new ArrayList<>(COUNT);
         mConfig = new ImageLoaderConfiguration.Builder(mContext).build();
         ImageLoader.getInstance().init(mConfig);
@@ -103,96 +103,108 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
         Log.d(TAG, "onBindViewHolder:position:"+Integer.toString(position));
         Log.d(TAG, "mItems:"+mItems.toString());
-        Log.d(TAG, "onBindViewHolder:mItems(position):mPosition"+Integer.toString(mItems.get(position).mPosition));
-        Log.d(TAG, "onBindViewHolder:mItems(holder.getAdapterPosition):mPosition"+Integer.toString(mItems.get(position).mPosition));
+        Log.d(TAG, "mItems:size/length:"+Integer.toString(mItems.size()));
+        if (position < mItems.size()) {
+            Log.d(TAG, "onBindViewHolder:mItems(position):mPosition"+Integer.toString(mItems.get(position).mPosition));
+            Log.d(TAG, "onBindViewHolder:mItems(holder.getAdapterPosition):mPosition"+Integer.toString(mItems.get(position).mPosition));
 //        holder.title.setText(Integer.toString(mItems.get(position).mPosition));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
-                GalleryActivity activity = (GalleryActivity) mContext;
-                if (activity.mActionMode == null) {
-                    Log.d(TAG, "onClick:mItems:mPosition:"+mItems.get(position).mPosition);
-                    Log.d(TAG, "onClick:onBIndViewHolder:position:"+position);
-                    Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
-                    Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    Uri photoURI = FileProvider.getUriForFile(mContext,
-                            mContext.getApplicationContext().getPackageName() + ".fileprovider",
-                            mItems.get(position).mItemPath);
-                    intent.setDataAndType(photoURI, "image/*");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    mContext.startActivity(intent);
-                } else if (activity.mActionMode != null) {
-                    Log.d(TAG, "actionMenu:onClick:mItems:mPosition:"+mItems.get(position).mPosition);
-                    Log.d(TAG, "actionMenu:onClick:onBIndViewHolder:position:"+position);
-                    toggleSelection(position, holder);
-                    activity.myToggleSelection();
-                    if (selectedItems.get(position, false)) {
+                @Override
+                public void onClick(View view) {
+                    GalleryActivity activity = (GalleryActivity) mContext;
+                    if (activity.mActionMode == null) {
+                        Log.d(TAG, "onClick:mItems:mPosition:"+mItems.get(position).mPosition);
+                        Log.d(TAG, "onClick:onBIndViewHolder:position:"+position);
+                        Log.d(TAG, "onBindViewHolder:holder.getAdapterPosition():"+Integer.toString(holder.getAdapterPosition()));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        Uri photoURI = FileProvider.getUriForFile(mContext,
+                                mContext.getApplicationContext().getPackageName() + ".fileprovider",
+                                mItems.get(position).mItemPath);
+                        intent.setDataAndType(photoURI, "image/*");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        mContext.startActivity(intent);
+                    } else if (activity.mActionMode != null) {
+                        Log.d(TAG, "actionMenu:onClick:mItems:mPosition:"+mItems.get(position).mPosition);
+                        Log.d(TAG, "actionMenu:onClick:onBIndViewHolder:position:"+position);
+                        toggleSelection(position, holder);
+                        activity.myToggleSelection();
+                        if (selectedItems.get(position, false)) {
 //                        holder.selected.setVisibility(View.VISIBLE);
 //                        holder.unselected.setVisibility(View.GONE);
-                    } else {
+                        } else {
 //                        holder.unselected.setVisibility(View.VISIBLE);
 //                        holder.selected.setVisibility(View.GONE);
-                    }
+                        }
 
+                    }
                 }
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                GalleryActivity activity = (GalleryActivity) mContext;
-                toggleSelection(position, holder);
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    GalleryActivity activity = (GalleryActivity) mContext;
+                    toggleSelection(position, holder);
 //                selectedItems.put(position, true);
 //                holder.selected.setVisibility(View.VISIBLE);
-                activity.onLongPress(position);
-                holder.unselected.setVisibility(View.GONE);
-                holder.selected.setVisibility(View.VISIBLE);
+                    activity.onLongPress(position);
+                    holder.unselected.setVisibility(View.GONE);
+                    holder.selected.setVisibility(View.VISIBLE);
 
-                return true;
-            }
-        });
-        ImageSize targetSize = new ImageSize(80, 50);
-        mImageLoader = ImageLoader.getInstance();
-        mImageLoader.loadImage("file:///"+mItems.get(position).mItemPath.getPath(), targetSize, null, new SimpleImageLoadingListener() {
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                // Do whatever you want with Bitmap
-                holder.thumbnail.setImageBitmap(loadedImage);
-            }
-        });
-        if (activity.mActionMode != null) {
-            if (selectedItems.get(position, false)) {
-                holder.selected.setVisibility(View.VISIBLE);
-                holder.unselected.setVisibility(View.GONE);
+                    return true;
+                }
+            });
+            ImageSize targetSize = new ImageSize(80, 50);
+            mImageLoader = ImageLoader.getInstance();
+            mImageLoader.loadImage("file:///"+mItems.get(position).mItemPath.getPath(), targetSize, null, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    // Do whatever you want with Bitmap
+                    holder.thumbnail.setImageBitmap(loadedImage);
+                }
+            });
+            if (activity.mActionMode != null) {
+                if (selectedItems.get(position, false)) {
+                    holder.selected.setVisibility(View.VISIBLE);
+                    holder.unselected.setVisibility(View.GONE);
+                } else {
+                    holder.unselected.setVisibility(View.VISIBLE);
+                    holder.selected.setVisibility(View.GONE);
+                }
+
             } else {
-                holder.unselected.setVisibility(View.VISIBLE);
+                holder.unselected.setVisibility(View.GONE);
                 holder.selected.setVisibility(View.GONE);
             }
-
         } else {
-            holder.unselected.setVisibility(View.GONE);
-            holder.selected.setVisibility(View.GONE);
+            Log.d(TAG, "NO ITEM FOUND FOR BINDVIEW");
         }
+
     }
 
     public void addItem(int index, GalleryItem item) {
         final int id = mCurrentItemId++;
-//        mItems.add(item);
-        mItems.put(index, item);
+        mItems.add(item);
+//        mItems.put(index, item);
         notifyItemInserted(item.getPosition());
     }
 
     public void removeItem(int position) {
         Log.d(TAG, "removeItem:position:"+Integer.toString(position));
+        Log.d(TAG, "removeItem:length:before:"+getItemCount());
         mItems.remove(position);
         notifyItemRemoved(position);
+        Log.d(TAG, "removeItem:length:before:"+getItemCount());
+
         Log.d(TAG, "removeItem:mItems:");
-        for (Map.Entry<Integer, GalleryItem> item : mItems.entrySet()) {
-            Log.d(TAG, "mItems:position:"+item.getValue().mPosition+":path:"+item.getValue().mItemPath.toString());
+        for (GalleryItem item : mItems) {
+            Log.d(TAG, "mItems:position:"+item.mPosition+":path:"+item.mItemPath.toString());
         }
+//        for (Map.Entry<Integer, GalleryItem> item : mItems.entrySet()) {
+//            Log.d(TAG, "mItems:position:"+item.getValue().mPosition+":path:"+item.getValue().mItemPath.toString());
+//        }
 
 //        notifyDataSetChanged();
     }
@@ -241,8 +253,11 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
 //        notifyItemChanged(pos);
     }
     public void selectAll() {
-        for ( Map.Entry<Integer, GalleryItem> item : mItems.entrySet() ) {
-            selectedItems.put(item.getKey(), true);
+//        for ( Map.Entry<Integer, GalleryItem> item : mItems.entrySet() ) {
+//            selectedItems.put(item.getKey(), true);
+//        }
+        for (GalleryItem item : mItems) {
+            selectedItems.put(item.mPosition, true);
         }
 //        notifyItemChanged(pos);
     }
@@ -255,6 +270,11 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         return selectedItems.size();
     }
     public List<Integer> getSelectedItems() {
+        /*
+        Return list of selected items in decending orger for safe ArrayList deletion,
+        i.e [10, 4, 1]
+        This will then be iterated through and items removed in this order.
+         */
         List<Integer> items =
                 new ArrayList<Integer>(selectedItems.size());
         for (int i = 0; i < selectedItems.size(); i++) {
@@ -262,6 +282,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.SimpleView
         }
         Log.d(TAG, "getSelectedItems():selected_items::"+selectedItems.toString());
         Log.d(TAG, "getSelectedItems():items_idexes:"+items.toString());
+        Collections.sort(items, Collections.reverseOrder());
+        Log.d(TAG, "getSelectedItems():items_idexes:sorted:"+items.toString());
         return items;
     }
 //    public boolean deleteSelectedFiles() {

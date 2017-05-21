@@ -15,7 +15,7 @@ import android.widget.ImageButton;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.camera.CameraActivity;
-import com.primewebtech.darts.gallery.GalleryActivity;
+import com.primewebtech.darts.gallery2.GalleryActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
 
 import java.io.File;

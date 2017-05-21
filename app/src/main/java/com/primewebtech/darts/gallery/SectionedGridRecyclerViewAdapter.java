@@ -3,6 +3,7 @@ package com.primewebtech.darts.gallery;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,10 @@ import java.util.Comparator;
 /**
  * Created by benebsworth on 7/5/17.
  */
-public class SectionedGridRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+
+public class SectionedGridRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final String TAG = SectionedGridRecyclerViewAdapter.class.getSimpleName();
         private final Context mContext;
         private static final int SECTION_TYPE = 0;
 
@@ -102,8 +105,10 @@ public class SectionedGridRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
         public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, int position) {
             // carry out the hydration of the view when called.
             if (isSectionHeaderPosition(position)) {
+                Log.d(TAG, "onBindViewHolder:Header");
                 ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
             }else{
+                Log.d(TAG, "onBindViewHolder:Item");
 //                mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
                 mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
             }
