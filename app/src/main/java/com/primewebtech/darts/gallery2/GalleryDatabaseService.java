@@ -61,6 +61,16 @@ public class GalleryDatabaseService {
         }
     }
 
+    public List<File> getSelectedItems(List<Integer> itemPositions) {
+        List<File> items = new ArrayList<>();
+        Log.d(TAG, "getSelectedItems:itemPositions:"+itemPositions.toString());
+        for ( Integer position: itemPositions) {
+            items.add(((PhotoItem) mItems.get(position - 1)).getFile());
+            Log.d(TAG, "getSelectedItems:file:"+((PhotoItem) mItems.get(position - 1)).getFile().getPath());
+        }
+        return items;
+    }
+
     public void createHeadersSectionsGalleryDataset() {
         pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
         mDateOrganiser = new DateOrganiser(pictureDirectory);

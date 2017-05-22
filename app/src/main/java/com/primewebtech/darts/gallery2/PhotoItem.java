@@ -23,6 +23,7 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.ISectionable;
+import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
 /**
@@ -107,18 +108,24 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 //            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
 ////            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
 //        }
-//
-////        holder.mFlipView.flipSilently(adapter.isSelected(position));
+        if (activity.mActionMode != null) {
+            holder.mFlipView.flipSilently(adapter.isSelected(position));
+            holder.mFlipView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mFlipView.setVisibility(View.GONE);
+        }
+
 ////        holder.mTitle.setText(getTitle());
 ////        holder.mSubtitle.setText(getSubtitle());
 //        ImageSize targetSize = new ImageSize(80, 50);
-        if (adapter.isSelected(position)) {
-            Log.d(TAG, "ITEM IS SELECTED:position:"+position);
-            holder.selected.setVisibility(View.VISIBLE);
-            holder.unselected.setVisibility(View.GONE);
-        } else {
 
-        }
+//        if (adapter.isSelected(position)) {
+//            Log.d(TAG, "ITEM IS SELECTED:position:"+position);
+//            holder.selected.setVisibility(View.VISIBLE);
+//            holder.unselected.setVisibility(View.GONE);
+//        } else {
+//
+//        }
         Log.d(TAG, "filepath:"+"file:///"+file.getPath());
         Glide.clear(holder.thumbnail);
         Glide.with(context).load("file:///"+file.getPath()).crossFade(500).into(holder.thumbnail);
@@ -128,9 +135,10 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
     final class PhotoViewHolder extends FlexibleViewHolder {
 
         Context mContext;
-        public final ImageView thumbnail;
-        public final ImageView selected;
-        public final ImageView unselected;
+        ImageView thumbnail;
+        ImageView selected;
+        ImageView unselected;
+        FlipView mFlipView;
         public boolean swiped = false;
         private boolean inActionMode = false;
 
@@ -140,9 +148,11 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 
             final GalleryActivity activity = (GalleryActivity) mContext;
             inActionMode = activity.inActionMode;
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            selected = (ImageView) view.findViewById(R.id.selected);
-            unselected = (ImageView) view.findViewById(R.id.unselected);
+            this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            this.selected = (ImageView) view.findViewById(R.id.selected);
+            this.unselected = (ImageView) view.findViewById(R.id.unselected);
+            mFlipView = (FlipView) view.findViewById(R.id.image);
+            mFlipView.setVisibility(View.GONE);
 //            selected.setVisibility(View.GONE);
 //            unselected.setVisibility(View.GONE);
 //            thumbnail.setOnClickListener(new View.OnClickListener() {
@@ -179,16 +189,17 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
         public void toggleActivation() {
             super.toggleActivation();
             Log.d(TAG, "toggleActivaition");
-            if (mAdapter.isSelected(getAdapterPosition())) {
+            mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
+//            if (mAdapter.isSelected(getAdapterPosition())) {
 //                selected.setVisibility(View.VISIBLE);
-
-            }
+//
+//            }
 
         }
 
         @Override
         protected boolean shouldAddSelectionInActionMode() {
-            return true;//default=false
+            return false;//default=false
         }
 
 //        @Override

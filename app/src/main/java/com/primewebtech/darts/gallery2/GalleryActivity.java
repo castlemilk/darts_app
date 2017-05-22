@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.davidea.fastscroller.FastScroller;
@@ -27,6 +31,9 @@ import eu.davidea.flexibleadapter.common.SmoothScrollGridLayoutManager;
 import eu.davidea.flexibleadapter.helpers.ActionModeHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.flexibleadapter.items.IHeader;
+import eu.davidea.flipview.FlipView;
+
+//import android.widget.ShareActionProvider;
 
 /**
  * Created by benebsworth on 20/5/17.
@@ -50,6 +57,8 @@ public class GalleryActivity extends AppCompatActivity
     private int mColumnCount = 4;
     public boolean inActionMode = false;
     public ActionMode mActionMode;
+    public boolean selectedAll = false;
+    private ShareActionProvider mShareActionProvider;
 
 
 
@@ -188,9 +197,9 @@ public class GalleryActivity extends AppCompatActivity
     private void toggleSelection(int position) {
         mAdapter.toggleSelection(position);
         int count = mAdapter.getSelectedItemCount();
-        ImageView unselected;
-        ImageView selected;
-        PhotoItem item = (PhotoItem) mAdapter.getItem(position);
+//        ImageView unselected;
+//        ImageView selected;
+//        PhotoItem item = (PhotoItem) mAdapter.getItem(position);
 //        Log.d(TAG, "toggleActivaition:position:"+position);
 //
 //        unselected = (ImageView) mRecyclerView.getChildAt(position).findViewById(R.id.unselected);
@@ -209,6 +218,7 @@ public class GalleryActivity extends AppCompatActivity
             mActionMode.finish();
         } else {
             setContextTitle(count);
+            mShareActionProvider.setShareIntent(shareIntentMaker());
         }
     }
 
@@ -216,6 +226,7 @@ public class GalleryActivity extends AppCompatActivity
 //        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
 //                getString(R.string.action_selected_one) :
 //                getString(R.string.action_selected_many)));
+        Log.d(TAG, "SHARING:"+mAdapter.getSelectedPositions().toString());
         mActionMode.setTitle(count == 1 ?
                 getString(R.string.action_selected_one, Integer.toString(count)) :
                 getString(R.string.action_selected_many, Integer.toString(count)));
@@ -286,6 +297,7 @@ public class GalleryActivity extends AppCompatActivity
         //TODO: implement deletion
         for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {
             for (Integer pos : mAdapter.getSelectedPositions()) {
+                Log.d(TAG, "onDeleteConfirmed:"+pos);
 
             }
         }
@@ -296,6 +308,8 @@ public class GalleryActivity extends AppCompatActivity
 	 * ACTION MODE IMPLEMENTATION
 	 * ========================== */
 
+
+
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         if (Utils.hasMarshmallow()) {
@@ -305,21 +319,28 @@ public class GalleryActivity extends AppCompatActivity
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccentDark_light));
         }
         mode.getMenuInflater().inflate(R.menu.gallery_selection, menu);
-        mAdapter.setMode(FlexibleAdapter.MODE_MULTI);
+//        mAdapter.setMode(FlexibleAdapter.MODE_MULTI);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+//        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+//        mShareActionProvider.setShareIntent(shareIntentMaker());
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        mShareActionProvider.setShareIntent(shareIntentMaker());
         return true;
     }
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        ImageView unselected;
-        ImageView selected;
-        inActionMode = true;
+//        ImageView unselected;
+//        ImageView selected;
+        FlipView flipView;
         for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-            if (unselected != null) {
-                unselected.setVisibility(View.VISIBLE);
-//                selected.setVisibility(View.VISIBLE);
+//            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
+//            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
+            flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
+            if (flipView != null) {
+//                unselected.setVisibility(View.VISIBLE);
+//                selected.setVisibility(View.GONE);
+                flipView.setVisibility(View.VISIBLE);
             }
 
         }
@@ -328,24 +349,76 @@ public class GalleryActivity extends AppCompatActivity
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        Log.d(TAG, "onActionItemClicked:SHARING:"+mAdapter.getSelectedPositions().toString());
+        Log.d(TAG, "onActionItemClicked:item.getItemId:"+item.getItemId());
+//        mShareActionProvider.setShareIntent(shareIntentMaker());
         switch (item.getItemId()) {
+            case R.id.menu_item_share:
+                Log.d(TAG, "onActionItemClicked:SHARING:");
+                mShareActionProvider.setShareIntent(shareIntentMaker());
+                return true;
             case R.id.menu_select_all:
-                mAdapter.selectAll();
-                mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
+                toggleSelectAll();
                 return true;
             case R.id.menu_delete:
-                StringBuilder message = new StringBuilder();
-                message.append(getString(R.string.action_deleted)).append(" ");
-                for (Integer pos : mAdapter.getSelectedPositions()) {
-//                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
-                    if (mAdapter.getSelectedItemCount() > 1)
-                        message.append(", ");
+//                StringBuilder message = new StringBuilder();
+//                message.append(getString(R.string.action_deleted)).append(" ");
+//
+//                for (Integer pos : mAdapter.getSelectedPositions()) {
+////                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
+//                    if (mAdapter.getSelectedItemCount() > 1)
+//                        message.append(", ");
+//                }
+                Log.d(TAG, "onActionItemClicked:DELETE");
+
+                List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+                for (File file : files) {
+                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+file.getPath());
+                    file.delete();
+                    Log.d(TAG, "onActionItemClicked:DELETE:file:done");
                 }
-                //TODO: implement delete
-//                mAdapter.removeItems(mAdapter.getSelectedPositions());
+                mAdapter.removeItems(mAdapter.getSelectedPositions());
+//                Log.d(TAG, "onActionItemClicked:deleted_items:"+mAdapter.getDeletedItems().toString());
+//                for ( AbstractFlexibleItem photo : mAdapter.getDeletedItems()) {
+//                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+((PhotoItem) photo).getFile());
+//                    ((PhotoItem) photo).getFile().delete();
+//                }
+                return true;
 
         }
         return false;
+    }
+
+    public void toggleSelectAll() {
+
+        if (selectedAll) {
+            mAdapter.clearSelection();
+            setContextTitle(mAdapter.getSelectedItemCount());
+            selectedAll = false;
+
+        } else {
+            selectedAll = true;
+            mAdapter.selectAll();
+            setContextTitle(mAdapter.getSelectedItemCount());
+        }
+
+    }
+
+    private Intent shareIntentMaker() {
+        Intent shareIntent  = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        ArrayList<Uri> imageUris = new ArrayList<>();
+        Log.d(TAG, "shareIntentMaker:SHARING:"+mAdapter.getSelectedPositions().toString());
+        List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+
+        for ( File file : files) {
+            Log.d(TAG, "shareIntentMaker:file:"+file.getPath());
+            imageUris.add(FileProvider.getUriForFile(this,
+                    getPackageName() + ".fileprovider", file));
+        }
+        Log.d(TAG, imageUris.toString());
+        shareIntent.setType("image/*");
+        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+        return shareIntent;
     }
 
     /* ======
@@ -376,13 +449,17 @@ public class GalleryActivity extends AppCompatActivity
         mAdapter.clearSelection();
         ImageView unselected;
         ImageView selected;
+        FlipView flipView;
         inActionMode = true;
         for (int i =0; i< mRecyclerView.getChildCount(); i++) {
             unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
             selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
+            flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
+
             if (unselected != null) {
                 unselected.setVisibility(View.GONE);
                 selected.setVisibility(View.GONE);
+                flipView.setVisibility(View.GONE);
             }
         }
 

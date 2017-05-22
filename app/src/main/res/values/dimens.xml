@@ -9,8 +9,8 @@
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_right">16dp</dimen>
     <dimen name="margin_right_handle">22dp</dimen>
-    <dimen name="icon_width">40dp</dimen>
-    <dimen name="icon_height">40dp</dimen>
+    <dimen name="icon_width">15dp</dimen>
+    <dimen name="icon_height">15dp</dimen>
     <dimen name="icon_touchable_component_mini">40dp</dimen>
     <dimen name="icon_circular_width">24dp</dimen>
     <dimen name="icon_circular_height">24dp</dimen>
