@@ -1,4 +1,4 @@
-package com.primewebtech.darts.gallery2;
+package com.primewebtech.darts.gallery;
 
 /**
  * Created by benebsworth on 21/5/17.

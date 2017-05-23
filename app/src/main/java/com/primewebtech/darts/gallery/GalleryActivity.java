@@ -3,151 +3,415 @@ package com.primewebtech.darts.gallery;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import eu.davidea.fastscroller.FastScroller;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.common.SmoothScrollGridLayoutManager;
+import eu.davidea.flexibleadapter.helpers.ActionModeHelper;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IHeader;
+import eu.davidea.flipview.FlipView;
+
+//import android.widget.ShareActionProvider;
+
+/**
+ * Created by benebsworth on 20/5/17.
+ */
+
+public class GalleryActivity extends AppCompatActivity
+        implements ActionMode.Callback,
+        FlexibleAdapter.OnItemClickListener,
+        FlexibleAdapter.OnItemLongClickListener,
+        FlexibleAdapter.OnUpdateListener,
+        FlexibleAdapter.OnDeleteCompleteListener, FastScroller.OnScrollStateChangeListener {
 
 
-public class GalleryActivity
-        extends AppCompatActivity
-        {
-    private static final String TAG = GalleryActivity.class.getSimpleName();
-    private File pictureDirectory;
-    private List<File> sortedFiles;
+    /**
+     * RecyclerView and related objects
+     */
     private RecyclerView mRecyclerView;
-    private SimpleAdapter mAdapter;
+    private FlexibleAdapter<AbstractFlexibleItem> mAdapter;
+    private ActionModeHelper mActionModeHelper;
+    private Toolbar mToolbar;
+    private int mColumnCount = 4;
+    public boolean inActionMode = false;
     public ActionMode mActionMode;
-    public Util.DateOrganiser mDateOrganiser;
-    public boolean mSelectedAll;
-    SectionedGridRecyclerViewAdapter mSectionedAdapter;
-    private GalleryActionBarCompat mGalleryActionBarCompat;
-//    private GalleryActionBar mGalleryActionBar;
-//    private ShareActionProvider mShareActionProvider;
-//    private GestureDetectorCompat gestureDetector;
+    public boolean selectedAll = false;
+    private ShareActionProvider mShareActionProvider;
+
+
+
+    public static final String TAG = GalleryActivity.class.getSimpleName();
+
+    /* ===================
+	 * ACTIVITY MANAGEMENT
+	 * =================== */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
+        Log.d(TAG, "onCreate");
+        FlexibleAdapter.enableLogs(true);
+        if (savedInstanceState == null) {
+            GalleryDatabaseService.getInstance().createHeadersSectionsGalleryDataset();
+        }
+        initializeRecylerView(savedInstanceState);
+//        initializeActionModeHelper(0);
+        inActionMode = false;
+    }
 
-        pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState!");
+        mAdapter.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
 
-//        Util.getHeaderIndexes(pictureDirectory);
-        mDateOrganiser = new Util.DateOrganiser(pictureDirectory);
-        mDateOrganiser.todaysFiles();
-
-        mSelectedAll = false;
-
-        generateGalleryGrouping();
-
-            //Sections
-            /*
-            Need to implement a top level algorithm here which generates the correct index to insert
-            the title corresponding to some date range. For example "Today" can be inserting at 0 only
-            if it was found that there are images which were taken today. Otherwise the next ranges
-            should be changed and follow a similar principle of only being inserted if images are found
-            in that range.
-
-            We have the adapter handling a generic layout of N images which is not concerned with the
-            placement of title. Not sure if that is a correct approach.
-            psuedo code:
-
-            TODAY:
-            if (imagesTakenToday()) {
-              insert @ 0
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore previous state
+        if (savedInstanceState != null && mAdapter != null) {
+            // Selection
+            mAdapter.onRestoreInstanceState(savedInstanceState);
+            if (mAdapter.getSelectedItemCount() > 0) {
+                mActionMode = startSupportActionMode(this);
+                setContextTitle(mAdapter.getSelectedItemCount());
             }
-            LASTWEEK:
-            int lastWeekIndex = getLastWeekIndex()
-            insert @ lastWeekIndex
-            LASTMONTH:
-            int lastMonthIndex = getLastMonthIndex()
-            for month in months:
-              int monthIndex = getMonthIndex(month)
-              insert @ monthIndex
+//            mActionModeHelper.restoreSelection(this);
+        }
+    }
 
-            ... keep going how far back? after a certain point we could just show the remaining pictures.
+    /* ======================
+	 * INITIALIZATION METHODS
+	 * ====================== */
 
-            more simplified approach:
+    private void initializeActionModeHelper(int mode) {
 
-            for day in days:
-                insert day_header @ day demarcation
+        mActionModeHelper = new ActionModeHelper(mAdapter, R.menu.gallery_selection, this) {
+            @Override
+            public void updateContextTitle(int count) {
+                if (mActionMode != null) {//You can use the internal ActionMode instance
+                    mActionMode.setTitle(count == 1 ?
+                            getString(R.string.action_selected_one, Integer.toString(count)) :
+                            getString(R.string.action_selected_many, Integer.toString(count)));
+                }
+            }
+        }.withDefaultMode(mode);
+    }
 
-             */
-//        List<File> sortedFiles = mDateOrganiser.sortedFiles();
-//        Date dow = new Date();
-//
-//        for (File file : sortedFiles) {
-//            if (!dow.equals(mDateOrganiser.getDay(file))) {
-//                dow = mDateOrganiser.getDay(file);
-//                Log.d(TAG, "day: "+dow.toString());
-//            }
-//            Log.d(TAG, new Date(file.lastModified()).toString());
-//        }
+    private void initializeRecylerView(Bundle savedInstanceState) {
+
+        mAdapter = new GalleryAdapter(GalleryDatabaseService.getInstance().getDatabaseList(), this);
+        mAdapter.setAnimationOnScrolling(false);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mRecyclerView.setLayoutManager(createNewGridLayoutManager());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.setFastScroller((FastScroller) findViewById(R.id.fast_scroller),
+                Utils.getColorAccent(this), this);
+        mAdapter.setDisplayHeadersAtStartUp(true)
+                .setStickyHeaders(true)
+                .showAllHeaders();
+
+    }
 
 
-        //Add your adapter to the sectionAdapter
+//    private void initializeToolbar() {
+//        Log.d(TAG, "initializeToolbar as actionBar");
+//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//        mHeaderView = (HeaderView) findViewById(R.id.toolbar_header_view);
+//        mHeaderView.bindTo(getString(R.string.app_name), getString(R.string.overall));
+//        //mToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+//        // Toolbar will now take on default Action Bar characteristics
+//        setSupportActionBar(mToolbar);
+//    }
 
 
+    /* ========================================================================
+	 * FLEXIBLE ADAPTER LISTENERS IMPLEMENTATION
+	 * Listeners implementation are in MainActivity to easily reuse the common
+	 * components like SwipeToRefresh, ActionMode, NavigationView, etc...
+	 * ======================================================================== */
 
+    @Override
+    public boolean onItemClick(int position) {
+        PhotoItem photoItem = (PhotoItem) mAdapter.getItem(position);
+        Log.d(TAG, "onItemClick:Clicked:postition:"+position);
+        if (mActionMode != null && position != RecyclerView.NO_POSITION) {
+            toggleSelection(position);
+            return true;
+        } else {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    getApplicationContext().getPackageName() + ".fileprovider",
+                    photoItem.getFile());
+            intent.setDataAndType(photoURI, "image/*");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+            return false;
         }
 
+        //TODO: navigate to selected image
 
-    public void onLongPress(int position) {
-        if (mActionMode != null) {
-            return;
+
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+        Log.d(TAG, "onItemLongClick:longClick:postition:"+position);
+//        mActionModeHelper.onLongClick(this, position);
+        if (mActionMode == null ) {
+            mActionMode = startSupportActionMode(this);
         }
+        toggleSelection(position);
 
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-//            mGalleryActionBar = new GalleryActionBar();
-//            startActionMode(mGalleryActionBar);
+    }
+
+    private void toggleSelection(int position) {
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+//        ImageView unselected;
+//        ImageView selected;
+//        PhotoItem item = (PhotoItem) mAdapter.getItem(position);
+//        Log.d(TAG, "toggleActivaition:position:"+position);
 //
+//        unselected = (ImageView) mRecyclerView.getChildAt(position).findViewById(R.id.unselected);
+//        selected = (ImageView) mRecyclerView.getChildAt(position).findViewById(R.id.selected);
+//        if (mAdapter.isSelected(position)) {
+//            Log.d(TAG, "toggleActivaition:selecting");
+//            selected.setVisibility(View.VISIBLE);
+//            unselected.setVisibility(View.GONE);
 //        } else {
-            mGalleryActionBarCompat = new GalleryActionBarCompat();
-            mActionMode =
-                    startSupportActionMode(mGalleryActionBarCompat);
+//            Log.d(TAG, "toggleActivaition:unselecting");
+//            selected.setVisibility(View.GONE);
+//            unselected.setVisibility(View.VISIBLE);
 //        }
 
-        Log.d(TAG, "Initialising actionBar:"+mActionMode);
-        myToggleSelection();
+        if (count == 0) {
+            mActionMode.finish();
+        } else {
+            setContextTitle(count);
+            mShareActionProvider.setShareIntent(shareIntentMaker());
+        }
+    }
 
+    private void setContextTitle(int count) {
+//        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
+//                getString(R.string.action_selected_one) :
+//                getString(R.string.action_selected_many)));
+        Log.d(TAG, "SHARING:"+mAdapter.getSelectedPositions().toString());
+        mActionMode.setTitle(count == 1 ?
+                getString(R.string.action_selected_one, Integer.toString(count)) :
+                getString(R.string.action_selected_many, Integer.toString(count)));
+    }
+
+    /**
+     * Handling RecyclerView when empty.
+     * <p><b>Note:</b> The order, how the 3 Views (RecyclerView, EmptyView, FastScroller)
+     * are placed in the Layout, is important!</p>
+     */
+    @Override
+    public void onUpdateEmptyView(int size) {
+        Log.d(TAG, "onUpdateEmptyView size=" + size);
+        FastScroller fastScroller = (FastScroller) findViewById(R.id.fast_scroller);
+        View emptyView = findViewById(R.id.empty_view);
+        TextView emptyText = (TextView) findViewById(R.id.empty_text);
+        if (emptyText != null)
+            emptyText.setText(getString(R.string.no_items));
+        if (size > 0) {
+            fastScroller.setVisibility(View.VISIBLE);
+//            mRefreshHandler.removeMessages(2);
+            emptyView.setAlpha(0);
+        } else {
+            emptyView.setAlpha(0);
+//            mRefreshHandler.sendEmptyMessage(2);
+            fastScroller.setVisibility(View.GONE);
+        }
+        if (mAdapter != null) {
+            String message = (mAdapter.hasSearchText() ? "Filtered " : "Refreshed ");
+            message += size + " items in " + mAdapter.getTime() + "ms";
+        }
+    }
+
+    public List<IHeader> getReferenceList() {
+        return mAdapter.getHeaderItems();
+    }
+
+     /* ====================================
+	 * OPTION MENU PREPARATION & MANAGEMENT
+	 * ==================================== */
+     protected GridLayoutManager createNewGridLayoutManager() {
+         GridLayoutManager gridLayoutManager = new SmoothScrollGridLayoutManager(this, mColumnCount);
+
+         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+             @Override
+             public int getSpanSize(int position) {
+                 //noinspection ConstantConditions
+                 switch (mAdapter.getItemViewType(position)) {
+//                     case R.layout.recycler_scrollable_usecase_item:
+//                     case R.layout.recycler_scrollable_header_item:
+//                     case R.layout.recycler_scrollable_footer_item:
+//                     case R.layout.recycler_scrollable_layout_item:
+//                     case R.layout.recycler_scrollable_uls_item:
+                     case R.layout.holder_header: return 4;
+                     default:
+                         return 1;
+                 }
+             }
+         });
+         return gridLayoutManager;
+     }
+
+
+
+
+    @Override
+    public void onDeleteConfirmed() {
+        //TODO: implement deletion
+        for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {
+            for (Integer pos : mAdapter.getSelectedPositions()) {
+                Log.d(TAG, "onDeleteConfirmed:"+pos);
+
+            }
+        }
     }
 
 
+    /* ==========================
+	 * ACTION MODE IMPLEMENTATION
+	 * ========================== */
 
-    public void myToggleSelection() {
 
-        String title = getString(
-                R.string.selected_count,
-                mAdapter.getSelectedItemCount());
-        mActionMode.setTitle(title);
-        mGalleryActionBarCompat.mShareActionProvider.setShareIntent(shareIntentMaker());
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        if (Utils.hasMarshmallow()) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccentDark_light, this.getTheme()));
+        } else if (Utils.hasLollipop()) {
+            //noinspection deprecation
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccentDark_light));
+        }
+        mode.getMenuInflater().inflate(R.menu.gallery_selection, menu);
+//        mAdapter.setMode(FlexibleAdapter.MODE_MULTI);
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+//        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+//        mShareActionProvider.setShareIntent(shareIntentMaker());
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        mShareActionProvider.setShareIntent(shareIntentMaker());
+        return true;
     }
 
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//        ImageView unselected;
+//        ImageView selected;
+        FlipView flipView;
+        for (int i =0; i< mRecyclerView.getChildCount(); i++) {
+//            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
+//            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
+            flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
+            if (flipView != null) {
+//                unselected.setVisibility(View.VISIBLE);
+//                selected.setVisibility(View.GONE);
+                flipView.setVisibility(View.VISIBLE);
+            }
 
+        }
+        return false;
+    }
 
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        Log.d(TAG, "onActionItemClicked:SHARING:"+mAdapter.getSelectedPositions().toString());
+        Log.d(TAG, "onActionItemClicked:item.getItemId:"+item.getItemId());
+//        mShareActionProvider.setShareIntent(shareIntentMaker());
+        switch (item.getItemId()) {
+            case R.id.menu_item_share:
+                Log.d(TAG, "onActionItemClicked:SHARING:");
+                mShareActionProvider.setShareIntent(shareIntentMaker());
+                return true;
+            case R.id.menu_select_all:
+                toggleSelectAll();
+                return true;
+            case R.id.menu_delete:
+//                StringBuilder message = new StringBuilder();
+//                message.append(getString(R.string.action_deleted)).append(" ");
+//
+//                for (Integer pos : mAdapter.getSelectedPositions()) {
+////                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
+//                    if (mAdapter.getSelectedItemCount() > 1)
+//                        message.append(", ");
+//                }
+                Log.d(TAG, "onActionItemClicked:DELETE");
+
+                List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+                for (File file : files) {
+                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+file.getPath());
+                    file.delete();
+                    Log.d(TAG, "onActionItemClicked:DELETE:file:done");
+                }
+                mAdapter.removeItems(mAdapter.getSelectedPositions());
+//                Log.d(TAG, "onActionItemClicked:deleted_items:"+mAdapter.getDeletedItems().toString());
+//                for ( AbstractFlexibleItem photo : mAdapter.getDeletedItems()) {
+//                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+((PhotoItem) photo).getFile());
+//                    ((PhotoItem) photo).getFile().delete();
+//                }
+                return true;
+
+        }
+        return false;
+    }
+
+    public void toggleSelectAll() {
+
+        if (selectedAll) {
+            mAdapter.clearSelection();
+            setContextTitle(mAdapter.getSelectedItemCount());
+            selectedAll = false;
+
+        } else {
+            selectedAll = true;
+            mAdapter.selectAll();
+            setContextTitle(mAdapter.getSelectedItemCount());
+        }
+
+    }
 
     private Intent shareIntentMaker() {
         Intent shareIntent  = new Intent(Intent.ACTION_SEND_MULTIPLE);
         ArrayList<Uri> imageUris = new ArrayList<>();
-        List<File> files = mAdapter.getSelectedFiles();
+        Log.d(TAG, "shareIntentMaker:SHARING:"+mAdapter.getSelectedPositions().toString());
+        List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+
         for ( File file : files) {
+            Log.d(TAG, "shareIntentMaker:file:"+file.getPath());
             imageUris.add(FileProvider.getUriForFile(this,
                     getPackageName() + ".fileprovider", file));
         }
@@ -156,332 +420,59 @@ public class GalleryActivity
         shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
         return shareIntent;
     }
-    private void generateGalleryGrouping() {
-        mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new SimpleAdapter(this);
-        List<SectionedGridRecyclerViewAdapter.Section> sections =
-                new ArrayList<SectionedGridRecyclerViewAdapter.Section>();
-        List<Map.Entry<Integer, String>> indices = mDateOrganiser.getDayIndices();
-        for ( Map.Entry<Integer, String> index : indices) {
-            if (index.getKey() == 0) {
-                sections.add(new SectionedGridRecyclerViewAdapter.Section(0,"Today"));
+    /* ======
+	 * EXTRAS
+	 * ====== */
 
-            } else {
-                sections.add(new SectionedGridRecyclerViewAdapter.Section(index.getKey(), index.getValue()));
-            }
-        }
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        SectionedGridRecyclerViewAdapter.Section[] dummy = new SectionedGridRecyclerViewAdapter.Section[sections.size()];
-        mSectionedAdapter = new
-                SectionedGridRecyclerViewAdapter(this,R.layout.section,R.id.section_text,mRecyclerView,mAdapter);
-        mSectionedAdapter.setSections(sections.toArray(dummy));
-        mRecyclerView.setAdapter(mSectionedAdapter);
+    @Override
+    public void onBackPressed() {
+        mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
+        mActionMode = null;
+        GalleryDatabaseService.onDestroy();
+        super.onBackPressed();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter = null;
+        mRecyclerView = null;
     }
 
-//    private class GalleryActionBar implements android.view.ActionMode.Callback {
-//        private android.widget.ShareActionProvider mShareActionProvider;
-//
-//        @Override
-//        public boolean onCreateActionMode(android.view.ActionMode actionMode, Menu menu) {
-//            MenuInflater inflater = actionMode.getMenuInflater();
-//            inflater.inflate(R.menu.gallery_selection_new, menu);
-//            final MenuItem item = menu.findItem(R.id.menu_item_share_new);
-////            mShareActionProvider = (android.widget.ShareActionProvider) MenuItemCompat.getActionProvider(item);
-//            mShareActionProvider.setShareIntent(shareIntentMaker());
-//            return true;
-//        }
-//
-//        @Override
-//        public boolean onPrepareActionMode(android.view.ActionMode actionMode, Menu menu) {
-//            Log.d(TAG, "onPrepareActionMode:preparing:");
-//
-//            ImageView unselected;
-//
-//
-//            for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-//                unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-//                if (unselected != null) {
-//                    unselected.setVisibility(View.VISIBLE);
-//                }
-//
-//            }
-//            Log.d(TAG, "onPrepareActionMode:preparing:");
-//            return false;
-//        }
-//
-//        @Override
-//        public boolean onActionItemClicked(android.view.ActionMode actionMode, MenuItem menuItem) {
-//            Log.d(TAG, "onActionItemClicked");
-//            switch (menuItem.getItemId()) {
-//                case R.id.menu_delete_new:
-//                    Log.d(TAG, "onActionItemClicked:menu_delete:");
-//                    List<File> selectedFiles = mAdapter.getSelectedFiles();
-//                    Log.d(TAG, "menu_delete_new:"+selectedFiles.toString());
-//                    for ( File file : selectedFiles) {
-//                        Log.d(TAG, "menu_delete_new:deleting file: "+ file.getPath());
-////                        file.delete();
-//                    }
-//                    int currPos;
-//                    mActionMode.finish();
-//                    break;
-//                case R.id.menu_select_all_new:
-//                    Log.d(TAG, "onActionItemClicked:menu_select_all:");
-//                    if (!mSelectedAll) {
-//                        ImageView unselected;
-//                        ImageView selected;
-//                        String[] items = pictureDirectory.list();
-//                        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
-//                            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-//                            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-//                            if (unselected != null) {
-//                                unselected.setVisibility(View.GONE);
-//
-//                            }
-//                            if (selected != null) {
-//                                selected.setVisibility(View.VISIBLE);
-//                            }
-//
-//                        }
-//
-//                        mAdapter.selectAll();
-//                        myToggleSelection();
-//                        mSelectedAll = true;
-//
-//                    } else {
-//                        ImageView unselected;
-//                        ImageView selected;
-//                        String[] items = pictureDirectory.list();
-//                        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
-//                            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-//                            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-//                            if (unselected != null) {
-//                                unselected.setVisibility(View.VISIBLE);
-//
-//                            }
-//                            if (selected != null) {
-//                                selected.setVisibility(View.GONE);
-//                            }
-//
-//                        }
-//                        mAdapter.clearSelections();
-//                        myToggleSelection();
-//                        mSelectedAll = false;
-//
-//
-//                    }
-//                    break;
-//                case R.id.menu_item_share_new:
-//                    Log.d(TAG, "share button clicked");
-//                    mShareActionProvider.setShareIntent(shareIntentMaker());
-//                    mActionMode.finish();
-//                    break;
-//                default:
-//                    break;
-//
-//            }
-//            return true;
-//        }
-//
-//        @Override
-//        public void onDestroyActionMode(android.view.ActionMode actionMode) {
-//            mActionMode = null;
-//            mAdapter.clearSelections();
-//            ImageView unselected;
-//            ImageView selected;
-//            for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-//                unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-//                selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-//                if (unselected != null) {
-//                    unselected.setVisibility(View.GONE);
-//                    selected.setVisibility(View.GONE);
-//                }
-//
-//            }
-//
-//        }
-//    }
-
-    private class GalleryActionBarCompat implements ActionMode.Callback{
-        private ShareActionProvider mShareActionProvider;
 
 
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        inActionMode = false;
+        mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
+        mActionMode = null;
+        mAdapter.clearSelection();
+        ImageView unselected;
+        ImageView selected;
+        FlipView flipView;
+        inActionMode = true;
+        for (int i =0; i< mRecyclerView.getChildCount(); i++) {
+            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
+            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
+            flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
+
+            if (unselected != null) {
+                unselected.setVisibility(View.GONE);
+                selected.setVisibility(View.GONE);
+                flipView.setVisibility(View.GONE);
+            }
+        }
+
+    }
 
 
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            //        MenuInflater inflater = actionMode.getMenuInflater();
-            getMenuInflater().inflate(R.menu.gallery_selection, menu);
-
-            MenuItem item = menu.findItem(R.id.menu_item_share);
-            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-            mShareActionProvider.setShareIntent(shareIntentMaker());
-//        mShareActionProvider = new ShareActionProvider(this);
-//        MenuItemCompat.setActionProvider(item, mShareActionProvider);
-//        if (mShareActionProvider != null ) {
-//            mShareActionProvider.setShareIntent(shareIntentMaker());
-//        new ShareActionProvider(this).setShareIntent(shareIntentMaker());
+    @Override
+    public void onFastScrollerStateChange(boolean scrolling) {
+//        if (scrolling) {
+//            hideFab();
 //        } else {
-//            Log.d(TAG, "mShareActionprovider:FOUND_NULL!:");
+//            showFab();
 //        }
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            Log.d(TAG, "onPrepareActionMode:preparing:");
-
-            ImageView unselected;
-
-
-            for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-                unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-                if (unselected != null) {
-                    unselected.setVisibility(View.VISIBLE);
-                }
-
-            }
-            Log.d(TAG, "onPrepareActionMode:preparing:");
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Log.d(TAG, "onActionItemClicked");
-            switch (item.getItemId()) {
-                case R.id.menu_delete:
-                    Log.d(TAG, "onActionItemClicked:menu_delete:");
-                    List<File> selectedFiles = mAdapter.getSelectedFiles();
-                    Log.d(TAG, "menu_delete_new:"+selectedFiles.toString());
-                    Log.d(TAG, "menu_delete_mew:items:mAdapter:before:count:"+mAdapter.getItemCount());
-                    Log.d(TAG, "menu_delete_mew:items:mSectionedAdapter:before:count:"+mSectionedAdapter.getItemCount());
-
-                    for (Integer galleryItem : mAdapter.getSelectedItems()) {
-                        Log.d(TAG, "galleryItem:"+galleryItem.toString());
-
-
-//                        mRecyclerView.removeViewAt(galleryItem);
-                        File file = mAdapter.getSelectedItemFile(galleryItem);
-                        file.delete();
-                        mAdapter.removeItem(galleryItem);
-                        mAdapter.notifyItemRemoved(galleryItem);
-                        mAdapter.notifyItemRangeChanged(galleryItem, mAdapter.getItemCount());
-                        mSectionedAdapter.notifyItemRangeChanged(galleryItem, mAdapter.getItemCount());
-                        mSectionedAdapter.notifyItemRemoved(galleryItem);
-
-
-
-
-                    }
-                    mSectionedAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount());
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount());
-//                    List<SectionedGridRecyclerViewAdapter.Section> sections =
-//                            new ArrayList<SectionedGridRecyclerViewAdapter.Section>();
-//                    List<Map.Entry<Integer, String>> indices = mDateOrganiser.getDayIndices();
-//                    for ( Map.Entry<Integer, String> index : indices) {
-//                        if (index.getKey() == 0) {
-//                            sections.add(new SectionedGridRecyclerViewAdapter.Section(0,"Today"));
-//
-//                        } else {
-//                            sections.add(new SectionedGridRecyclerViewAdapter.Section(index.getKey(), index.getValue()));
-//                        }
-//                    }
-//                    SectionedGridRecyclerViewAdapter.Section[] dummy = new SectionedGridRecyclerViewAdapter.Section[sections.size()];
-//                    mSectionedAdapter.setSections(sections.toArray(dummy));
-//                    mRecyclerView.setAdapter(mSectionedAdapter);
-                    Log.d(TAG, "menu_delete_mew:items:mAdapter:after:count:"+mAdapter.getItemCount());
-                    Log.d(TAG, "menu_delete_mew:items:mSectionedAdapter:after:count:"+mSectionedAdapter.getItemCount());
-
-//                    mAdapter.notifyDataSetChanged(
-//                    mRecyclerView.invalidate();
-//                    generateGalleryGrouping();
-                    mActionMode.finish();
-
-//                    mAdapter.deleteSelectedFiles();
-//                    mActionMode.finish();
-//                    generateGalleryGrouping();
-                    break;
-                case R.id.menu_select_all:
-                    Log.d(TAG, "onActionItemClicked:menu_select_all:");
-                    if (!mSelectedAll) {
-                        ImageView unselected;
-                        ImageView selected;
-                        String[] items = pictureDirectory.list();
-                        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
-                            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-                            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-                            if (unselected != null) {
-                                unselected.setVisibility(View.GONE);
-
-                            }
-                            if (selected != null) {
-                                selected.setVisibility(View.VISIBLE);
-                            }
-
-                        }
-
-                        mAdapter.selectAll();
-                        myToggleSelection();
-                        mSelectedAll = true;
-
-                    } else {
-                        ImageView unselected;
-                        ImageView selected;
-                        String[] items = pictureDirectory.list();
-                        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
-                            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-                            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-                            if (unselected != null) {
-                                unselected.setVisibility(View.VISIBLE);
-
-                            }
-                            if (selected != null) {
-                                selected.setVisibility(View.GONE);
-                            }
-
-                        }
-                        mAdapter.clearSelections();
-                        myToggleSelection();
-                        mSelectedAll = false;
-
-
-                    }
-                    break;
-                case R.id.menu_item_share:
-                    Log.d(TAG, "share button clicked");
-                    mShareActionProvider.setShareIntent(shareIntentMaker());
-                    break;
-                default:
-                    break;
-
-            }
-            return true;
-        }
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-            mAdapter.clearSelections();
-            ImageView unselected;
-            ImageView selected;
-            for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-                unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-                selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
-                if (unselected != null) {
-                    unselected.setVisibility(View.GONE);
-                    selected.setVisibility(View.GONE);
-                }
-
-            }
-
-        }
     }
 
-
-
-
-
-
-
-        }
+}

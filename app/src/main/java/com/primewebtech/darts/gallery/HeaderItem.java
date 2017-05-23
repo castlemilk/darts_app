@@ -1,4 +1,4 @@
-package com.primewebtech.darts.gallery2;
+package com.primewebtech.darts.gallery;
 
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;

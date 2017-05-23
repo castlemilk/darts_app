@@ -1,4 +1,4 @@
-package com.primewebtech.darts.gallery2;
+package com.primewebtech.darts.gallery;
 
 import android.view.LayoutInflater;
 import android.view.View;

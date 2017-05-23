@@ -1,4 +1,4 @@
-package com.primewebtech.darts.gallery2;
+package com.primewebtech.darts.gallery;
 
 import android.animation.Animator;
 import android.content.Context;

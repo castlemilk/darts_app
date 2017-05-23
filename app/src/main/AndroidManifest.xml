@@ -38,6 +38,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".scoring.ScoringActivity" />
+        <activity android:name=".scoring.OneDartActivity" />
         <activity
             android:name=".camera.CameraActivity"
             android:theme="@style/AppTheme.Black.NoActionBar">
@@ -52,7 +53,7 @@
             <!--android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">-->
         <!--</activity>-->
         <activity
-            android:name=".gallery2.GalleryActivity"
+            android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"></activity>
     </application>

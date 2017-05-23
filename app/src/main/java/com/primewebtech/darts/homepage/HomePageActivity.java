@@ -15,7 +15,8 @@ import android.widget.ImageButton;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.camera.CameraActivity;
-import com.primewebtech.darts.gallery2.GalleryActivity;
+import com.primewebtech.darts.gallery.GalleryActivity;
+import com.primewebtech.darts.scoring.OneDartActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         Intent scoringIntent = new Intent(HomePageActivity.this, ScoringActivity.class);
+        Intent oneDartIntent = new Intent(HomePageActivity.this, OneDartActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
 //        Intent galleryIntent;
 //        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -69,7 +71,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 // route to darts1 based scoring
                 Log.d(TAG, "darts1:selected");
                 scoringIntent.putExtra("SCORING_TYPE", R.id.darts1);
-                startActivity(scoringIntent);
+                startActivity(oneDartIntent);
                 break;
             case R.id.darts2:
                 // route to darts2 based scoring

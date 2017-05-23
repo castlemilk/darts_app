@@ -1,4 +1,4 @@
-package com.primewebtech.darts.gallery2;
+package com.primewebtech.darts.gallery;
 
 import java.io.File;
 import java.io.Serializable;
