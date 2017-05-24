@@ -34,7 +34,7 @@ public class FragmentOneDart extends AbstractFragment{
         Bundle args = getArguments();
         oneDartView = inflater.inflate(R.layout.one_dart_view, container, false);
         pin = (ImageView) oneDartView.findViewById(R.id.pin);
-        pin.setImageResource(R.drawable.scoreboard_60s);
+        pin.setImageResource(R.drawable.pin_60s);
         return oneDartView;
     }
 

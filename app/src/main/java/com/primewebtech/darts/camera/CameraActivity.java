@@ -26,8 +26,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.primewebtech.darts.R;
@@ -36,6 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
@@ -61,6 +65,8 @@ public class CameraActivity extends AppCompatActivity {
     private int mLayoutOrientation;
     private ViewPager mViewPager;
     private Bitmap mThumbNail;
+    private Spinner mScoreType;
+    private Spinner mScoreValue;
     private Uri mRecentlySavedImageURI;
     private byte[] mJPEGdata;
     private Location mLocation;
@@ -73,6 +79,8 @@ public class CameraActivity extends AppCompatActivity {
     private ArrayList permissions = new ArrayList();
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private FrameLayout preview;
+    private String scoreType;
+
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
         @Override
@@ -112,6 +120,29 @@ public class CameraActivity extends AppCompatActivity {
             R.drawable.fifth,
             R.drawable.sixth
     };
+    private String[] spinnerTypes = {
+            "Peg",
+            "Score",
+    };
+    private int[] mScorePins = {
+            R.drawable.pin_40s,
+            R.drawable.pin_60s,
+            R.drawable.pin_70s,
+            R.drawable.pin_80s,
+            R.drawable.pin_90s,
+            R.drawable.pin_100s,
+            R.drawable.pin_110sf,
+            R.drawable.pin_120s,
+            R.drawable.pin_130sf,
+            R.drawable.pin_140sf,
+            R.drawable.pin_150s,
+            R.drawable.pin_160sf,
+            R.drawable.pin_170s,
+    };
+    private int[] mScoreResources = {
+            R.drawable.picture_score_image,
+    };
+
 
 
 
@@ -123,10 +154,22 @@ public class CameraActivity extends AppCompatActivity {
             mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
         }
         setContentView(R.layout.activity_camera);
+        mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
+        mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
+        mScoreValue.setVisibility(View.GONE);
+        mScoreType.setVisibility(View.GONE);
+        initTypeSpinners();
         Util.initialize(this);
         mContentResolver = this.getContentResolver();
         mNamedImages = new NamedImages();
         mMediaSaver = new MediaSaver(mContentResolver);
+        mCamera = openBackFacingCamera();
+        mParameters = mCamera.getParameters();
+        List<String> focusModes = mParameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            // Autofocus mode is supported
+            mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
         Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
         // Create an instance of Camera
         Log.d(TAG, "onCreate:starting");
@@ -178,7 +221,9 @@ public class CameraActivity extends AppCompatActivity {
         preview = (FrameLayout) findViewById(R.id.camera_preview);
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
         mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+        mPreviousImageThumbnail.setEnabled(false);
         if (mRecentlySavedImageFilePath != null) {
+            mPreviousImageThumbnail.setEnabled(true);
             mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
                     THUMBSIZE, THUMBSIZE));
         }
@@ -188,15 +233,12 @@ public class CameraActivity extends AppCompatActivity {
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
 
-        mCustomPagerAdapter = new CustomPagerAdapter(this, mResources);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mCustomPagerAdapter);
-        mViewPager.setVisibility(View.GONE);
 
-        mCamera = openBackFacingCamera();
+
+
         mPreview = new CameraPreview(this, mCamera);
         mCamera.startPreview();
-        mParameters = mCamera.getParameters();
+
         Camera.getCameraInfo(cameraId, mCameraInfo);
         mCamera.setDisplayOrientation(90);
         mCamera.setParameters(mParameters);
@@ -276,6 +318,7 @@ public class CameraActivity extends AppCompatActivity {
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
+
         mViewPager.setVisibility(View.GONE);
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
         String title = mNamedImages.getTitle();
@@ -367,7 +410,9 @@ public class CameraActivity extends AppCompatActivity {
             mCaptureStartTime = System.currentTimeMillis();
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
-            mViewPager.setVisibility(View.VISIBLE);
+            setPegDisplay(0);
+            mScoreType.setVisibility(View.VISIBLE);
+            mScoreValue.setVisibility(View.VISIBLE);
             mTakePhotoButton.setVisibility(View.GONE);
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
@@ -452,6 +497,135 @@ public class CameraActivity extends AppCompatActivity {
             mCamera = null;
         }
     }
+
+    /**
+     * Manage Spinners
+     */
+
+    private void setPegDisplay(int item) {
+
+        mCustomPagerAdapter = new CustomPagerAdapter(this, mScorePins);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mCustomPagerAdapter);
+        mViewPager.setVisibility(View.VISIBLE);
+        mViewPager.setCurrentItem(item);
+    }
+
+    private void updatePegDisplay(int item) {
+        if ( 40 <= item && item < 50) {
+            mViewPager.setCurrentItem(0);
+        } else if (50 <= item && item < 60) {
+            mViewPager.setCurrentItem(1);
+        } else if (70 <= item && item < 80) {
+            mViewPager.setCurrentItem(2);
+        } else if (80 <= item && item < 90) {
+            mViewPager.setCurrentItem(3);
+        } else if (90 <= item && item < 100) {
+            mViewPager.setCurrentItem(4);
+        } else if (100 <= item && item < 110) {
+            mViewPager.setCurrentItem(5);
+        } else if (110 <= item && item < 120) {
+            mViewPager.setCurrentItem(6);
+        } else if (120 <= item && item < 130) {
+            mViewPager.setCurrentItem(7);
+        } else if (130 <= item && item < 140) {
+            mViewPager.setCurrentItem(8);
+        } else if (140 <= item && item < 150) {
+            mViewPager.setCurrentItem(9);
+        } else if (150 <= item && item < 160) {
+            mViewPager.setCurrentItem(10);
+        } else if (160 <= item && item < 170) {
+            mViewPager.setCurrentItem(11);
+        } else if (170 <= item && item < 180) {
+            mViewPager.setCurrentItem(12);
+        }
+        mViewPager.setCurrentItem(item);
+
+    }
+    private List<Integer> makeSequence(int begin, int end) {
+        List<Integer> ret = new ArrayList<>(end - begin + 1);
+        for (int i=begin; i<=end; i++) {
+            ret.add(i);
+        }
+        return ret;
+    }
+    private List<Integer> makePegs() {
+        List<Integer> ret = new ArrayList<>();
+        ret.add(170);
+        ret.add(167);
+        ret.add(164);
+        return ret;
+    }
+
+    private void initTypeSpinners() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, spinnerTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mScoreType.setAdapter(adapter);
+        mScoreType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String type = (String) mScoreType.getItemAtPosition(i);
+                Log.d(TAG, "onItemSelected:"+type);
+                initScoreSpinner(type);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+    private void initScoreSpinner(String type) {
+        ArrayAdapter<Integer> adapter = null;
+        Log.d(TAG, "initScoreSpinner:type:"+type);
+        switch (type) {
+            case "Score":
+                Log.d(TAG, "initScoreSpinner:type:Score");
+                adapter = new ArrayAdapter<>(
+                        this, android.R.layout.simple_spinner_item, makeSequence(0, 180));
+                scoreType = "SCORE";
+                break;
+            case "Peg":
+                Log.d(TAG, "initScoreSpinner:type:Peg");
+                adapter = new ArrayAdapter<>(
+                        this, android.R.layout.simple_spinner_item, makePegs());
+                scoreType = "PEG";
+                break;
+            default:
+                Log.d(TAG, "initScoreSpinner:type:default(score)");
+                adapter = new ArrayAdapter<>(
+                        this, android.R.layout.simple_spinner_item, makeSequence(0, 180));
+                scoreType = "SCORE";
+                break;
+        }
+        mScoreValue.setAdapter(adapter);
+        mScoreValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:");
+                int value = (int) mScoreValue.getItemAtPosition(i);
+                Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:score:"+value);
+                if (scoreType == "PEG") {
+                    updatePegDisplay(i);
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+    }
+
+
 
     private static class NamedImages {
         private ArrayList<NamedEntity> mQueue;

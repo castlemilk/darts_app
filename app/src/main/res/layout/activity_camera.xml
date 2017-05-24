@@ -41,7 +41,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1"
+        android:layout_marginLeft="0dp"
+        android:layout_marginBottom="0dp">
 
     </android.support.constraint.ConstraintLayout>
 
@@ -110,6 +112,28 @@
         android:layout_marginBottom="15dp"
         app:layout_constraintVertical_bias="0.325"
         android:layout_marginLeft="55dp" />
+
+    <Spinner
+        android:id="@+id/camera_score_type_spinner"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="45dp"
+        android:layout_marginEnd="55dp"
+        android:background="@color/material_color_grey_700"
+        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+        android:layout_marginTop="67dp" />
+
+    <Spinner
+        android:id="@+id/camera_score_spinner"
+        android:background="@color/material_color_grey_700"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="55dp"
+        android:layout_marginRight="55dp"
+        android:layout_marginTop="27dp"
+        app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
 
 
 </android.support.constraint.ConstraintLayout>
