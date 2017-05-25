@@ -30,7 +30,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.primewebtech.darts.R;
@@ -80,6 +82,10 @@ public class CameraActivity extends AppCompatActivity {
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private FrameLayout preview;
     private String scoreType;
+    private ImageView mLogoText;
+    private ImageView mScoreTypeBackground;
+    private TextView mScoreNumber;
+    public int mScoreNumberValue;
 
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
@@ -151,11 +157,17 @@ public class CameraActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
+            if (savedInstanceState.getString(LATEST_PICTRUE) != null) {
+                mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
+            } else {
+                mRecentlySavedImageURI = null;
+            }
+
         }
         setContentView(R.layout.activity_camera);
         mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
         mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
+        mScoreNumber = (TextView) findViewById(R.id.score_number);
         mScoreValue.setVisibility(View.GONE);
         mScoreType.setVisibility(View.GONE);
         initTypeSpinners();
@@ -233,6 +245,13 @@ public class CameraActivity extends AppCompatActivity {
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
 
+        mLogoText = (ImageView) findViewById(R.id.logo_text);
+        mLogoText.setVisibility(View.GONE);
+
+        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+        mScoreTypeBackground.setVisibility(View.GONE);
+
+
 
 
 
@@ -270,11 +289,22 @@ public class CameraActivity extends AppCompatActivity {
                 mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
                 mBackButton = (ImageButton) findViewById(R.id.button_back);
                 mViewPager = (ViewPager) findViewById(R.id.pager);
-                mViewPager.setAdapter(mCustomPagerAdapter);
+                mLogoText = (ImageView) findViewById(R.id.logo_text);
+                mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+                mLogoText.setVisibility(View.GONE);
+                if (mCustomPagerAdapter != null) {
+                    mViewPager.setAdapter(mCustomPagerAdapter);
+                } else {
+                    mViewPager.setAdapter(new CustomPagerAdapter(this, mScorePins));
+                }
+
                 mViewPager.setVisibility(View.GONE);
                 mSaveImageButton.setVisibility(View.GONE);
                 mBackButton.setVisibility(View.GONE);
                 mTakePhotoButton.setVisibility(View.VISIBLE);
+                mScoreTypeBackground.setVisibility(View.GONE);
+                mScoreNumber.setVisibility(View.GONE);
+
                 if (mRecentlySavedImageFilePath != null) {
                     mPreviousImageThumbnail.setVisibility(View.VISIBLE);
                     mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
@@ -312,22 +342,29 @@ public class CameraActivity extends AppCompatActivity {
 //                        new PhotoHandler(getApplicationContext()));
 
     }
+
     public void onSavePhotoClick(View view) {
         Log.d(TAG, "onCLick:Saving photo");
         mCamera.startPreview();
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
-
         mViewPager.setVisibility(View.GONE);
-        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
+        mScoreType.setVisibility(View.GONE);
+        mScoreType.setEnabled(false);
+        mScoreValue.setVisibility(View.GONE);
+        mScoreValue.setEnabled(false);
+        mLogoText.setVisibility(View.GONE);
+        mPreviousImageThumbnail.setEnabled(true);
+
+        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue);
         String title = mNamedImages.getTitle();
         long date = mNamedImages.getDate();
         Camera.Size s = mParameters.getPictureSize();
         int width, height;
         int orientation = mDisplayOrientation;
-        Drawable d = getResources().getDrawable(mResources[mViewPager.getCurrentItem()]);
-        Bitmap selectedIcon = drawableToBitmap(d);
+        Bitmap pin = drawableToBitmap(getResources().getDrawable(mScorePins[mViewPager.getCurrentItem()]));
+        Bitmap logo = drawableToBitmap(getResources().getDrawable(R.drawable.logotext));
         boolean result = Util.checkPermission(CameraActivity.this);
         if ((orientation == 90)) {
             width = s.width;
@@ -344,7 +381,7 @@ public class CameraActivity extends AppCompatActivity {
             if (date == -1) date = mCaptureStartTime;
             if (result) {
                 Log.e(TAG, "attempting async save");
-                mMediaSaver.addImage(mJPEGdata, selectedIcon, title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
+                mMediaSaver.addImage(mJPEGdata, logo, pin, mScoreNumberValue, title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
 
             }
         }
@@ -358,8 +395,15 @@ public class CameraActivity extends AppCompatActivity {
         mCamera.startPreview();
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
-        mViewPager.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
+        mViewPager.setVisibility(View.GONE);
+        mScoreType.setVisibility(View.GONE);
+        mScoreType.setEnabled(false);
+        mScoreValue.setVisibility(View.GONE);
+        mScoreValue.setEnabled(false);
+        mLogoText.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
+        mPreviousImageThumbnail.setEnabled(true);
 
     }
     public void onReviewLatestPhotoClick(View view) {
@@ -411,9 +455,15 @@ public class CameraActivity extends AppCompatActivity {
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
             setPegDisplay(0);
+            mScoreType.setEnabled(true);
+            mScoreValue.setEnabled(true);
             mScoreType.setVisibility(View.VISIBLE);
             mScoreValue.setVisibility(View.VISIBLE);
             mTakePhotoButton.setVisibility(View.GONE);
+            mLogoText.setVisibility(View.VISIBLE);
+            mScoreTypeBackground.setVisibility(View.VISIBLE);
+            mScoreNumber.setVisibility(View.VISIBLE);
+
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
 
@@ -509,37 +559,53 @@ public class CameraActivity extends AppCompatActivity {
         mViewPager.setAdapter(mCustomPagerAdapter);
         mViewPager.setVisibility(View.VISIBLE);
         mViewPager.setCurrentItem(item);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //TODO: set number on scroll as well as the spinner selection action
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //TODO: set number on scroll as well as the spinner selection action
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
-    private void updatePegDisplay(int item) {
-        if ( 40 <= item && item < 50) {
+    private void updatePegDisplay(int score) {
+        if ( 40 <= score && score < 50) {
             mViewPager.setCurrentItem(0);
-        } else if (50 <= item && item < 60) {
+        } else if (50 <= score && score < 60) {
             mViewPager.setCurrentItem(1);
-        } else if (70 <= item && item < 80) {
+        } else if (70 <= score && score < 80) {
             mViewPager.setCurrentItem(2);
-        } else if (80 <= item && item < 90) {
+        } else if (80 <= score && score < 90) {
             mViewPager.setCurrentItem(3);
-        } else if (90 <= item && item < 100) {
+        } else if (90 <= score && score < 100) {
             mViewPager.setCurrentItem(4);
-        } else if (100 <= item && item < 110) {
+        } else if (100 <= score && score < 110) {
             mViewPager.setCurrentItem(5);
-        } else if (110 <= item && item < 120) {
+        } else if (110 <= score && score < 120) {
             mViewPager.setCurrentItem(6);
-        } else if (120 <= item && item < 130) {
+        } else if (120 <= score && score < 130) {
             mViewPager.setCurrentItem(7);
-        } else if (130 <= item && item < 140) {
+        } else if (130 <= score && score < 140) {
             mViewPager.setCurrentItem(8);
-        } else if (140 <= item && item < 150) {
+        } else if (140 <= score && score < 150) {
             mViewPager.setCurrentItem(9);
-        } else if (150 <= item && item < 160) {
+        } else if (150 <= score && score < 160) {
             mViewPager.setCurrentItem(10);
-        } else if (160 <= item && item < 170) {
+        } else if (160 <= score && score < 170) {
             mViewPager.setCurrentItem(11);
-        } else if (170 <= item && item < 180) {
+        } else if (170 <= score && score < 180) {
             mViewPager.setCurrentItem(12);
         }
-        mViewPager.setCurrentItem(item);
 
     }
     private List<Integer> makeSequence(int begin, int end) {
@@ -568,6 +634,24 @@ public class CameraActivity extends AppCompatActivity {
                 String type = (String) mScoreType.getItemAtPosition(i);
                 Log.d(TAG, "onItemSelected:"+type);
                 initScoreSpinner(type);
+                if (type.equals("Score")) {
+                    scoreType = "SCORE";
+                    mViewPager.setEnabled(false);
+                    mViewPager.setVisibility(View.GONE);
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+
+                } else if (type.equals("Peg")) {
+                    scoreType = "PEG";
+                    if (mViewPager != null) {
+                        mViewPager.setEnabled(true);
+                        mViewPager.setVisibility(View.VISIBLE);
+
+                    }
+                    mCustomPagerAdapter.notifyDataSetChanged();
+
+                    mScoreTypeBackground.setVisibility(View.GONE);
+
+                }
 
 
             }
@@ -609,8 +693,21 @@ public class CameraActivity extends AppCompatActivity {
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:");
                 int value = (int) mScoreValue.getItemAtPosition(i);
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:score:"+value);
-                if (scoreType == "PEG") {
-                    updatePegDisplay(i);
+                Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:scoreType:"+scoreType);
+                if (scoreType.equals("PEG")) {
+                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:score");
+                    updatePegDisplay(value);
+//                    mScoreNumber.setText(Integer.toString(value));
+                    mScoreNumber.setVisibility(View.GONE);
+                    mViewPager.setTag(value);
+                    mScoreNumberValue = value;
+                    mCustomPagerAdapter.notifyDataSetChanged();
+
+
+                } else if (scoreType.equals("SCORE")) {
+                    mScoreNumber.setVisibility(View.VISIBLE);
+                    mScoreNumber.setText(Integer.toString(value));
+                    mScoreNumberValue = value;
                 }
 
 
@@ -634,9 +731,9 @@ public class CameraActivity extends AppCompatActivity {
         public NamedImages() {
             mQueue = new ArrayList<NamedEntity>();
         }
-        public void nameNewImage(ContentResolver resolver, long date) {
+        public void nameNewImage(ContentResolver resolver, long date, int score) {
             NamedEntity r = new NamedEntity();
-            r.title = Util.createJpegName(date);
+            r.title = Util.createJpegName(date, score);
             r.date = date;
             mQueue.add(r);
             Log.d(TAG +"nameNewImage:title:", r.title);

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -18,6 +19,9 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 
 import com.primewebtech.darts.R;
@@ -52,9 +56,9 @@ public class Util {
                 context.getString(R.string.image_file_name_format));
     }
 
-    public static String createJpegName(long dateTaken) {
+    public static String createJpegName(long dateTaken, int score) {
         synchronized (sImageFileNamer) {
-            return sImageFileNamer.generateName(dateTaken);
+            return sImageFileNamer.generateName(dateTaken, score);
         }
     }
 
@@ -122,7 +126,7 @@ public class Util {
         }
     }
 
-    public static Bitmap addSelectedIcon(byte[] picture, Bitmap icon) {
+    public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, int score) {
         final long t0 = System.currentTimeMillis();
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
         Log.d(TAG, String.format("created bitmap in %dms", System.currentTimeMillis() - t0));
@@ -139,24 +143,39 @@ public class Util {
         int pictureHeight = rotatedImg.getHeight();
 //        int pictureWidth = pictureImg.getWidth();
 //        int pictureHeight = pictureImg.getHeight();
-        Double iconSize = pictureWidth * 0.2;
-        int iconSizeInt = iconSize.intValue();
-        float iconFloatLeft = pictureWidth - iconSizeInt - 50;
-        float iconFloatTop = pictureHeight - iconSizeInt - 50;
+        Double pinSize = pictureWidth * 0.2;
+        int pinSizeInt = pinSize.intValue();
+        Double logoSize = pictureWidth * 0.2;
+        int logoSizeInt = pinSize.intValue();
+        float logoFloatRight = 50;
+        float logoFloatTop = pictureHeight - logoSizeInt - 50;
+        float pinFloatLeft = pictureWidth - pinSizeInt - 50;
+        float pinFloatTop = pictureHeight - pinSizeInt - 50;
 
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));
         Log.d("bytes:pictureHeight", Integer.toString(pictureHeight));
-        Log.d("bytes:iconSize", Integer.toString(iconSizeInt));
+        Log.d("bytes:logoSize", Integer.toString(logoSizeInt));
 
+        TextPaint textPaint = new TextPaint();
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(12 * 2);
+        textPaint.setColor(Color.BLACK);
+        int width = (int) textPaint.measureText(Integer.toString(score));
+        StaticLayout staticLayout = new StaticLayout(Integer.toString(score),
+                textPaint, (int) width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
 
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(combinedImg);
 
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
-//        comboImage.drawBitmap(pictureImg, 0f, 0f, null);
-        comboImage.drawBitmap(Bitmap.createScaledBitmap(icon, iconSizeInt, iconSizeInt, false), iconFloatLeft, iconFloatTop, null);
+        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeInt, logoSizeInt, false), logoFloatRight, logoFloatTop, null);
+        comboImage.drawBitmap(Bitmap.createScaledBitmap(pin, pinSizeInt, pinSizeInt, false), pinFloatLeft, pinFloatTop, null);
+        comboImage.save();
+        comboImage.translate(pinFloatLeft+27,pinFloatTop + 35);
+        staticLayout.draw(comboImage);
+        comboImage.restore();
         Log.d(TAG, String.format("addSelectedIcon took %dms", System.currentTimeMillis() - t2));
 
         return combinedImg;
@@ -174,7 +193,7 @@ public class Util {
             mFormat = new SimpleDateFormat(format);
         }
 
-        public String generateName(long dateTaken) {
+        public String generateName(long dateTaken, int score) {
             Date date = new Date(dateTaken);
             String result = mFormat.format(date);
             // If the last name was generated for the same second,
@@ -186,7 +205,7 @@ public class Util {
                 mLastDate = dateTaken;
                 mSameSecondCount = 0;
             }
-            return result;
+            return result+Integer.toString(score);
         }
     }
 

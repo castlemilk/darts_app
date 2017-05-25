@@ -35,11 +35,13 @@ public class MediaSaver extends Thread {
         return (mQueue.size() >= SAVE_QUEUE_LIMIT);
     }
     // Runs in main thread
-    public void addImage(final byte[] data, Bitmap icon,  String title, long date, Location loc,
+    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, int score, String title, long date, Location loc,
                          int width, int height, int orientation, OnMediaSavedListener l) {
         SaveRequest r = new SaveRequest();
         r.data = data;
-        r.icon = icon;
+        r.logo = logo;
+        r.pin = pin;
+        r.score = score;
         r.date = date;
         r.title = title;
         r.loc = (loc == null) ? null : new Location(loc);  // make a copy
@@ -84,7 +86,7 @@ public class MediaSaver extends Thread {
                 notifyAll();  // the main thread may wait in addImage
             }
             final long t0 = System.currentTimeMillis();
-            Uri uri = storeImage(Util.BitMapToByteArray(Util.addSelectedIcon(r.data, r.icon)), r.title, r.date, r.loc, r.width, r.height,
+            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(r.data, r.logo, r.pin, r.score)), r.title, r.date, r.loc, r.width, r.height,
                     r.orientation);
             Log.d(TAG, String.format("storeImage took %dms", System.currentTimeMillis() - t0));
             r.listener.onMediaSaved(uri);
@@ -120,9 +122,11 @@ public class MediaSaver extends Thread {
     // Each SaveRequest remembers the data needed to save an image.
     private static class SaveRequest {
         byte[] data;
-        Bitmap icon;
         String title;
         long date;
+        Bitmap logo;
+        Bitmap pin;
+        int score;
         Location loc;
         int width, height;
         int orientation;
