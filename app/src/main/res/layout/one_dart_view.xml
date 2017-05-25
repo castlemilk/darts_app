@@ -2,7 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBlack"
+    >
 
     <ImageView
         android:id="@+id/pin"
@@ -14,5 +16,15 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="74dp"
-        />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager_one_dart"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/pin"
+        app:layout_constraintTop_toBottomOf="@+id/pin"
+        app:layout_constraintRight_toLeftOf="@+id/pin"
+        app:layout_constraintLeft_toRightOf="@+id/pin">
+    </android.support.v4.view.ViewPager>
 </android.support.constraint.ConstraintLayout>
