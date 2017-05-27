@@ -38,5 +38,7 @@
     <dimen name="header_view_start_margin_bottom">14dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="text_size_large">20sp</dimen>
-    <dimen name="text_size_large_one_dart">40sp</dimen>
+    <dimen name="text_size_large_one_dart">50sp</dimen>
+    <dimen name="score_circle_button_width">90dp</dimen>
+    <dimen name="score_circle_button_height">90dp</dimen>
 </resources>

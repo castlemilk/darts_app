@@ -1,6 +1,7 @@
 package com.primewebtech.darts.homepage;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -33,7 +34,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-
+        final Application app = getApplication();
         //Scoring buttons
         Button darts1 = (Button) findViewById(R.id.darts1);
         darts1.setOnClickListener(this);

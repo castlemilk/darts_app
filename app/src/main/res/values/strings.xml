@@ -38,7 +38,9 @@
     <string name="scrolling_animations">Scrolling Animations</string>
     <string name="item_animators">Item Animators</string>
     <string name="intent_chooser">Complete action using</string>
-
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
 
 
 </resources>

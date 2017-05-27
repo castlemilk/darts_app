@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.primewebtech.darts.MainApplication;
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.database.ScoreDatabase;
+import com.primewebtech.darts.database.model.PegRecord;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -33,12 +39,16 @@ public class OneDartActivity extends AppCompatActivity {
      * being logged for the statistics/analytics stage.
      */
 
+
+    private static final String TAG = OneDartActivity.class.getSimpleName();
     private ImageView pin;
     private int pegsCompleted;
     private HashMap<Integer, Integer> scoreCounts;
     private ViewPager mViewPager;
+    private TextView mCountButton;
     private ScorePagerAdapter mScoringAdapter;
-    private int[] mScores = {
+    public MainApplication app;
+    private int[] mPegs = {
             40, 32, 24,36,50,2
     };
 
@@ -46,11 +56,39 @@ public class OneDartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_dart_view);
+        app = (MainApplication) getApplication();
+        initialisePegCounts();
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
         initialisePager();
+        initialiseCountButton();
 
 
+    }
+
+    public void initialisePegCounts() {
+        for (int peg : mPegs) {
+            PegRecord pegRecord = new PegRecord((new Date()).getTime(), 0, peg, 0);
+            try {
+                ScoreDatabase.mScoreDoa.addPegValue(pegRecord);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void initialiseCountButton() {
+        mCountButton = (TextView) findViewById(R.id.count_button);
+        int currentPeg = mViewPager.getCurrentItem();
+//        PegRecord pegRecord = app.mDatabase.mScoreDoa.getPegValue(currentPeg);
+//        mCountButton.setText(currentPegCountToday.getPegCount());
+        mCountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: increment number via DB service
+                Log.d(TAG, "Increment button Clicked");
+            }
+        });
     }
 
     public void initialisePager() {
@@ -59,7 +97,7 @@ public class OneDartActivity extends AppCompatActivity {
         if (mScoringAdapter != null) {
             mViewPager.setAdapter(mScoringAdapter);
         } else {
-            mViewPager.setAdapter(new ScorePagerAdapter(this, mScores));
+            mViewPager.setAdapter(new ScorePagerAdapter(this, mPegs));
         }
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -101,7 +139,7 @@ public class OneDartActivity extends AppCompatActivity {
         }
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view == ((FrameLayout) object);
+            return view == object;
         }
         @Override
         public int getItemPosition(Object object) {

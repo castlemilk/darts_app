@@ -8,7 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:padding="12dip"
+        android:padding="5dip"
+        android:textColor="@color/colorBlack"
         android:textSize="@dimen/text_size_large_one_dart"
         android:text=""
         android:lines="1"/>

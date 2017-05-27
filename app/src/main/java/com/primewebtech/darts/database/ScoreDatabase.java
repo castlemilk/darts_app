@@ -1,0 +1,67 @@
+package com.primewebtech.darts.database;
+
+import android.content.Context;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.primewebtech.darts.database.model.ScoreSchema;
+
+/**
+ * Created by benebsworth on 27/5/17.
+ */
+
+public class ScoreDatabase implements ScoreSchema{
+    private static final String TAG = ScoreDatabase.class.getSimpleName();
+    private static final String DATABASE_NAME    = "darts.db";
+    private static final int    DATABASE_VERSION = 1;
+    private DatabaseHelper mDbHelper;
+    private final Context mContext;
+    public static ScoreDao mScoreDoa;
+
+    public ScoreDatabase open() throws SQLException {
+        Log.d(TAG, "Opening DB");
+        mDbHelper = new DatabaseHelper(mContext);
+        SQLiteDatabase mDatabase = mDbHelper.getWritableDatabase();
+        mScoreDoa = new ScoreDao(mDatabase);
+        Log.d(TAG, "completed initialisation");
+        return this;
+    }
+    public void close() {
+        mDbHelper.close();
+    }
+
+
+    public ScoreDatabase(Context context) {
+        this.mContext = context;
+    }
+
+
+
+    private static class DatabaseHelper extends SQLiteOpenHelper {
+        DatabaseHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            Log.d(TAG, "Creating database if doesnt exist");
+            Log.d(TAG, CREATE_TABLE);
+            db.execSQL(CREATE_TABLE);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion,
+                              int newVersion) {
+            Log.w(TAG, "Upgrading database from version "
+                    + oldVersion + " to "
+                    + newVersion + " which destroys all old data");
+
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + SCORE_TABLE);
+            onCreate(db);
+
+        }
+    }
+}
