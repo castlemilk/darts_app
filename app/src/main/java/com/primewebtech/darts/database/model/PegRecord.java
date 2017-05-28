@@ -15,7 +15,7 @@ public class PegRecord extends BaseRecord{
         this.pegCount = 0;
     }
 
-    public PegRecord(long dateStored, int type,
+    public PegRecord(String dateStored, int type,
                        int pegValue, int pegCount) {
         super(dateStored, type);
         this.pegValue = pegValue;
@@ -28,5 +28,8 @@ public class PegRecord extends BaseRecord{
 
     public int getPegValue() {
         return pegValue;
+    }
+    public String toString() {
+        return "pegValue = "+pegValue+", pegCount = "+pegCount +", pegLastModified = "+dateStored;
     }
 }

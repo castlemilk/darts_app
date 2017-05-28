@@ -6,25 +6,29 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.ScoreSchema;
 
 /**
  * Created by benebsworth on 27/5/17.
  */
 
-public class ScoreDatabase implements ScoreSchema{
+public class ScoreDatabase implements ScoreSchema, ActionSchema{
     private static final String TAG = ScoreDatabase.class.getSimpleName();
     private static final String DATABASE_NAME    = "darts.db";
     private static final int    DATABASE_VERSION = 1;
     private DatabaseHelper mDbHelper;
     private final Context mContext;
     public static ScoreDao mScoreDoa;
+    public static ActionDao mActionDoa;
+
 
     public ScoreDatabase open() throws SQLException {
         Log.d(TAG, "Opening DB");
         mDbHelper = new DatabaseHelper(mContext);
         SQLiteDatabase mDatabase = mDbHelper.getWritableDatabase();
         mScoreDoa = new ScoreDao(mDatabase);
+        mActionDoa = new ActionDao(mDatabase);
         Log.d(TAG, "completed initialisation");
         return this;
     }
@@ -47,8 +51,11 @@ public class ScoreDatabase implements ScoreSchema{
         @Override
         public void onCreate(SQLiteDatabase db) {
             Log.d(TAG, "Creating database if doesnt exist");
-            Log.d(TAG, CREATE_TABLE);
-            db.execSQL(CREATE_TABLE);
+            Log.d(TAG, CREATE_SCORE_TABLE);
+            db.execSQL(CREATE_SCORE_TABLE);
+            db.execSQL(CREATE_TODAY_SCORE_TABLE);
+            db.execSQL(CREATE_ACTION_TABLE);
+            db.execSQL(deleteActionTrigger());
         }
 
         @Override
@@ -60,8 +67,27 @@ public class ScoreDatabase implements ScoreSchema{
 
             db.execSQL("DROP TABLE IF EXISTS "
                     + SCORE_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + TODAY_SCORE_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + CREATE_ACTION_TABLE);
+            db.execSQL("DROP trigger delete_action");
             onCreate(db);
 
+        }
+        public String deleteActionTrigger(){
+            Log.d(TAG, "deleteActionTrigger");
+            String deleteAction = "CREATE TRIGGER if not exists delete_action " +
+                    " AFTER INSERT " +
+                    " ON " + ACTION_TABLE +
+                    " WHEN (SELECT COUNT(*) FROM " + ACTION_TABLE +") >" + HISTORY_LIMIT +
+                    " BEGIN " +
+                    "  DELETE FROM " + ACTION_TABLE +
+                    "  WHERE " + ID + " = (select "+ ID +" from "+ ACTION_TABLE +
+                    "  order by "+ ID +" asc limit 1); "+
+                    " END; ";
+            Log.d(TAG, "deleteActionTrigger:"+deleteAction);
+            return deleteAction;
         }
     }
 }
