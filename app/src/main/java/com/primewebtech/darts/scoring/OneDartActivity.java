@@ -90,10 +90,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
 
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
+        initialiseCountIndicators();
         initialisePager();
         initialiseBackButton();
         initialiseCountButtons();
         initialiseMenuButton();
+
     }
     public void initialiseMenuButton() {
         mMenuButton = (ImageButton) findViewById(R.id.button_menu);
@@ -105,6 +107,18 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
             }
         });
     }
+    public int getPegIndex(int pegValue) {
+        int index = 0;
+        for (int peg : mPegs) {
+            if (pegValue == peg) {
+                return index;
+            } else {
+                index++;
+            }
+        }
+        return 0;
+    }
+
     public void initialiseBackButton() {
         //TODO: implement undo functionality using action SQL table of historical actions
         mBackButton = (ImageButton) findViewById(R.id.button_back);
@@ -113,8 +127,17 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
             public void onClick(View view) {
                 Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction();
                 if (action != null) {
-                    ScoreDatabase.mScoreDoa.rollbackScore(action);
-                    mCountButton.setText(action.getRollBackValue());
+                    int currentIndex = mViewPager.getCurrentItem();
+                    if (mPegs[currentIndex] == action.getPegValue()) {
+                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        ScoreDatabase.mScoreDoa.rollbackScore(action);
+                        mCountButton.setText(action.getRollBackValue());
+                    } else {
+                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        ScoreDatabase.mScoreDoa.rollbackScore(action);
+                        mCountButton.setText(action.getRollBackValue());
+                    }
+
                 }
 
 
@@ -249,6 +272,34 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
         });
     }
 
+    public int[] indicatorResources = {
+            R.id.indicator1,
+            R.id.indicator2,
+            R.id.indicator3,
+            R.id.indicator4,
+            R.id.indicator5,
+            R.id.indicator6,
+            R.id.indicator7,
+            R.id.indicator8,
+            R.id.indicator9,
+            R.id.indicator10,
+    };
+    public void initialiseCountIndicators() {
+        for (int i = 0; i < 10; i++) {
+            ImageView indicator = (ImageView) findViewById(indicatorResources[i]);
+            indicator.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Updates the circular indicators for a given selected peg value. Will carry out a DB lookup
+     * and aggregate today + historical peg counts and update the indicator where each circle
+     * represents 100 pegs made for that selected peg value.
+     * @param pegValue
+     */
+    public void updateCountIndicators(int pegValue) {
+
+    }
     public class ScorePagerAdapter extends PagerAdapter {
 
         Context mContext;

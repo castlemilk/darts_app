@@ -103,6 +103,25 @@ public class ScoreDao extends DatabaseContentProvider implements ScoreSchema {
 
     }
 
+    /***
+     * Aggregate total peg counts over all time.
+     * @param pegValue
+     * @return
+     */
+    public int getTotalPegCount(int pegValue) {
+        final String selectionArgs[] =  {String.valueOf(pegValue)};
+        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE +
+                PEG_VALUE_WHERE + ";", selectionArgs);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int total = cursor.getInt(0);
+                cursor.close();
+                return total;
+            }
+        }
+        return 0;
+    }
+
     public String getTodaysDate() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

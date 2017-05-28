@@ -19,9 +19,132 @@
         android:layout_marginTop="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
+    <ImageView
+        android:id="@+id/indicator1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="@drawable/pin_count_indicator"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        android:layout_marginTop="2.5dp" />
+
+    <ImageView
+        android:id="@+id/indicator2"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="14.2dp"
+        android:layout_marginTop="24.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="0.831" />
+    <ImageView
+        android:id="@+id/indicator3"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8.3dp"
+        android:layout_marginTop="81.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="1.0" />
+    <ImageView
+        android:id="@+id/indicator4"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8.3dp"
+        android:layout_marginTop="152.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="1.0" />
+    <ImageView
+        android:id="@+id/indicator5"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="13.7dp"
+        android:layout_marginTop="210dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="0.83" />
+    <ImageView
+        android:id="@+id/indicator6"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="@drawable/pin_count_indicator"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        android:layout_marginTop="232dp" />
+
+
+    <ImageView
+    android:id="@+id/indicator7"
+    android:layout_width="15dp"
+    android:layout_height="15dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="176dp"
+    android:layout_marginTop="210dp"
+    android:background="@drawable/pin_count_indicator"
+    app:layout_constraintLeft_toLeftOf="@+id/pin"
+    app:layout_constraintRight_toRightOf="@+id/pin"
+    app:layout_constraintTop_toTopOf="@+id/pin"
+    app:layout_constraintHorizontal_bias="0.83" />
+    <ImageView
+        android:id="@+id/indicator8"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="226.5dp"
+        android:layout_marginTop="152.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="1.0" />
+    <ImageView
+        android:id="@+id/indicator9"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="226.5dp"
+        android:layout_marginTop="81.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="1.0" />
+    <ImageView
+        android:id="@+id/indicator10"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="176dp"
+        android:layout_marginTop="24.5dp"
+        android:background="@drawable/pin_count_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pin"
+        app:layout_constraintRight_toRightOf="@+id/pin"
+        app:layout_constraintTop_toTopOf="@+id/pin"
+        app:layout_constraintHorizontal_bias="0.831" />
+
+
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager_one_dart"
-        android:layout_width="200dp"
+        android:layout_width="280dp"
         android:layout_height="110dp"
         app:layout_constraintBottom_toTopOf="@+id/pin"
         app:layout_constraintTop_toBottomOf="@+id/pin"
