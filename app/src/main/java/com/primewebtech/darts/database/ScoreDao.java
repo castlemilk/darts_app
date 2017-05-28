@@ -111,7 +111,7 @@ public class ScoreDao extends DatabaseContentProvider implements ScoreSchema {
     public int getTotalPegCount(int pegValue) {
         final String selectionArgs[] =  {String.valueOf(pegValue)};
         cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE +
-                PEG_VALUE_WHERE + ";", selectionArgs);
+                " WHERE " + PEG_VALUE_WHERE + ";", selectionArgs);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int total = cursor.getInt(0);

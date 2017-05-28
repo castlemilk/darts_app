@@ -16,7 +16,7 @@ import com.primewebtech.darts.database.model.ScoreSchema;
 public class ScoreDatabase implements ScoreSchema, ActionSchema{
     private static final String TAG = ScoreDatabase.class.getSimpleName();
     private static final String DATABASE_NAME    = "darts.db";
-    private static final int    DATABASE_VERSION = 1;
+    private static final int    DATABASE_VERSION = 2;
     private DatabaseHelper mDbHelper;
     private final Context mContext;
     public static ScoreDao mScoreDoa;
@@ -70,8 +70,8 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL("DROP TABLE IF EXISTS "
                     + TODAY_SCORE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS "
-                    + CREATE_ACTION_TABLE);
-            db.execSQL("DROP trigger delete_action");
+                    + ACTION_TABLE);
+            db.execSQL("DROP trigger IF EXISTS delete_action");
             onCreate(db);
 
         }
@@ -83,8 +83,8 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
                     " WHEN (SELECT COUNT(*) FROM " + ACTION_TABLE +") >" + HISTORY_LIMIT +
                     " BEGIN " +
                     "  DELETE FROM " + ACTION_TABLE +
-                    "  WHERE " + ID + " = (select "+ ID +" from "+ ACTION_TABLE +
-                    "  order by "+ ID +" asc limit 1); "+
+                    "  WHERE " + ActionSchema.ID + " = (select "+ ActionSchema.ID +" from "+ ACTION_TABLE +
+                    "  order by "+ ActionSchema.ID +" asc limit 1); "+
                     " END; ";
             Log.d(TAG, "deleteActionTrigger:"+deleteAction);
             return deleteAction;

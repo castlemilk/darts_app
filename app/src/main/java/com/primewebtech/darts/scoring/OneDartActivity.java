@@ -96,6 +96,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
         initialiseCountButtons();
         initialiseMenuButton();
 
+
     }
     public void initialiseMenuButton() {
         mMenuButton = (ImageButton) findViewById(R.id.button_menu);
@@ -254,10 +255,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
                 PegRecord pegRecord = ScoreDatabase.mScoreDoa.getTodayPegValue(mPegs[position]);
                 if (pegRecord != null) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()));
+                    updateCountIndicators(mPegs[position]);
                 } else {
                     PegRecord newPegRecord = new PegRecord(getDate(), 0,mPegs[position] , 0);
                     try {
                         ScoreDatabase.mScoreDoa.addTodayPegValue(newPegRecord);
+                        mCountButton.setText(String.format(Locale.getDefault(),"%d", 0));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -285,8 +288,8 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
             R.id.indicator10,
     };
     public void initialiseCountIndicators() {
-        for (int i = 0; i < 10; i++) {
-            ImageView indicator = (ImageView) findViewById(indicatorResources[i]);
+        for (int circleIndicator : indicatorResources) {
+            ImageView indicator = (ImageView) findViewById(circleIndicator);
             indicator.setVisibility(View.GONE);
         }
     }
@@ -298,6 +301,18 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
      * @param pegValue
      */
     public void updateCountIndicators(int pegValue) {
+        Log.d(TAG, "updateCountIndicators:pegValue:"+pegValue);
+        int total = ScoreDatabase.mScoreDoa.getTotalPegCount(pegValue);
+        Log.d(TAG, "updateCountIndicators:total:"+total);
+        int index = 1;
+        for (int circleIndicator : indicatorResources) {
+            double rem = Math.floor(index * 100 /total);
+            Log.d(TAG, "updateCountIndicators:remainder"+rem);
+            index++;
+
+        }
+
+
 
     }
     public class ScorePagerAdapter extends PagerAdapter {
