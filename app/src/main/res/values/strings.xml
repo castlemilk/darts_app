@@ -41,6 +41,8 @@
     <string name="_1">1</string>
     <string name="_2">2</string>
     <string name="_3">3</string>
+    <string name="_plus_ten">+10</string>
+    <string name="_minus_ten">-10</string>
 
 
 </resources>

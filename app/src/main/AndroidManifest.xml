@@ -41,8 +41,11 @@
         <activity android:name=".scoring.ScoringActivity" />
         <activity android:name=".scoring.OneDartActivity"
             android:theme="@style/AppTheme.Black.NoActionBar">
-
         </activity>
+        <activity android:name=".scoring.TwoDartActivity"
+            android:theme="@style/AppTheme.Black.NoActionBar">
+        </activity>
+
         <activity
             android:name=".camera.CameraActivity"
             android:theme="@style/AppTheme.Black.NoActionBar">

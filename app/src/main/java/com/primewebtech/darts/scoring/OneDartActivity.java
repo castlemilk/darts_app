@@ -73,17 +73,19 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_dart_view);
-//        initialisePegCounts();
+
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
 
-        Log.d(TAG, "CUR_TIME:"+curTime);
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime", curTime);
+        Log.d(TAG, "CUR_TIME:"+curTime);
+        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
             initialisePegCounts();
+            initialiseCountButtons();
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
 

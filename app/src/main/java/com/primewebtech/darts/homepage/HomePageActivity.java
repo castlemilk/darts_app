@@ -19,6 +19,7 @@ import com.primewebtech.darts.camera.CameraActivity;
 import com.primewebtech.darts.gallery.GalleryActivity;
 import com.primewebtech.darts.scoring.OneDartActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
+import com.primewebtech.darts.scoring.TwoDartActivity;
 
 import java.io.File;
 
@@ -59,6 +60,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         Intent scoringIntent = new Intent(HomePageActivity.this, ScoringActivity.class);
         Intent oneDartIntent = new Intent(HomePageActivity.this, OneDartActivity.class);
+        Intent twoDartIntent = new Intent(HomePageActivity.this, TwoDartActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
 //        Intent galleryIntent;
 //        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -78,7 +80,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 // route to darts2 based scoring
                 Log.d(TAG, "darts2:selected");
                 scoringIntent.putExtra("SCORING_TYPE", R.id.darts2);
-                startActivity(scoringIntent);
+                startActivity(twoDartIntent);
                 break;
             case R.id.darts3:
                 // route to darts3 based scoring
