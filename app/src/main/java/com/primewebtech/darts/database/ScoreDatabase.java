@@ -19,7 +19,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     private static final int    DATABASE_VERSION = 2;
     private DatabaseHelper mDbHelper;
     private final Context mContext;
-    public static ScoreDao mScoreDoa;
+    public static ScoreOneDao mScoreOneDoa;
     public static ActionDao mActionDoa;
 
 
@@ -27,7 +27,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
         Log.d(TAG, "Opening DB");
         mDbHelper = new DatabaseHelper(mContext);
         SQLiteDatabase mDatabase = mDbHelper.getWritableDatabase();
-        mScoreDoa = new ScoreDao(mDatabase);
+        mScoreOneDoa = new ScoreOneDao(mDatabase);
         mActionDoa = new ActionDao(mDatabase);
         Log.d(TAG, "completed initialisation");
         return this;
@@ -51,9 +51,11 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
         @Override
         public void onCreate(SQLiteDatabase db) {
             Log.d(TAG, "Creating database if doesnt exist");
-            Log.d(TAG, CREATE_SCORE_TABLE);
-            db.execSQL(CREATE_SCORE_TABLE);
-            db.execSQL(CREATE_TODAY_SCORE_TABLE);
+            Log.d(TAG, CREATE_SCORE_TABLE_ONE);
+            db.execSQL(CREATE_SCORE_TABLE_ONE);
+            db.execSQL(CREATE_SCORE_TABLE_TWO);
+            db.execSQL(CREATE_SCORE_TABLE_THREE);
+            db.execSQL(CREATE_SCORE_TABLE_HUNDRED);
             db.execSQL(CREATE_ACTION_TABLE);
             db.execSQL(deleteActionTrigger());
         }
@@ -66,7 +68,13 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
                     + newVersion + " which destroys all old data");
 
             db.execSQL("DROP TABLE IF EXISTS "
-                    + SCORE_TABLE);
+                    + SCORE_TABLE_ONE);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + SCORE_TABLE_TWO);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + SCORE_TABLE_THREE);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + SCORE_TABLE_HUNDRED);
             db.execSQL("DROP TABLE IF EXISTS "
                     + TODAY_SCORE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS "

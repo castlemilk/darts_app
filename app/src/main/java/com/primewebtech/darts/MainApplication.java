@@ -33,8 +33,11 @@ public class MainApplication extends android.app.Application {
         // Do first run stuff here then set 'firstrun' as false
         // using the following line to edit/commit prefs
         Log.i(TAG,"first_run:initialising DB");
+//        clearPreference();
         mDatabase = new ScoreDatabase(this);
         mDatabase.open();
+
+
         if (sharedPreferences.getBoolean("firstrun", true)) {
             Log.i(TAG, "FIRST_RUN:initialising system");
             initialisePegCounts();
@@ -43,12 +46,16 @@ public class MainApplication extends android.app.Application {
 
         singleton = this;
     }
-
+    public void clearPreference() {
+        SharedPreferences.Editor prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE).edit();
+        prefs.clear();
+        prefs.commit();
+    }
     public void initialisePegCounts() {
         for (int peg : mPegs) {
             PegRecord pegRecord = new PegRecord(getDate(), 0, peg, 0);
             try {
-                ScoreDatabase.mScoreDoa.addTodayPegValue(pegRecord);
+                ScoreDatabase.mScoreOneDoa.addTodayPegValue(pegRecord);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -20,6 +20,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,7 @@ import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final String TAG = CameraActivity.class.getSimpleName();
 
     private Camera mCamera;
@@ -165,27 +167,6 @@ public class CameraActivity extends AppCompatActivity {
 
         }
         setContentView(R.layout.activity_camera);
-        mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
-        mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
-        mScoreNumber = (TextView) findViewById(R.id.score_number);
-        mScoreValue.setVisibility(View.GONE);
-        mScoreType.setVisibility(View.GONE);
-        initTypeSpinners();
-        Util.initialize(this);
-        mContentResolver = this.getContentResolver();
-        mNamedImages = new NamedImages();
-        mMediaSaver = new MediaSaver(mContentResolver);
-        mCamera = openBackFacingCamera();
-        mParameters = mCamera.getParameters();
-        List<String> focusModes = mParameters.getSupportedFocusModes();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            // Autofocus mode is supported
-            mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        }
-        Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
-        // Create an instance of Camera
-        Log.d(TAG, "onCreate:starting");
-        // do we have a camera?
         if (!getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
@@ -205,14 +186,41 @@ public class CameraActivity extends AppCompatActivity {
                         // no permission so request and return
                         return;
                     }
-                    Log.d(TAG, "onCreate:openingCamera:done");
+                    Log.d(TAG, "getCameraPermission:openingCamera:done");
                 } else {
-                    Log.d(TAG, "onCreate:OLD_VERSION:openingCamera:done");
+                    Log.d(TAG, "getCameraPermission:OLD_VERSION:openingCamera:done");
 
                 }
 
             }
         }
+        mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
+        mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
+        mScoreNumber = (TextView) findViewById(R.id.score_number);
+        mScoreValue.setVisibility(View.GONE);
+        mScoreType.setVisibility(View.GONE);
+        initTypeSpinners();
+        Util.initialize(this);
+        mContentResolver = this.getContentResolver();
+        mNamedImages = new NamedImages();
+        mMediaSaver = new MediaSaver(mContentResolver);
+        mCamera = openBackFacingCamera();
+
+        if (mCamera != null) {
+            mParameters = mCamera.getParameters();
+        }
+
+        List<String> focusModes = mParameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            // Autofocus mode is supported
+            Log.d(TAG, "SETTING_FOCUS_MODE");
+            mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
+        Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
+        // Create an instance of Camera
+        Log.d(TAG, "onCreate:starting");
+        // do we have a camera?
+
 
         if (Integer.parseInt(Build.VERSION.SDK) >= 8)
             setDisplayOrientation(mCamera, 90);
@@ -261,10 +269,68 @@ public class CameraActivity extends AppCompatActivity {
         Camera.getCameraInfo(cameraId, mCameraInfo);
         mCamera.setDisplayOrientation(90);
         mCamera.setParameters(mParameters);
+        Log.d(TAG, "FOCUS_MODE:"+mCamera.getParameters().getFocusMode());
         determineDisplayOrientation();
         preview.addView(mPreview);
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE_ASK_PERMISSIONS) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                super.onCreate(null);
+
+            } else {
+
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+
+            }
+
+        }
+    }
+
+    public boolean getCameraPermission() {
+
+
+        if (!getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
+                    .show();
+            return false;
+        } else {
+            cameraId = Util.findBackFacingCamera();
+            if (cameraId < 0) {
+                Toast.makeText(this, "No front facing camera found.",
+                        Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    // request permission
+                    int hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
+                    if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[] {Manifest.permission.CAMERA},
+                                REQUEST_CODE_ASK_PERMISSIONS);
+                        // no permission so request and return
+                        return false;
+                    }
+                    Log.d(TAG, "getCameraPermission:openingCamera:done");
+                } else {
+                    Log.d(TAG, "getCameraPermission:OLD_VERSION:openingCamera:done");
+                    return true;
+
+                }
+
+            }
+            return false;
+        }
     }
 
     @Override
@@ -291,6 +357,12 @@ public class CameraActivity extends AppCompatActivity {
                 mViewPager = (ViewPager) findViewById(R.id.pager);
                 mLogoText = (ImageView) findViewById(R.id.logo_text);
                 mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+                mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
+                mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
+                mScoreNumber = (TextView) findViewById(R.id.score_number);
+                mScoreValue.setVisibility(View.GONE);
+                mScoreType.setVisibility(View.GONE);
+                initTypeSpinners();
                 mLogoText.setVisibility(View.GONE);
                 if (mCustomPagerAdapter != null) {
                     mViewPager.setAdapter(mCustomPagerAdapter);
@@ -355,7 +427,9 @@ public class CameraActivity extends AppCompatActivity {
         mScoreValue.setVisibility(View.GONE);
         mScoreValue.setEnabled(false);
         mLogoText.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
+        mPreviousImageThumbnail.setVisibility(View.VISIBLE);
 
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue);
         String title = mNamedImages.getTitle();
@@ -404,6 +478,7 @@ public class CameraActivity extends AppCompatActivity {
         mLogoText.setVisibility(View.GONE);
         mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
+        mPreviousImageThumbnail.setVisibility(View.VISIBLE);
 
     }
     public void onReviewLatestPhotoClick(View view) {
@@ -459,10 +534,13 @@ public class CameraActivity extends AppCompatActivity {
             mScoreValue.setEnabled(true);
             mScoreType.setVisibility(View.VISIBLE);
             mScoreValue.setVisibility(View.VISIBLE);
+            initTypeSpinners();
             mTakePhotoButton.setVisibility(View.GONE);
             mLogoText.setVisibility(View.VISIBLE);
             mScoreTypeBackground.setVisibility(View.VISIBLE);
             mScoreNumber.setVisibility(View.VISIBLE);
+            mPreviousImageThumbnail.setVisibility(View.GONE);
+            mPreviousImageThumbnail.setEnabled(false);
 
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
@@ -473,6 +551,7 @@ public class CameraActivity extends AppCompatActivity {
 
         }
     };
+
     public static Bitmap drawableToBitmap (Drawable drawable) {
 
         if (drawable instanceof BitmapDrawable) {

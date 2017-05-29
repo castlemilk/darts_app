@@ -20,9 +20,9 @@ import java.util.Locale;
  * Created by benebsworth on 27/5/17.
  */
 
-public class ScoreDao extends DatabaseContentProvider implements ScoreSchema {
+public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema {
 
-    private static final String TAG = ScoreDao.class.getSimpleName();
+    private static final String TAG = ScoreOneDao.class.getSimpleName();
 
     private Cursor cursor;
 
@@ -30,10 +30,10 @@ public class ScoreDao extends DatabaseContentProvider implements ScoreSchema {
         return TODAY_SCORE_TABLE;
     }
     protected String getScoreTableName() {
-        return SCORE_TABLE;
+        return SCORE_TABLE_ONE;
     }
 
-    public ScoreDao(SQLiteDatabase database) {
+    public ScoreOneDao(SQLiteDatabase database) {
         super(database);
     }
     public boolean updateTodayPegValue(PegRecord scoreRecord) throws IOException {
@@ -110,7 +110,7 @@ public class ScoreDao extends DatabaseContentProvider implements ScoreSchema {
      */
     public int getTotalPegCount(int pegValue) {
         final String selectionArgs[] =  {String.valueOf(pegValue)};
-        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE +
+        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_ONE +
                 " WHERE " + PEG_VALUE_WHERE + ";", selectionArgs);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
