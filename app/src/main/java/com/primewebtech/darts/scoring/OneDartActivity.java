@@ -314,7 +314,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         if (total > 0) {
             for (int circleIndicator : indicatorResources) {
 
-                Double rem = Math.floor((index + 1) * 100 / total);
+                Double rem = Math.floor((index + 1) * 100 / (total + 1) );
                 Log.d(TAG, "updateCountIndicators:remainder" + rem);
                 if (rem.intValue() == 0) {
                     ImageView indicator = (ImageView) findViewById(circleIndicator);

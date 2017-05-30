@@ -48,6 +48,7 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         contentValues.put(ACTION_TYPE, action.getActionType());
         contentValues.put(ACTION_VALUE, action.getActionValue());
         contentValues.put(PEG_VALUE, action.getPegValue());
+        contentValues.put(PEG_TYPE, action.getType());
         contentValues.put(PEG_COUNT, action.getPegCount());
         contentValues.put(DATE, getDateNow());
         return contentValues;
@@ -82,6 +83,7 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         int actionTypeIndex;
         int actionValueIndex;
         int actionPegValueIndex;
+        int actionPegTypeIndex;
         int actionPegCountIndex;
         int dateIndex;
         int IDIndex;
@@ -98,6 +100,10 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
             if (cursor.getColumnIndex(PEG_VALUE) != -1) {
                 actionPegValueIndex = cursor.getColumnIndexOrThrow(PEG_VALUE);
                 action.pegValue = cursor.getInt(actionPegValueIndex);
+            }
+            if (cursor.getColumnIndex(PEG_TYPE) != -1) {
+                actionPegTypeIndex = cursor.getColumnIndexOrThrow(PEG_TYPE);
+                action.type = cursor.getInt(actionPegTypeIndex);
             }
             if (cursor.getColumnIndex(PEG_COUNT) != -1) {
                 actionPegCountIndex = cursor.getColumnIndexOrThrow(PEG_COUNT);

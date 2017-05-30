@@ -10,14 +10,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.primewebtech.darts.MainApplication;
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.database.ScoreDatabase;
 import com.primewebtech.darts.database.model.ActionSchema;
+import com.primewebtech.darts.database.model.PegRecord;
+import com.primewebtech.darts.database.model.ScoreSchema;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +32,7 @@ import java.util.Locale;
  * Created by benebsworth on 29/5/17.
  */
 
-public class TwoDartActivity extends AppCompatActivity implements ActionSchema {
+public class TwoDartActivity extends AppCompatActivity implements ActionSchema, ScoreSchema {
     /**
      * The two dart activity is a little different compared to the one dart activity in that there
      * will be two values which are incremented on the pin board, the two dot and three dot values.
@@ -53,6 +58,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema {
     private List<Integer> mPinValues;
     private String curTime;
     private String lastResetTime;
+    private Button mCountButtonTwo;
+    private Button mCountButtonThree;
+    private Button mIncrementTwo;
+    private Button mIncrementThree;
     public MainApplication app;
     SharedPreferences prefs = null;
 
@@ -79,11 +88,54 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema {
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
+            initialisePegCounts();
             prefs.edit().putString("lastResetTime_Two", curTime).apply();
         }
+        initialisePegCounts();
         updatePinBoard(0);
         initialisePager();
 
+    }
+
+    public void initialiseCountButtons() {
+        mCountButtonTwo = (Button) findViewById(R.id.two_count_button);
+        mCountButtonThree = (Button) findViewById(R.id.three_count_button);
+        mIncrementTwo = (Button) findViewById(R.id.increment_two);
+        mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementThree = (Button) findViewById(R.id.increment_three);
+        int currentIndex = mViewPager.getCurrentItem();
+        PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_2);
+        if (pegRecord != null) {
+            mCountButtonTwo.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
+            mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
+//            updateCountIndicators(mPegs[currentIndex]);
+        } else {
+            try {
+                PegRecord peg2 = new PegRecord(getDate(), TYPE_2, mPinValues.get(currentIndex), 0);
+                PegRecord peg3 = new PegRecord(getDate(), TYPE_3, mPinValues.get(currentIndex), 0);
+                ScoreDatabase.mScoreTwoDoa.addTodayPegValue(peg2);
+                ScoreDatabase.mScoreTwoDoa.addTodayPegValue(peg3);
+                mCountButtonTwo.setText(String.format(Locale.getDefault(), "%d", peg2.getPegCount()));
+                mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", peg3.getPegCount()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        Date now = new Date();
+        return dateFormat.format(now);
+    }
+    public void initialisePegCounts() {
+        for (int peg : mPinValues) {
+            try {
+                ScoreDatabase.mScoreTwoDoa.addTodayPegValue(new PegRecord(getDate(), TYPE_2, peg, 0));
+                ScoreDatabase.mScoreTwoDoa.addTodayPegValue(new PegRecord(getDate(), TYPE_3, peg, 0));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     public List<Integer> generatePinValues() {
         List<Integer> values = Util.makeSequence(61, 100);
