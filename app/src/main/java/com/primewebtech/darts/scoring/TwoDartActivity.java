@@ -88,13 +88,13 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mPinValues = generatePinValues();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime_Two", curTime);
+        lastResetTime = prefs.getString("lastResetTime_two", curTime);
         Log.d(TAG, "CUR_TIME:"+curTime);
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             new InitialisePegValueTask().execute();
-            prefs.edit().putString("lastResetTime_Two", curTime).apply();
+            prefs.edit().putString("lastResetTime_two", curTime).apply();
         }
         updatePinBoard(0);
         initialisePager();
@@ -181,10 +181,13 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentItem();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_2);
-                ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1);
-                mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                Action action = new Action(ADD, 1,  mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
-                ScoreDatabase.mActionDoa.addAction(action);
+                if(ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
+                    mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
+                    ScoreDatabase.mActionDoa.addAction(action);
+                } else {
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                }
             }
         });
         mCountButtonThree.setOnClickListener(new View.OnClickListener() {
@@ -209,10 +212,13 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentItem();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_2);
-                ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1);
-                mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                Action action = new Action(ADD, 1,  mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
-                ScoreDatabase.mActionDoa.addAction(action);
+                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
+                    mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
+                    ScoreDatabase.mActionDoa.addAction(action);
+                } else {
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                }
             }
         });
         mIncrementThree.setOnClickListener(new View.OnClickListener() {

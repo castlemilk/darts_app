@@ -65,17 +65,17 @@ public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema 
         Log.d(TAG, "increaseTodayPegValue:pegValue:"+pegValue);
         Log.d(TAG, "increaseTodayPegValue:increment:"+increment);
         PegRecord pegRecord = getTodayPegValue(pegValue, type);
-        String selector = PEG_VALUE_WHERE + " AND " + DATE_WHERE + "AND " + TYPE_WHERE;
-        String selectorArgs[] = new String[]{String.valueOf(pegValue),
-                getDateNow(), String.valueOf(type)};
+        final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                getTodaysDate(), String.valueOf(type)};
 
         if (pegRecord != null) {
             Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
             contentValues.put(PEG_COUNT, pegRecord.getPegCount()+increment);
             contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableName(), contentValues, selector,
-                    selectorArgs) > 0;
+            return super.update(getScoreTableName(), contentValues, selection,
+                    selectionArgs) > 0;
         } else {
             return false;
         }

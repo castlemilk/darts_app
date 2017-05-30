@@ -43,7 +43,7 @@ public interface ScoreSchema {
     String[] SCORE_COLUMNS = new String[] {ID,
             PEG_VALUE, TYPE, PEG_COUNT, LAST_MODIFIED };
     String PEG_VALUE_WHERE              = PEG_VALUE + " = ?";
-    String DATE_WHERE                   = LAST_MODIFIED + " >= ?";
+    String DATE_WHERE                   = LAST_MODIFIED + " > ?";
     String TYPE_WHERE                   = TYPE + " = ?";
 
 }
