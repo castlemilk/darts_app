@@ -30,6 +30,6 @@ public class PegRecord extends BaseRecord{
         return pegValue;
     }
     public String toString() {
-        return "pegValue = "+pegValue+", pegCount = "+pegCount +", pegLastModified = "+dateStored;
+        return "pegType = "+type+", pegValue = "+pegValue+", pegCount = "+pegCount +", pegLastModified = "+dateStored;
     }
 }

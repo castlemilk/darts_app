@@ -48,8 +48,8 @@
         app:layout_constraintHorizontal_bias="0.502"
         android:layout_marginRight="10dp" />
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager_one_dart"
-        android:layout_width="280dp"
+        android:id="@+id/pager_two_dart"
+        android:layout_width="100dp"
         android:layout_height="110dp"
         app:layout_constraintBottom_toTopOf="@+id/pin"
         app:layout_constraintTop_toBottomOf="@+id/pin"

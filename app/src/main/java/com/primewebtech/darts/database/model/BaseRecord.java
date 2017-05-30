@@ -9,7 +9,7 @@ import android.content.Context;
 public class BaseRecord {
 
     protected final Context context;
-    protected final int type;
+    public int type;
     public String dateStored;
 
 

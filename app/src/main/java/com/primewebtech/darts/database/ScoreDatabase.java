@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.ScoreSchema;
+import com.primewebtech.darts.database.model.ScoreTwoSchema;
 
 /**
  * Created by benebsworth on 27/5/17.
@@ -53,7 +54,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             Log.d(TAG, "Creating database if doesnt exist");
             Log.d(TAG, CREATE_SCORE_TABLE_ONE);
             db.execSQL(CREATE_SCORE_TABLE_ONE);
-            db.execSQL(CREATE_SCORE_TABLE_TWO);
+            db.execSQL(ScoreTwoSchema.CREATE_SCORE_TABLE_TWO);
             db.execSQL(CREATE_SCORE_TABLE_THREE);
             db.execSQL(CREATE_SCORE_TABLE_HUNDRED);
             db.execSQL(CREATE_ACTION_TABLE);
@@ -70,7 +71,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL("DROP TABLE IF EXISTS "
                     + SCORE_TABLE_ONE);
             db.execSQL("DROP TABLE IF EXISTS "
-                    + SCORE_TABLE_TWO);
+                    + ScoreTwoSchema.SCORE_TABLE_TWO);
             db.execSQL("DROP TABLE IF EXISTS "
                     + SCORE_TABLE_THREE);
             db.execSQL("DROP TABLE IF EXISTS "
