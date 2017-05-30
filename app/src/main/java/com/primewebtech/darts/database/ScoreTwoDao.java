@@ -25,12 +25,8 @@ public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema 
     private static final String TAG = ScoreOneDao.class.getSimpleName();
 
     private Cursor cursor;
-
-    protected String getTodayScoreTableName() {
-        return TODAY_SCORE_TABLE;
-    }
     protected String getScoreTableName() {
-        return SCORE_TABLE_ONE;
+        return SCORE_TABLE_TWO;
     }
 
     public ScoreTwoDao(SQLiteDatabase database) {
