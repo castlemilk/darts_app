@@ -106,7 +106,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             new InitialisePegValueTask().execute();
-            prefs.edit().putString("lastResetTime_two", curTime).apply();
+            prefs.edit().putString("lastResetTime_three", curTime).apply();
         }
 
         updatePinBoard(0);

@@ -134,7 +134,7 @@ public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema 
     public String getTodaysDate() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_YEAR, 0);
         Date yesterday = cal.getTime();
         return df.format(yesterday);
     }
