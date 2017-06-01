@@ -22,6 +22,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     private final Context mContext;
     public static ScoreOneDao mScoreOneDoa;
     public static ScoreTwoDao mScoreTwoDoa;
+    public static ScoreThreeDao mScoreThreeDoa;
     public static ActionDao mActionDoa;
 
 
@@ -31,6 +32,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
         SQLiteDatabase mDatabase = mDbHelper.getWritableDatabase();
         mScoreOneDoa = new ScoreOneDao(mDatabase);
         mScoreTwoDoa = new ScoreTwoDao(mDatabase);
+        mScoreThreeDoa = new ScoreThreeDao(mDatabase);
         mActionDoa = new ActionDao(mDatabase);
         Log.d(TAG, "completed initialisation");
         return this;

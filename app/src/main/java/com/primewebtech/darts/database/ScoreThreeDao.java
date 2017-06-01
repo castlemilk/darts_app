@@ -20,16 +20,16 @@ import java.util.Locale;
  * Created by benebsworth on 27/5/17.
  */
 
-public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema {
+public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchema {
 
     private static final String TAG = ScoreOneDao.class.getSimpleName();
 
     private Cursor cursor;
     protected String getScoreTableName() {
-        return SCORE_TABLE_TWO;
+        return SCORE_TABLE_THREE;
     }
 
-    public ScoreTwoDao(SQLiteDatabase database) {
+    public ScoreThreeDao(SQLiteDatabase database) {
         super(database);
     }
     public boolean updateTodayPegValue(PegRecord scoreRecord) throws IOException {

@@ -1,6 +1,7 @@
 package com.primewebtech.darts.scoring;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.primewebtech.darts.database.model.Action;
 import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
+import com.primewebtech.darts.homepage.HomePageActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -65,6 +67,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     private Button mCountButtonThree;
     private Button mIncrementTwo;
     private Button mIncrementThree;
+    private Button mMovePagerForwardTen;
+    private Button mMovePagerBackwardsTen;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
@@ -83,7 +87,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.two_dart_view);
-
+        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -100,8 +105,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         initialisePager();
         initialiseCountButtons();
         initialiseBackButton();
-        new InitialisePegValueTask().execute();
-
+        initialiseMenuButton();
     }
 
     public void initialiseBackButton() {
@@ -114,8 +118,12 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 if (action != null) {
                     int currentIndex = mViewPager.getCurrentItem();
                     if (mPinValues.get(currentIndex) == action.getPegValue()) {
-                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
-                        ScoreDatabase.mScoreTwoDoa.rollbackScore(action);
+//                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        if(ScoreDatabase.mScoreTwoDoa.rollbackScore(action)) {
+                            Log.d(TAG, "Successfully Deleted action");
+                        } else {
+                            Log.d(TAG, "FAILED to delete");
+                        }
                         if (action.getType() == TYPE_2) {
                             mCountButtonTwo.setText(action.getRollBackValue());
                         } else {
@@ -123,7 +131,11 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                         }
                     } else {
                         mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
-                        ScoreDatabase.mScoreTwoDoa.rollbackScore(action);
+                        if(ScoreDatabase.mScoreTwoDoa.rollbackScore(action)) {
+                            Log.d(TAG, "Successfully Deleted action");
+                        } else {
+                            Log.d(TAG, "FAILED to delete");
+                        }
                         if (action.getType() == TYPE_2) {
                             mCountButtonTwo.setText(action.getRollBackValue());
                         } else {
@@ -198,10 +210,13 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentItem();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
-                ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1);
-                mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                Action action = new Action(ADD, 1,  mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-                ScoreDatabase.mActionDoa.addAction(action);
+                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                    ScoreDatabase.mActionDoa.addAction(action);
+                } else {
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                }
             }
         });
         mIncrementTwo.setOnClickListener(new View.OnClickListener() {
@@ -229,12 +244,51 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentItem();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
-                ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1);
-                mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                Action action = new Action(ADD, 1,  mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-                ScoreDatabase.mActionDoa.addAction(action);
+                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                    ScoreDatabase.mActionDoa.addAction(action);
+                } else {
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                }
             }
         });
+        mMovePagerForwardTen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "move Froward +10 clicked");
+                movePagerForwardTen();
+            }
+        });
+        mMovePagerBackwardsTen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "move Froward +10 clicked");
+                movePagerBackwardsTen();
+            }
+        });
+    }
+    public void movePagerForwardTen() {
+        //TODO: answer question: do we want to always arrive at the start of the next interval
+        int currentIndex = mViewPager.getCurrentItem();
+        if ( currentIndex+10 > mPinValues.size() ) {
+            mViewPager.setCurrentItem(mPinValues.size());
+        } else if (currentIndex < 8){
+            mViewPager.setCurrentItem(currentIndex+9);
+        } else {
+            mViewPager.setCurrentItem(currentIndex+10);
+        }
+    }
+    public void movePagerBackwardsTen() {
+        //TODO: answer question: do we want to always arrive at the start of the next interval
+        int currentIndex = mViewPager.getCurrentItem();
+        if ( currentIndex-10 < 0) {
+            mViewPager.setCurrentItem(0);
+        } else if (currentIndex > mPinValues.size() - 4) {
+            mViewPager.setCurrentItem(currentIndex-4);
+        } else {
+            mViewPager.setCurrentItem(currentIndex-10);
+        }
     }
     public String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -254,6 +308,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     public List<Integer> generatePinValues() {
         List<Integer> values = Util.makeSequence(61, 100);
         values.add(101);
+        values.add(104);
         values.add(107);
         values.add(110);
 
@@ -277,20 +332,31 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             @Override
             public void onPageSelected(int position) {
                 updatePinBoard(mPinValues.get(position));
-//                PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[position]);
-//                if (pegRecord != null) {
-////                    mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()));
-////                    updateCountIndicators(mPegs[position]);
-//                } else {
-////                    PegRecord newPegRecord = new PegRecord(getDate(), 0,mPegs[position] , 0);
-//                    try {
-//                        ScoreDatabase.mScoreOneDoa.addTodayPegValue(newPegRecord);
-////                        mCountButton.setText(String.format(Locale.getDefault(),"%d", 0));
-////                        updateCountIndicators(mPegs[position]);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
+                PegRecord pegRecord2 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(position), TYPE_2);
+
+                if (pegRecord2 != null) {
+                    mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord2.getPegCount()));
+                } else {
+                    PegRecord newPegRecord2 = new PegRecord(getDate(), 0,mPinValues.get(position) , TYPE_2);
+                    try {
+                        ScoreDatabase.mScoreTwoDoa.addTodayPegValue(newPegRecord2);
+                        mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", 0));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                PegRecord pegRecord3 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(position), TYPE_3);
+                if (pegRecord3 != null) {
+                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
+                } else {
+                    PegRecord newPegRecord3 = new PegRecord(getDate(), 0,mPinValues.get(position) , TYPE_3);
+                    try {
+                        ScoreDatabase.mScoreTwoDoa.addTodayPegValue(newPegRecord3);
+                        mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", 0));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 
             }
             @Override
@@ -299,6 +365,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             }
         });
     }
+
+
 
     private void updatePinBoard(int pinValue) {
         if (60 < pinValue && pinValue < 70) {
@@ -315,6 +383,17 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             pin.setImageResource(mPinBoards[0]);
         }
 
+    }
+
+    public void initialiseMenuButton() {
+        mMenuButton = (ImageButton) findViewById(R.id.button_menu);
+        mMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent homePageIntent = new Intent(TwoDartActivity.this, HomePageActivity.class);
+                startActivity(homePageIntent);
+            }
+        });
     }
 
     /**
