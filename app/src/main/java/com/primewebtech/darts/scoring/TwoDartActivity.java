@@ -331,13 +331,16 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 
             @Override
             public void onPageSelected(int position) {
+                Log.d(TAG, "onPageSelected:NEW_PAGE:position:"+position);
                 updatePinBoard(mPinValues.get(position));
                 PegRecord pegRecord2 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(position), TYPE_2);
 
                 if (pegRecord2 != null) {
+                    Log.d(TAG, "onPageSelected:RECORD_FOUND:TYPE_2");
                     mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord2.getPegCount()));
                 } else {
-                    PegRecord newPegRecord2 = new PegRecord(getDate(), 0,mPinValues.get(position) , TYPE_2);
+                    Log.d(TAG, "onPageSelected:RECORD_NOT_FOUND:INITIALISING");
+                    PegRecord newPegRecord2 = new PegRecord(getDate(), TYPE_2,mPinValues.get(position) , 0);
                     try {
                         ScoreDatabase.mScoreTwoDoa.addTodayPegValue(newPegRecord2);
                         mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", 0));
@@ -349,7 +352,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 if (pegRecord3 != null) {
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
-                    PegRecord newPegRecord3 = new PegRecord(getDate(), 0,mPinValues.get(position) , TYPE_3);
+                    PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(position) , 0);
                     try {
                         ScoreDatabase.mScoreTwoDoa.addTodayPegValue(newPegRecord3);
                         mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", 0));

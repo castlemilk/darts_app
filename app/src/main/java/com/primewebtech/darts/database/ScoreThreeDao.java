@@ -22,7 +22,7 @@ import java.util.Locale;
 
 public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchema {
 
-    private static final String TAG = ScoreOneDao.class.getSimpleName();
+    private static final String TAG = ScoreTwoDao.class.getSimpleName();
 
     private Cursor cursor;
     protected String getScoreTableName() {

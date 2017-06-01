@@ -284,7 +284,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 if (pegRecord3 != null) {
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
-                    PegRecord newPegRecord3 = new PegRecord(getDate(), 0,mPinValues.get(position) , TYPE_3);
+                    PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(position) , 0);
                     try {
                         ScoreDatabase.mScoreThreeDoa.addTodayPegValue(newPegRecord3);
                         mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", 0));
