@@ -8,6 +8,7 @@ public class Action extends BaseRecord implements ActionSchema {
 
     public int actionType;
     public int pegValue;
+    public int gameMode;
     public int actionValue;
     public int pegCount;
     public int id;
@@ -16,19 +17,25 @@ public class Action extends BaseRecord implements ActionSchema {
         this.pegValue = 0;
         this.actionValue = 0;
         this.actionType = 1;
+        this.gameMode = 0;
 
         this.id = 0;
     }
-    public Action(int actionType, int actionValue, int pegValue, int type, int pegCount) {
+    public Action(int gameMode, int actionType, int actionValue, int pegValue, int type, int pegCount) {
         this.actionValue = actionValue;
         this.actionType = actionType;
+        this.gameMode = gameMode;
         this.pegValue = pegValue;
         this.pegCount = pegCount;
         this.type = type;
+
     }
 
     public int getActionType() {
         return actionType;
+    }
+    public int getGameMode() {
+        return gameMode;
     }
     public int getPegValue() {
         return pegValue;
@@ -53,7 +60,7 @@ public class Action extends BaseRecord implements ActionSchema {
         }
     }
     public String toString() {
-        return "pegValue = " + pegValue + ", pegType = " + type + "pegCount = " + pegCount+ ", actionType = " +
+        return "pegValue = " + pegValue + ", pegType = " + type + ", pegCount = " + pegCount+ ", actionType = " +
                 actionType + ", actionValue = " + actionValue +
                 ", date = " + dateStored + ", id = " + id;
     }

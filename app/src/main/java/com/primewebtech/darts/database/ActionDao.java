@@ -31,6 +31,7 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
     public boolean addAction(Action action) {
         Log.d(TAG, "addAction:actionType:"+action.getActionType());
         Log.d(TAG, "addAction:actionValue:"+action.getActionValue());
+        Log.d(TAG, "addAction:gameMode:"+action.getGameMode());
         Log.d(TAG, "addAction:pegValue:"+action.getPegValue());
         Log.d(TAG, "addAction:pegCount:"+action.getPegCount());
 
@@ -47,18 +48,44 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ACTION_TYPE, action.getActionType());
         contentValues.put(ACTION_VALUE, action.getActionValue());
+        contentValues.put(GAME_MODE, action.getGameMode());
         contentValues.put(PEG_VALUE, action.getPegValue());
         contentValues.put(PEG_TYPE, action.getType());
         contentValues.put(PEG_COUNT, action.getPegCount());
         contentValues.put(DATE, getDateNow());
         return contentValues;
     }
+    public Action getAndDeleteLastHistoryAction(int gameMode) {
+        Log.d(TAG, "getAndDeleteLastestHistoryAction");
+        String ORDER_BY = ID+" DESC";
+        String LIMIT = "1";
+        Action action;
+        final String selection = GAME_MODE_WHERE;
+        final String selectionArgs[] = { String.valueOf(gameMode)};
+
+        cursor = super.query(getActionTableName(), ACTION_COLUMNS, selection,
+                selectionArgs, ORDER_BY, LIMIT);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                action = cursorToEntity(cursor);
+                Log.d(TAG, "getAndDeleteLastestHistoryAction:foundMatch:"+action.toString());
+                Log.d(TAG, "getAndDeleteLastestHistoryAction:deleting:id:"+action.id);
+                boolean done = deleteAction(action.id);
+                Log.d(TAG, "getAndDeleteLastestHistoryAction:delete:done:"+done);
+                cursor.close();
+                return action;
+            }
+        }
+        return null;
+    }
     public Action getAndDeleteLastHistoryAction() {
         Log.d(TAG, "getAndDeleteLastestHistoryAction");
         String ORDER_BY = ID+" DESC";
         String LIMIT = "1";
         Action action;
-        cursor = super.query(getActionTableName(), ACTION_COLUMNS, null,null,ORDER_BY, LIMIT);
+
+        cursor = super.query(getActionTableName(), ACTION_COLUMNS, null,
+                null, ORDER_BY, LIMIT);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 action = cursorToEntity(cursor);
@@ -82,6 +109,7 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
     protected Action cursorToEntity(Cursor cursor) {
         int actionTypeIndex;
         int actionValueIndex;
+        int actionGameModeIndex;
         int actionPegValueIndex;
         int actionPegTypeIndex;
         int actionPegCountIndex;
@@ -96,6 +124,10 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
             if (cursor.getColumnIndex(ACTION_VALUE) != -1) {
                 actionValueIndex = cursor.getColumnIndexOrThrow(ACTION_VALUE);
                 action.actionValue = cursor.getInt(actionValueIndex);
+            }
+            if (cursor.getColumnIndex(GAME_MODE) != -1) {
+                actionGameModeIndex = cursor.getColumnIndexOrThrow(GAME_MODE);
+                action.gameMode = cursor.getInt(actionGameModeIndex);
             }
             if (cursor.getColumnIndex(PEG_VALUE) != -1) {
                 actionPegValueIndex = cursor.getColumnIndexOrThrow(PEG_VALUE);

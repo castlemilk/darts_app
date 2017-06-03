@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.camera.CameraActivity;
 import com.primewebtech.darts.gallery.GalleryActivity;
+import com.primewebtech.darts.scoring.HundredDartActivity;
 import com.primewebtech.darts.scoring.OneDartActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
 import com.primewebtech.darts.scoring.ThreeDartActivity;
@@ -63,6 +64,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Intent oneDartIntent = new Intent(HomePageActivity.this, OneDartActivity.class);
         Intent twoDartIntent = new Intent(HomePageActivity.this, TwoDartActivity.class);
         Intent threeDartIntent = new Intent(HomePageActivity.this, ThreeDartActivity.class);
+        Intent hundredDartIntent = new Intent(HomePageActivity.this, HundredDartActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
 //        Intent galleryIntent;
 //        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
@@ -94,7 +96,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 // route to darts100 based scoring
                 Log.d(TAG, "darts100:selected");
                 scoringIntent.putExtra("SCORING_TYPE", R.id.darts100);
-                startActivity(scoringIntent);
+                startActivity(hundredDartIntent);
                 break;
             case R.id.stats_button:
                 // route to stats based scoring

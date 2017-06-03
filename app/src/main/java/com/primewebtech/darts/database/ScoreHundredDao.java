@@ -20,16 +20,17 @@ import java.util.Locale;
  * Created by benebsworth on 27/5/17.
  */
 
-public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema {
+public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSchema {
 
-    private static final String TAG = ScoreTwoDao.class.getSimpleName();
+    private static final String TAG = ScoreHundredDao.class.getSimpleName();
 
     private Cursor cursor;
+
     protected String getScoreTableName() {
-        return SCORE_TABLE_TWO;
+        return SCORE_TABLE_HUNDRED;
     }
 
-    public ScoreTwoDao(SQLiteDatabase database) {
+    public ScoreHundredDao(SQLiteDatabase database) {
         super(database);
     }
     public boolean updateTodayPegValue(PegRecord scoreRecord) throws IOException {
@@ -88,24 +89,22 @@ public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema 
         String selectorArgs[] = new String[]{String.valueOf(pegValue), getDateNow(), String.valueOf(type)};
 
         if (pegRecord != null) {
-            Log.d(TAG, "decreasingTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
+            Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
             contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
             contentValues.put(LAST_MODIFIED, getDateNow());
             return super.update(getScoreTableName(), contentValues,selector,
-                    selectorArgs) > 0;
+                   selectorArgs) > 0;
         } else {
             return false;
         }
     }
     public boolean rollbackScore(Action action) {
         if (action.actionType == ActionSchema.ADD) {
-            Log.d(TAG, "rollbackScore:actionType:ADD");
-            Log.d(TAG, "rollbackScore:actionType:DECREASING SCORE TO RESVERSE");
+            Log.d(TAG, "rollbackScore:DECREASING:"+action.toString());
             return decreaseTodayPegValue(action.pegValue, action.type, action.actionValue);
         } else {
-            Log.d(TAG, "rollbackScore:actionType:DEL");
-            Log.d(TAG, "rollbackScore:actionType:INCREASING SCORE TO RESVERSE");
+            Log.d(TAG, "rollbackScore:INCREASING:"+action.toString());
             return increaseTodayPegValue(action.pegValue, action.type, action.actionValue);
         }
 
@@ -119,11 +118,13 @@ public class ScoreTwoDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getTotalPegCount(int pegValue) {
         final String selectionArgs[] =  {String.valueOf(pegValue)};
-        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_TWO +
+        Log.d(TAG, "getTotalPegCount:pegValue:"+pegValue);
+        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_HUNDRED +
                 " WHERE " + PEG_VALUE_WHERE + ";", selectionArgs);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int total = cursor.getInt(0);
+                Log.d(TAG, "getTotalPegCount:total:"+total);
                 cursor.close();
                 return total;
             }

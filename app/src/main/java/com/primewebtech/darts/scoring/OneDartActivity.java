@@ -131,7 +131,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction();
+                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_ONE);
                 if (action != null) {
                     int currentIndex = mViewPager.getCurrentItem();
                     if (mPegs[currentIndex] == action.getPegValue()) {
@@ -143,7 +143,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                         mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
                         ScoreDatabase.mScoreOneDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());
-                        updateCountIndicators(mPegs[currentIndex]);
+                        updateCountIndicators(mPegs[getPegIndex(action.getPegValue())]);
                     }
 
                 }
@@ -196,7 +196,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
+                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {
@@ -214,7 +214,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
+                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {
@@ -231,7 +231,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  2)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+2));
-                    Action action = new Action(ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
+                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {
@@ -248,7 +248,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  3)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+3));
-                    Action action = new Action(ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
+                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {

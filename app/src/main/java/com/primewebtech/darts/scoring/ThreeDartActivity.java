@@ -135,7 +135,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction();
+                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_THREE);
                 if (action != null) {
                     int currentIndex = mViewPager.getCurrentItem();
                     if (mPinValues.get(currentIndex) == action.getPegValue()) {
@@ -201,7 +201,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         mPinValues.get(currentIndex), TYPE_3);
                 if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                    Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
@@ -218,7 +218,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         mPinValues.get(currentIndex), TYPE_3);
                 if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                    Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");

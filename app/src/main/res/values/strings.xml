@@ -43,6 +43,9 @@
     <string name="_3">3</string>
     <string name="_plus_ten">+10</string>
     <string name="_minus_ten">-10</string>
+    <string name="_180">180</string>
+    <string name="_140">140+</string>
+    <string name="_100plus">100+</string>
 
 
 </resources>

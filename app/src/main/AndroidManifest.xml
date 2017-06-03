@@ -48,6 +48,9 @@
         <activity android:name=".scoring.ThreeDartActivity"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
+        <activity android:name=".scoring.HundredDartActivity"
+            android:theme="@style/AppTheme.Black.NoActionBar">
+        </activity>
 
         <activity
             android:name=".camera.CameraActivity"
