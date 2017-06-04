@@ -426,6 +426,7 @@ public class CameraActivity extends AppCompatActivity {
         mScoreType.setEnabled(false);
         mScoreValue.setVisibility(View.GONE);
         mScoreValue.setEnabled(false);
+        mScoreNumber.setVisibility(View.GONE);
         mLogoText.setVisibility(View.GONE);
         mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
@@ -475,6 +476,7 @@ public class CameraActivity extends AppCompatActivity {
         mScoreType.setEnabled(false);
         mScoreValue.setVisibility(View.GONE);
         mScoreValue.setEnabled(false);
+        mScoreNumber.setVisibility(View.GONE);
         mLogoText.setVisibility(View.GONE);
         mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
