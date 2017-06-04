@@ -238,7 +238,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
 
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
+
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
         mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
         mPreviousImageThumbnail.setEnabled(false);
@@ -259,19 +259,24 @@ public class CameraActivity extends AppCompatActivity {
         mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
         mScoreTypeBackground.setVisibility(View.GONE);
 
-
-
-
-
-        mPreview = new CameraPreview(this, mCamera);
-        mCamera.startPreview();
-
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
         Camera.getCameraInfo(cameraId, mCameraInfo);
+        mPreview = new CameraPreview(this, mCamera);
+
+
+
         mCamera.setDisplayOrientation(90);
         mCamera.setParameters(mParameters);
         Log.d(TAG, "FOCUS_MODE:"+mCamera.getParameters().getFocusMode());
         determineDisplayOrientation();
         preview.addView(mPreview);
+//        mCamera.startPreview();
+//        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+//            @Override
+//            public void onAutoFocus(boolean b, Camera camera) {
+//
+//            }
+//        });
 
 
     }
@@ -546,6 +551,7 @@ public class CameraActivity extends AppCompatActivity {
 
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
+            mCamera.stopPreview();
 
 
 

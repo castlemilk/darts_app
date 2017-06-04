@@ -69,7 +69,7 @@
         android:gravity="center_vertical|center_horizontal"
         android:textColor="#fff"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="501dp"
+        android:layout_marginTop="445dp"
         app:layout_constraintRight_toLeftOf="@+id/camera_button"
         app:layout_constraintLeft_toRightOf="@+id/stats_button" />
 
@@ -77,8 +77,8 @@
         android:id="@+id/stats_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginLeft="47dp"
-        android:layout_marginTop="501dp"
+        android:layout_marginLeft="76dp"
+        android:layout_marginTop="445dp"
         android:background="@drawable/round_button"
         android:gravity="center_vertical|center_horizontal"
         android:src="@drawable/graph_icon"
@@ -91,7 +91,7 @@
         android:id="@+id/camera_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="501dp"
+        android:layout_marginTop="445dp"
         android:background="@drawable/round_button"
         android:gravity="center_vertical|center_horizontal"
         android:src="@drawable/camera_icon"
