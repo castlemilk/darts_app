@@ -443,7 +443,20 @@ public class CameraActivity extends AppCompatActivity {
         Camera.Size s = mParameters.getPictureSize();
         int width, height;
         int orientation = mDisplayOrientation;
-        Bitmap pin = drawableToBitmap(getResources().getDrawable(mScorePins[mViewPager.getCurrentItem()]));
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inScaled = false;
+//        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logotext, options);
+        Bitmap pin = null;
+//        (String)mScoreType.getSelectedItem()
+        Log.d(TAG, "ScoreType:"+mScoreType.getSelectedItem());
+        if ((mScoreType.getSelectedItem()).equals("Score")) {
+            Log.d(TAG, "mScoreTYpe:SCORE");
+            pin = drawableToBitmap(getResources().getDrawable(R.drawable.picture_score_image));
+        } else {
+            Log.d(TAG, "mScoreTYpe:PEG");
+            pin = drawableToBitmap(getResources().getDrawable(mScorePins[mViewPager.getCurrentItem()]));
+        }
+
         Bitmap logo = drawableToBitmap(getResources().getDrawable(R.drawable.logotext));
         boolean result = Util.checkPermission(CameraActivity.this);
         if ((orientation == 90)) {
@@ -551,6 +564,16 @@ public class CameraActivity extends AppCompatActivity {
 
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
+//            File photo=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "photo.jpg");
+//            try {
+//                FileOutputStream fos=new FileOutputStream(photo.getPath());
+//                fos.write(mJPEGdata[0]);
+//                fos.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
             mCamera.stopPreview();
 
 
@@ -596,7 +619,7 @@ public class CameraActivity extends AppCompatActivity {
         Canvas comboImage = new Canvas(combinedImg);
 
         comboImage.drawBitmap(picture, 0f, 0f, null);
-        comboImage.drawBitmap(Util.getResizedBitmap(icon, iconSizeInt, iconSizeInt), iconFloatLeft, iconFloatTop, null);
+        comboImage.drawBitmap(Util.BITMAP_RESIZER(icon, iconSizeInt, iconSizeInt), iconFloatLeft, iconFloatTop, null);
 
         return combinedImg;
     }

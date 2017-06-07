@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -128,7 +129,9 @@ public class Util {
 
     public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, int score) {
         final long t0 = System.currentTimeMillis();
+
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
+//        return pictureImg;
         Log.d(TAG, String.format("created bitmap in %dms", System.currentTimeMillis() - t0));
         final long t1 = System.currentTimeMillis();
         Matrix matrix = new Matrix();
@@ -145,12 +148,17 @@ public class Util {
 //        int pictureHeight = pictureImg.getHeight();
         Double pinSize = pictureWidth * 0.2;
         int pinSizeInt = pinSize.intValue();
-        Double logoSize = pictureWidth * 0.2;
+        Double logoWidth = pictureWidth * 0.5;
+        Double logoHeight = pictureHeight* 0.18;
+
         int logoSizeInt = pinSize.intValue();
-        float logoFloatRight = 50;
-        float logoFloatTop = pictureHeight - logoSizeInt - 50;
-        float pinFloatLeft = pictureWidth - pinSizeInt - 50;
-        float pinFloatTop = pictureHeight - pinSizeInt - 50;
+        int logoSizeIntWidth = logoWidth.intValue();
+
+        int logoSizeIntHeight = logoHeight.intValue();
+        float logoFloatRight = pictureWidth * 0.05f;
+        float logoFloatTop = pictureHeight - logoSizeIntHeight - 20;
+        float pinFloatLeft = pictureWidth - pinSizeInt - pictureWidth * 0.05f;
+        float pinFloatTop = pictureHeight - pinSizeInt - pictureHeight * 0.05f;
 
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));
@@ -163,22 +171,42 @@ public class Util {
         textPaint.setColor(Color.BLACK);
         int width = (int) textPaint.measureText(Integer.toString(score));
         StaticLayout staticLayout = new StaticLayout(Integer.toString(score),
-                textPaint, (int) width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+                textPaint, (int) width, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
 
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
 
         Canvas comboImage = new Canvas(combinedImg);
-
+//        comboImage.drawBitmap(pictureImg, 0f, 0f, null);
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
-        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeInt, logoSizeInt, false), logoFloatRight, logoFloatTop, null);
-        comboImage.drawBitmap(Bitmap.createScaledBitmap(pin, pinSizeInt, pinSizeInt, false), pinFloatLeft, pinFloatTop, null);
+        comboImage.drawBitmap(BITMAP_RESIZER(logo, logoSizeIntWidth, logoSizeIntHeight), logoFloatRight, logoFloatTop, null);
+//        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeIntWidth, logoSizeIntHeight, false), logoFloatRight, logoFloatTop, null);
+        comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
         comboImage.save();
-        comboImage.translate(pinFloatLeft+27,pinFloatTop + 35);
+        comboImage.translate(pinFloatLeft + 27, pinFloatTop + 35);
         staticLayout.draw(comboImage);
         comboImage.restore();
         Log.d(TAG, String.format("addSelectedIcon took %dms", System.currentTimeMillis() - t2));
 
         return combinedImg;
+    }
+
+    public static Bitmap BITMAP_RESIZER(Bitmap bitmap,int newWidth,int newHeight) {
+        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
+
+        float ratioX = newWidth / (float) bitmap.getWidth();
+        float ratioY = newHeight / (float) bitmap.getHeight();
+        float middleX = newWidth / 2.0f;
+        float middleY = newHeight / 2.0f;
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return scaledBitmap;
+
     }
 
 
@@ -234,24 +262,24 @@ public class Util {
 
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        final long t0 = System.currentTimeMillis();
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-//        bm.recycle();
-        Log.d(TAG, String.format("getResizedBitmap took %dms", System.currentTimeMillis() - t0));
-        return resizedBitmap;
-    }
+//    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+//        final long t0 = System.currentTimeMillis();
+//        int width = bm.getWidth();
+//        int height = bm.getHeight();
+//        float scaleWidth = ((float) newWidth) / width;
+//        float scaleHeight = ((float) newHeight) / height;
+//        // CREATE A MATRIX FOR THE MANIPULATION
+//        Matrix matrix = new Matrix();
+//        // RESIZE THE BIT MAP
+//        matrix.postScale(scaleWidth, scaleHeight);
+//
+//        // "RECREATE" THE NEW BITMAP
+//        Bitmap resizedBitmap = Bitmap.createBitmap(
+//                bm, 0, 0, width, height, matrix, false);
+////        bm.recycle();
+//        Log.d(TAG, String.format("getResizedBitmap took %dms", System.currentTimeMillis() - t0));
+//        return resizedBitmap;
+//    }
 
     /**
      * @param bitmap
@@ -259,18 +287,9 @@ public class Util {
      */
     public static byte[] BitMapToByteArray(Bitmap bitmap) {
 
-//        int width, height;
-//
-//        final long t0 = System.currentTimeMillis();
-//        int bytes = byteSizeOf(bitmap);
-//        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes);
-//        bitmap.copyPixelsToBuffer(byteBuffer);
-//        byte[] byteArray = byteBuffer.array();
-//        Log.d(TAG, String.format("BitMapToByteArray[buffer based] took %dms", System.currentTimeMillis() - t0));
-//        return byteArray;
         final long t0 = System.currentTimeMillis();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] b = baos.toByteArray();
         bitmap.recycle();
         Log.d(TAG, String.format("BitMapToByteArray took %dms", System.currentTimeMillis() - t0));
