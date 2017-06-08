@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -147,11 +148,12 @@ public class Util {
 //        int pictureWidth = pictureImg.getWidth();
 //        int pictureHeight = pictureImg.getHeight();
         Double pinSize = pictureWidth * 0.2;
+        int textSize = (int) (pictureHeight * 0.03f);
         int pinSizeInt = pinSize.intValue();
         Double logoWidth = pictureWidth * 0.5;
         Double logoHeight = pictureHeight* 0.18;
 
-        int logoSizeInt = pinSize.intValue();
+//        int logoSizeInt = pinSize.intValue();
         int logoSizeIntWidth = logoWidth.intValue();
 
         int logoSizeIntHeight = logoHeight.intValue();
@@ -163,15 +165,23 @@ public class Util {
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));
         Log.d("bytes:pictureHeight", Integer.toString(pictureHeight));
-        Log.d("bytes:logoSize", Integer.toString(logoSizeInt));
+        Log.d("bytes:logoSizeWidth", Integer.toString(logoSizeIntWidth));
+        Log.d("bytes:logoSizeHeight", Integer.toString(logoSizeIntHeight));
+        Log.d("bytes:pinSize", Integer.toString(pinSizeInt));
 
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(12 * 2);
+        textPaint.setTextSize(textSize);
         textPaint.setColor(Color.BLACK);
-        int width = (int) textPaint.measureText(Integer.toString(score));
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(String.valueOf(score), 0, String.valueOf(score).length(), bounds);
+        int textHeight  = bounds.height();
+        Log.d("bytes:textHeight", Integer.toString(textHeight));
+        Log.d("bytes:textSize", Integer.toString(textSize));
+        int textWidth = bounds.width();
+        int textPositionHeight = (int) (pinFloatTop + pinSizeInt / 2 - textSize/2);
         StaticLayout staticLayout = new StaticLayout(Integer.toString(score),
-                textPaint, (int) width, Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
+                textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
 
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
 
@@ -182,7 +192,8 @@ public class Util {
 //        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeIntWidth, logoSizeIntHeight, false), logoFloatRight, logoFloatTop, null);
         comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
         comboImage.save();
-        comboImage.translate(pinFloatLeft + 27, pinFloatTop + 35);
+//        comboImage.translate(pinFloatLeft + pinSizeInt / 3, pinFloatTop + pinSizeInt / 3);
+        comboImage.translate(pinFloatLeft, textPositionHeight);
         staticLayout.draw(comboImage);
         comboImage.restore();
         Log.d(TAG, String.format("addSelectedIcon took %dms", System.currentTimeMillis() - t2));
