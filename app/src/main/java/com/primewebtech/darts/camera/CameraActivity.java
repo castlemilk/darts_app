@@ -504,6 +504,7 @@ public class CameraActivity extends AppCompatActivity {
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
+            mCamera = null;
         }
 
     }
