@@ -38,22 +38,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".scoring.ScoringActivity" />
+        <activity android:name=".scoring.ScoringActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".scoring.OneDartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
         <activity android:name=".scoring.TwoDartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
         <activity android:name=".scoring.ThreeDartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
         <activity android:name=".scoring.HundredDartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
 
         <activity
             android:name=".camera.CameraActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,9 +72,10 @@
             <!--android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">-->
         <!--</activity>-->
         <activity
+            android:screenOrientation="portrait"
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
     </application>
 
 </manifest>

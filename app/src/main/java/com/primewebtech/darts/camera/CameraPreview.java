@@ -1,12 +1,14 @@
 package com.primewebtech.darts.camera;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by benebsworth on 1/5/17.
@@ -16,6 +18,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private static final String TAG = CameraPreview.class.getSimpleName();
     private SurfaceHolder mHolder;
     private Camera mCamera;
+    private boolean cameraConfigured;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);
@@ -27,7 +30,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        setFocus(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//        setFocus(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -41,12 +44,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
-    }
-
-    private void setFocus(String mParameter) {
-        Camera.Parameters mParameters = mCamera.getParameters();
-        mParameters.setFocusMode(mParameter);
-        mCamera.setParameters(mParameters);
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -77,7 +74,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // start preview with new settings
         try {
-            setFocus(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//            setFocus(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            initPreview(w, h);
             mCamera.setDisplayOrientation(90);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
@@ -88,6 +86,81 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
+
+    private void initPreview(int width, int height) {
+        if (mCamera != null && mHolder.getSurface() != null) {
+            try {
+                mCamera.setPreviewDisplay(mHolder);
+            }
+            catch (Throwable t) {
+                Log.e(TAG, ":Exception init)", t);
+            }
+
+            if (!cameraConfigured) {
+                Camera.Parameters parameters=mCamera.getParameters();
+                Camera.Size size=getBestPreviewSize(width, height, parameters);
+                Camera.Size pictureSize=getLargestPictureSize(parameters);
+
+                if (size != null && pictureSize != null) {
+                    parameters.setPreviewSize(size.width, size.height);
+                    parameters.setPictureSize(pictureSize.width,
+                            pictureSize.height);
+                    List<String> focusModes = parameters.getSupportedFocusModes();
+                    if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                        // Autofocus mode is supported
+                        Log.d(TAG, "SETTING_FOCUS_MODE");
+                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                    }
+                    parameters.setPictureFormat(ImageFormat.JPEG);
+                    mCamera.setParameters(parameters);
+                    cameraConfigured=true;
+                }
+            }
+        }
+    }
+
+    private Camera.Size getBestPreviewSize(int width, int height,
+                                           Camera.Parameters parameters) {
+        Camera.Size result=null;
+
+        for (Camera.Size size : parameters.getSupportedPreviewSizes()) {
+            if (size.width <= width && size.height <= height) {
+                if (result == null) {
+                    result=size;
+                }
+                else {
+                    int resultArea=result.width * result.height;
+                    int newArea=size.width * size.height;
+
+                    if (newArea > resultArea) {
+                        result=size;
+                    }
+                }
+            }
+        }
+
+        return(result);
+    }
+    private Camera.Size getLargestPictureSize(Camera.Parameters parameters) {
+        Camera.Size result=null;
+
+        for (Camera.Size size : parameters.getSupportedPictureSizes()) {
+            if (result == null) {
+                result=size;
+            }
+            else {
+                int resultArea=result.width * result.height;
+                int newArea=size.width * size.height;
+
+                if (newArea > resultArea) {
+                    result=size;
+                }
+            }
+        }
+
+        return(result);
+    }
+
 
 
 }

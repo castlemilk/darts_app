@@ -158,7 +158,7 @@ public class Util {
 
         int logoSizeIntHeight = logoHeight.intValue();
         float logoFloatRight = pictureWidth * 0.05f;
-        float logoFloatTop = pictureHeight - logoSizeIntHeight - 20;
+        float logoFloatTop = pictureHeight - logoSizeIntHeight - pictureHeight * 0.05f;
         float pinFloatLeft = pictureWidth - pinSizeInt - pictureWidth * 0.05f;
         float pinFloatTop = pictureHeight - pinSizeInt - pictureHeight * 0.05f;
 
@@ -168,6 +168,8 @@ public class Util {
         Log.d("bytes:logoSizeWidth", Integer.toString(logoSizeIntWidth));
         Log.d("bytes:logoSizeHeight", Integer.toString(logoSizeIntHeight));
         Log.d("bytes:pinSize", Integer.toString(pinSizeInt));
+        Log.d(TAG, ":logo:Height:"+logo.getHeight());
+        Log.d(TAG, ":logo:Width:"+logo.getWidth());
 
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
@@ -184,13 +186,14 @@ public class Util {
                 textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
 
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
-
         Canvas comboImage = new Canvas(combinedImg);
 //        comboImage.drawBitmap(pictureImg, 0f, 0f, null);
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
-        comboImage.drawBitmap(BITMAP_RESIZER(logo, logoSizeIntWidth, logoSizeIntHeight), logoFloatRight, logoFloatTop, null);
-//        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeIntWidth, logoSizeIntHeight, false), logoFloatRight, logoFloatTop, null);
-        comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
+//        comboImage.drawBitmap(BITMAP_RESIZER(logo, logoSizeIntWidth, logoSizeIntHeight), logoFloatRight, logoFloatTop, null);
+//        comboImage.drawBitmap(logo, logoFloatRight, logoFloatTop, null);
+        comboImage.drawBitmap(Bitmap.createScaledBitmap(logo, logoSizeIntWidth, logoSizeIntHeight, true), logoFloatRight, logoFloatTop, null);
+//        comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
+        comboImage.drawBitmap(pin, pinFloatLeft, pinFloatTop, null);
         comboImage.save();
 //        comboImage.translate(pinFloatLeft + pinSizeInt / 3, pinFloatTop + pinSizeInt / 3);
         comboImage.translate(pinFloatLeft, textPositionHeight);
@@ -400,4 +403,6 @@ public class Util {
 
         return null;
     }
+
+
 }

@@ -4,8 +4,8 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,7 +40,6 @@ import com.primewebtech.darts.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +166,7 @@ public class CameraActivity extends AppCompatActivity {
 
         }
         setContentView(R.layout.activity_camera);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (!getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
@@ -194,6 +194,7 @@ public class CameraActivity extends AppCompatActivity {
 
             }
         }
+
         mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
         mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
         mScoreNumber = (TextView) findViewById(R.id.score_number);
@@ -209,34 +210,8 @@ public class CameraActivity extends AppCompatActivity {
         if (mCamera != null) {
             mParameters = mCamera.getParameters();
         }
-
-        List<String> focusModes = mParameters.getSupportedFocusModes();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            // Autofocus mode is supported
-            Log.d(TAG, "SETTING_FOCUS_MODE");
-            mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        }
         Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
-        // Create an instance of Camera
-        Log.d(TAG, "onCreate:starting");
-        // do we have a camera?
 
-
-        if (Integer.parseInt(Build.VERSION.SDK) >= 8)
-            setDisplayOrientation(mCamera, 90);
-        else
-        {
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-            {
-                mParameters.set("orientation", "portrait");
-                mParameters.set("rotation", 90);
-            }
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            {
-                mParameters.set("orientation", "landscape");
-                mParameters.set("rotation", 90);
-            }
-        }
 
 
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
@@ -267,16 +242,8 @@ public class CameraActivity extends AppCompatActivity {
 
         mCamera.setDisplayOrientation(90);
         mCamera.setParameters(mParameters);
-        Log.d(TAG, "FOCUS_MODE:"+mCamera.getParameters().getFocusMode());
         determineDisplayOrientation();
         preview.addView(mPreview);
-//        mCamera.startPreview();
-//        mCamera.autoFocus(new Camera.AutoFocusCallback() {
-//            @Override
-//            public void onAutoFocus(boolean b, Camera camera) {
-//
-//            }
-//        });
 
 
     }
@@ -528,18 +495,18 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        stopCamera();
-//    }
-//    private void stopCamera() {
-//        if (mCamera != null) {
-//            mCamera.stopPreview();
-//            mCamera.release();
-//        }
-//
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopCamera();
+    }
+    private void stopCamera() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.release();
+        }
+
+    }
 
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -651,12 +618,12 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    private void releaseCamera(){
-        if (mCamera != null){
-            mCamera.release();        // release the camera for other applications
-            mCamera = null;
-        }
-    }
+//    private void releaseCamera(){
+//        if (mCamera != null){
+//            mCamera.release();        // release the camera for other applications
+//            mCamera = null;
+//        }
+//    }
 
     /**
      * Manage Spinners
@@ -911,18 +878,7 @@ public class CameraActivity extends AppCompatActivity {
         mCamera.setDisplayOrientation(displayOrientation);
     }
 
-    protected void setDisplayOrientation(Camera camera, int angle){
-        Method downPolymorphic;
-        try
-        {
-            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
-            if (downPolymorphic != null)
-                downPolymorphic.invoke(camera, new Object[] { angle });
-        }
-        catch (Exception e1)
-        {
-        }
-    }
+
 
     public static Camera getCameraInstance(){
 
