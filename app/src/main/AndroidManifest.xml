@@ -52,6 +52,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
         </activity>
+        <activity android:name=".statistics.StatsOneActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Black.NoActionBar">
+        </activity>
         <activity android:name=".scoring.HundredDartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">

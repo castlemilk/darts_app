@@ -46,6 +46,12 @@
     <string name="_180">180</string>
     <string name="_140">140+</string>
     <string name="_100plus">100+</string>
+    <string name="_2_stats">2</string>
+    <string name="_24_stats">24</string>
+    <string name="_32_stats">32</string>
+    <string name="_36_stats">36</string>
+    <string name="_40_stats">40</string>
+    <string name="_stats_d">D</string>
 
 
 </resources>

@@ -22,6 +22,7 @@ import com.primewebtech.darts.scoring.OneDartActivity;
 import com.primewebtech.darts.scoring.ScoringActivity;
 import com.primewebtech.darts.scoring.ThreeDartActivity;
 import com.primewebtech.darts.scoring.TwoDartActivity;
+import com.primewebtech.darts.statistics.StatsOneActivity;
 
 import java.io.File;
 
@@ -66,6 +67,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Intent threeDartIntent = new Intent(HomePageActivity.this, ThreeDartActivity.class);
         Intent hundredDartIntent = new Intent(HomePageActivity.this, HundredDartActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
+        Intent statsOneIntent = new Intent(HomePageActivity.this, StatsOneActivity.class);
 //        Intent galleryIntent;
 //        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
@@ -101,6 +103,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             case R.id.stats_button:
                 // route to stats based scoring
                 Log.d(TAG, "stats:selected");
+                startActivity(statsOneIntent);
                 break;
             case R.id.gallery_button:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

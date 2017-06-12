@@ -25,6 +25,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     public static ScoreThreeDao mScoreThreeDoa;
     public static ScoreHundredDao mScoreHundredDoa;
     public static ActionDao mActionDoa;
+    public static StatsOneDao mStatsOneDoa;
 
 
     public ScoreDatabase open() throws SQLException {
@@ -36,6 +37,9 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
         mScoreThreeDoa = new ScoreThreeDao(mDatabase);
         mScoreHundredDoa = new ScoreHundredDao(mDatabase);
         mActionDoa = new ActionDao(mDatabase);
+        mStatsOneDoa = new StatsOneDao(mDatabase);
+
+
         Log.d(TAG, "completed initialisation");
         return this;
     }

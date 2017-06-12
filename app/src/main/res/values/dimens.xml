@@ -41,4 +41,6 @@
     <dimen name="text_size_large_one_dart">50sp</dimen>
     <dimen name="score_circle_button_width">80dp</dimen>
     <dimen name="score_circle_button_height">80dp</dimen>
+    <dimen name="stats_headers">60dp</dimen>
+    <dimen name="stats_values">45dp</dimen>
 </resources>
