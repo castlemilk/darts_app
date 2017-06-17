@@ -1,9 +1,11 @@
-package com.primewebtech.darts.statistics;
+package com.primewebtech.darts.statistics.Fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.primewebtech.darts.R;
@@ -13,15 +15,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- * Created by benebsworth on 4/6/17.
+ * Created by benebsworth on 17/6/17.
  */
 
-public class StatsOneActivity extends AppCompatActivity {
-    /**
-     * Shows the statistics for the one dart activity scoring mode. With the maximum value obtained
-     * over the periods of Day, Week and Month.
-     */
-    private static final String TAG = StatsOneActivity.class.getSimpleName();
+public class StatsOneFragment extends Fragment {
+
+    private static final String TAG = StatsOneFragment.class.getSimpleName();
     public int[] mStatsRow40 = {
             R.id.row_40_d,
             R.id.row_40_w,
@@ -109,11 +108,27 @@ public class StatsOneActivity extends AppCompatActivity {
             50,
             2
     };
+    private String type;
+
+    public static StatsOneFragment newInstance() {
+        StatsOneFragment statsOneFragment = new StatsOneFragment();
+        Bundle args = new Bundle();
+        args.putString("type", "one");
+        statsOneFragment.setArguments(args);
+        return statsOneFragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats_one);
+        type = getArguments().getString("type");
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_stats_one, container, false);
+
         mStatsRows = new ArrayList<>();
         mStatsRows.add(mStatsRow40);
         mStatsRows.add(mStatsRow32);
@@ -121,31 +136,42 @@ public class StatsOneActivity extends AppCompatActivity {
         mStatsRows.add(mStatsRow36);
         mStatsRows.add(mStatsRow50);
         mStatsRows.add(mStatsRow2);
-//        TextView statsScoreDay = (TextView) findViewById(R.id.row_40_d);
-//        statsScoreDay.setText(
-//                String.format(Locale.getDefault(),"%d",
-//                        ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(40)));
+
         int index = 0;
         for ( int[] statRow : mStatsRows) {
 
 
-            TextView statsScoreDay = (TextView) findViewById(statRow[0]);
-            statsScoreDay.setText(String.format(Locale.getDefault(),"%d",
-                    ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index])));
+            TextView statsScoreDay = (TextView) rootView.findViewById(statRow[0]);
+            TextView statsScoreWeek = (TextView) rootView.findViewById(statRow[1]);
+            TextView statsScoreMonth = (TextView) rootView.findViewById(statRow[2]);
+            int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
+            int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
+            int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);
+            if (dailyScore > 1000) {
+
+                statsScoreDay.setTextSize(12);
+
+            }
+            if (weeklyScore > 1000) {
+                statsScoreWeek.setTextSize(12);
+
+            }
+            if (monthlyScore > 1000) {
+                statsScoreMonth.setTextSize(12);
+            }
+            //Set Day element:
+            statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
+            statsScoreDay.setTextColor(Color.BLACK);
             statsScoreDay.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            statsScoreDay.setTextColor(Color.BLACK);
-
-            TextView statsScoreWeek = (TextView) findViewById(statRow[1]);
+            //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
-                    ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index])));
+                    weeklyScore));
             statsScoreWeek.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
             statsScoreWeek.setTextColor(Color.BLACK);
-
-            TextView statsScoreMonth = (TextView) findViewById(statRow[2]);
-            statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",
-                    ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index])));
+            //Set Month element:
+            statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore ));
             statsScoreMonth.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
             statsScoreMonth.setTextColor(Color.BLACK);
@@ -153,15 +179,6 @@ public class StatsOneActivity extends AppCompatActivity {
             index++;
         }
 
-        Log.d(TAG, "todayPegValue:"+ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(40));
-        Log.d(TAG, "weekPegValue:"+ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(40));
-        Log.d(TAG, "monthPegValue:"+ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(40));
-
-
+        return rootView;
     }
-
-
-
-
-
 }

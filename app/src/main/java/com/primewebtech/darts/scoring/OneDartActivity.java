@@ -329,7 +329,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         int total = ScoreDatabase.mScoreOneDoa.getTotalPegCount(pegValue);
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
-        if (total > 0) {
+        if (total > 0 && total < 1100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / (total + 1) );
@@ -337,7 +337,14 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 if (rem.intValue() == 0) {
                     ImageView indicator = (ImageView) findViewById(circleIndicator);
                     indicator.setVisibility(View.VISIBLE);
-                } else {
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        indicator.setBackgroundDrawable( getResources().getDrawable(R.drawable.pin_count_indicator_white));
+                    } else {
+                        indicator.setBackground( getResources().getDrawable(R.drawable.pin_count_indicator_white));
+                    }
+                }
+                else {
                     ImageView indicator = (ImageView) findViewById(circleIndicator);
                     indicator.setVisibility(View.GONE);
                 }
@@ -346,7 +353,68 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 index++;
 
             }
-        } else {
+        } else if (total > 1100 && total < 2100) {
+            for (int circleIndicator : indicatorResources) {
+
+                Double rem = Math.floor((index + 1) * 100 / ((total - 1000) + 1) );
+                Log.d(TAG, "updateCountIndicators:remainder" + rem);
+                if (rem.intValue() == 0) {
+                    ImageView indicator = (ImageView) findViewById(circleIndicator);
+                    indicator.setVisibility(View.VISIBLE);
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        indicator.setBackgroundDrawable( getResources().getDrawable(R.drawable.pin_count_indicator_green));
+                    } else {
+                        indicator.setBackground( getResources().getDrawable(R.drawable.pin_count_indicator_green));
+                    }
+                } else {
+                    ImageView indicator = (ImageView) findViewById(circleIndicator);
+                    indicator.setVisibility(View.VISIBLE);
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        indicator.setBackgroundDrawable( getResources().getDrawable(R.drawable.pin_count_indicator_white));
+                    } else {
+                        indicator.setBackground( getResources().getDrawable(R.drawable.pin_count_indicator_white));
+                    }
+                }
+
+
+                index++;
+
+            }
+
+        } else if (total > 2100 ) {
+            for (int circleIndicator : indicatorResources) {
+
+                Double rem = Math.floor((index + 1) * 100 / ((total - 2000) + 1) );
+                Log.d(TAG, "updateCountIndicators:remainder" + rem);
+                if (rem.intValue() == 0) {
+                    ImageView indicator = (ImageView) findViewById(circleIndicator);
+                    indicator.setVisibility(View.VISIBLE);
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        indicator.setBackgroundDrawable( getResources().getDrawable(R.drawable.pin_count_indicator_red));
+                    } else {
+                        indicator.setBackground( getResources().getDrawable(R.drawable.pin_count_indicator_red));
+                    }
+                } else {
+                    ImageView indicator = (ImageView) findViewById(circleIndicator);
+                    indicator.setVisibility(View.VISIBLE);
+                    final int sdk = android.os.Build.VERSION.SDK_INT;
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        indicator.setBackgroundDrawable( getResources().getDrawable(R.drawable.pin_count_indicator_green));
+                    } else {
+                        indicator.setBackground( getResources().getDrawable(R.drawable.pin_count_indicator_green));
+                    }
+                }
+
+
+                index++;
+
+            }
+
+        }
+        else {
             initialiseCountIndicators();
         }
 
