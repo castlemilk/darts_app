@@ -25,6 +25,7 @@ import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
+import com.primewebtech.darts.statistics.StatsActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -64,6 +65,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private Button mCountButton;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
+    private ImageButton mStatsButton;
+
     private OneDartActivity.ScorePagerAdapter mScoringAdapter;
     public MainApplication app;
     private String curTime;
@@ -103,9 +106,25 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         initialiseCountButtons();
         initialiseMenuButton();
         initialiseBackButton();
+        initialiseStatsButton();
         updateCountIndicators(100);
     }
 
+    public void initialiseStatsButton() {
+        mStatsButton = (ImageButton) findViewById(R.id.stats_button);
+        mStatsButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent statsIntent = new Intent(HundredDartActivity.this, StatsActivity.class);
+                Bundle b = new Bundle();
+                b.putString("scoreType", "hundred");
+                statsIntent.putExtras(b);
+                startActivity(statsIntent);
+                finish();
+            }
+        });
+    }
     public void initialiseMenuButton() {
         mMenuButton = (ImageButton) findViewById(R.id.button_menu);
         mMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -299,7 +318,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
      */
     public void updateCountIndicators(int pegValue) {
         Log.d(TAG, "updateCountIndicators:pegValue:"+pegValue);
-        int total = ScoreDatabase.mScoreOneDoa.getTotalPegCount(pegValue);
+        int total = ScoreDatabase.mScoreHundredDoa.getTotalPegCount(pegValue);
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
         if (total > 0 && total < 1100) {

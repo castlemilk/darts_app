@@ -25,6 +25,7 @@ import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
+import com.primewebtech.darts.statistics.StatsActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -58,6 +59,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private Button mCountButton;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
+    private ImageButton mStatsButton;
     private ScorePagerAdapter mScoringAdapter;
     public MainApplication app;
     private String curTime;
@@ -99,9 +101,25 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         initialiseBackButton();
         initialiseCountButtons();
         initialiseMenuButton();
+        initialiseStatsButton();
         updateCountIndicators(40); //always start on pegValue 40.
 
 
+    }
+    public void initialiseStatsButton() {
+        mStatsButton = (ImageButton) findViewById(R.id.stats_button);
+        mStatsButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent statsIntent = new Intent(OneDartActivity.this, StatsActivity.class);
+                Bundle b = new Bundle();
+                b.putString("scoreType", "one");
+                statsIntent.putExtras(b);
+                startActivity(statsIntent);
+                finish();
+            }
+        });
     }
     public void initialiseMenuButton() {
         mMenuButton = (ImageButton) findViewById(R.id.button_menu);

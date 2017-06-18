@@ -58,7 +58,7 @@ public class Util {
                 context.getString(R.string.image_file_name_format));
     }
 
-    public static String createJpegName(long dateTaken, int score) {
+    public static String createJpegName(long dateTaken, String score) {
         synchronized (sImageFileNamer) {
             return sImageFileNamer.generateName(dateTaken, score);
         }
@@ -128,7 +128,7 @@ public class Util {
         }
     }
 
-    public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, int score) {
+    public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, String score) {
         final long t0 = System.currentTimeMillis();
 
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
@@ -174,30 +174,35 @@ public class Util {
         Log.d("bytes:pinSize", Integer.toString(pinSizeInt));
         Log.d(TAG, ":logo:Height:"+logo.getHeight());
         Log.d(TAG, ":logo:Width:"+logo.getWidth());
-
-        TextPaint textPaint = new TextPaint();
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(textSize);
-        textPaint.setColor(Color.BLACK);
-        Rect bounds = new Rect();
-        textPaint.getTextBounds(String.valueOf(score), 0, String.valueOf(score).length(), bounds);
-        int textHeight  = bounds.height();
-        Log.d("bytes:textHeight", Integer.toString(textHeight));
-        Log.d("bytes:textSize", Integer.toString(textSize));
-        int textWidth = bounds.width();
-        int textPositionHeight = (int) (pinFloatTop + pinSizeInt / 2 - textSize/2);
-        StaticLayout staticLayout = new StaticLayout(Integer.toString(score),
-                textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
-
         combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
         Canvas comboImage = new Canvas(combinedImg);
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
         comboImage.drawBitmap(BITMAP_RESIZER(logo, logoSizeIntWidth, logoSizeIntHeight), logoFloatRight, logoFloatTop, null);
         comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
-        comboImage.save();
-        comboImage.translate(pinFloatLeft, textPositionHeight);
-        staticLayout.draw(comboImage);
-        comboImage.restore();
+
+        if (score != "RH") {
+            comboImage.save();
+            TextPaint textPaint = new TextPaint();
+            textPaint.setAntiAlias(true);
+            textPaint.setTextSize(textSize);
+            textPaint.setColor(Color.BLACK);
+            Rect bounds = new Rect();
+            textPaint.getTextBounds(String.valueOf(score), 0, String.valueOf(score).length(), bounds);
+            int textHeight  = bounds.height();
+            Log.d("bytes:textHeight", Integer.toString(textHeight));
+            Log.d("bytes:textSize", Integer.toString(textSize));
+            int textWidth = bounds.width();
+            int textPositionHeight = (int) (pinFloatTop + pinSizeInt / 2 - textSize/2);
+            StaticLayout staticLayout = new StaticLayout(String.valueOf(score),
+                    textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
+            comboImage.translate(pinFloatLeft, textPositionHeight);
+            staticLayout.draw(comboImage);
+            comboImage.restore();
+        }
+
+
+
+
         Log.d(TAG, String.format("addSelectedIcon took %dms", System.currentTimeMillis() - t2));
 
         return combinedImg;
@@ -234,7 +239,7 @@ public class Util {
             mFormat = new SimpleDateFormat(format);
         }
 
-        public String generateName(long dateTaken, int score) {
+        public String generateName(long dateTaken, String score) {
             Date date = new Date(dateTaken);
             String result = mFormat.format(date);
             // If the last name was generated for the same second,
@@ -246,7 +251,7 @@ public class Util {
                 mLastDate = dateTaken;
                 mSameSecondCount = 0;
             }
-            return result+Integer.toString(score);
+            return result+score;
         }
     }
 

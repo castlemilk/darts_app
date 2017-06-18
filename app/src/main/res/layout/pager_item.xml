@@ -10,7 +10,7 @@
         android:id="@+id/imageView"
         android:layout_gravity="center_horizontal|center_vertical" />
     <TextView
-        android:id="@+id/score_number"
+        android:id="@+id/pager_score_number"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

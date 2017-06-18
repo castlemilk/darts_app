@@ -35,7 +35,7 @@ public class MediaSaver extends Thread {
         return (mQueue.size() >= SAVE_QUEUE_LIMIT);
     }
     // Runs in main thread
-    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, int score, String title, long date, Location loc,
+    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, String score, String title, long date, Location loc,
                          int width, int height, int orientation, OnMediaSavedListener l) {
         SaveRequest r = new SaveRequest();
         r.data = data;
@@ -126,7 +126,7 @@ public class MediaSaver extends Thread {
         long date;
         Bitmap logo;
         Bitmap pin;
-        int score;
+        String score;
         Location loc;
         int width, height;
         int orientation;

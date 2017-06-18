@@ -66,6 +66,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         Intent twoDartIntent = new Intent(HomePageActivity.this, TwoDartActivity.class);
         Intent threeDartIntent = new Intent(HomePageActivity.this, ThreeDartActivity.class);
         Intent hundredDartIntent = new Intent(HomePageActivity.this, HundredDartActivity.class);
+//        Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
 //        Intent statsOneIntent = new Intent(HomePageActivity.this, StatsOneActivity.class);
         Intent statsOneIntent = new Intent(HomePageActivity.this, StatsActivity.class);

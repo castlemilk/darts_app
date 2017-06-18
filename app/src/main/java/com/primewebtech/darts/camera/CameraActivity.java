@@ -27,21 +27,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aigestudio.wheelpicker.WheelPicker;
 import com.primewebtech.darts.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
@@ -61,15 +61,16 @@ public class CameraActivity extends AppCompatActivity {
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
     private ImageButton mTakePhotoButton;
-    private CustomPagerAdapter mCustomPagerAdapter;
+    private CustomPagerAdapter mCustomPagerAdapterPegs;
+    private CustomPagerAdapter mCustomPagerAdapterScores;
     private Camera.Parameters mParameters;
     static final String LATEST_PICTRUE = "LATEST_PICTURE";
     private int mDisplayOrientation;
     private int mLayoutOrientation;
     private ViewPager mViewPager;
     private Bitmap mThumbNail;
-    private Spinner mScoreType;
-    private Spinner mScoreValue;
+    private WheelPicker mScoreType;
+    private WheelPicker mScoreValue;
     private Uri mRecentlySavedImageURI;
     private byte[] mJPEGdata;
     private Location mLocation;
@@ -86,7 +87,7 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView mLogoText;
     private ImageView mScoreTypeBackground;
     private TextView mScoreNumber;
-    public int mScoreNumberValue;
+    public Object mScoreNumberValue;
 
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
@@ -119,35 +120,31 @@ public class CameraActivity extends AppCompatActivity {
     };
 
 
-    private int[] mResources = {
-            R.drawable.first,
-            R.drawable.second,
-            R.drawable.third,
-            R.drawable.fourth,
-            R.drawable.fifth,
-            R.drawable.sixth
-    };
     private String[] spinnerTypes = {
             "Peg",
             "Score",
     };
-    private int[] mScorePins = {
-            R.drawable.pin_40s,
-            R.drawable.pin_60s,
-            R.drawable.pin_70s,
-            R.drawable.pin_80s,
-            R.drawable.pin_90s,
-            R.drawable.pin_100s,
-            R.drawable.pin_110sf,
-            R.drawable.pin_120s,
-            R.drawable.pin_130sf,
-            R.drawable.pin_140sf,
-            R.drawable.pin_150s,
-            R.drawable.pin_160sf,
-            R.drawable.pin_170s,
+    private int[] mPegResources = {
+            R.drawable.score_board_s,
+            R.drawable.pin_60ns,
+            R.drawable.pin_70ns,
+            R.drawable.pin_80ns,
+            R.drawable.pin_90ns,
+            R.drawable.pin_100ns,
+            R.drawable.pin_100ns,
+            R.drawable.pin_120ns,
+            R.drawable.pin_130ns,
+            R.drawable.pin_140ns,
+            R.drawable.pin_150ns,
+            R.drawable.pin_160ns,
+            R.drawable.pin_170ns,
     };
     private int[] mScoreResources = {
-            R.drawable.picture_score_image,
+            R.drawable.green_hat,
+//            R.drawable.score_board_p,
+            R.drawable.score_board_s,
+            R.drawable.score_board_r,
+
     };
 
 
@@ -177,7 +174,7 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(this, "No front facing camera found.",
                         Toast.LENGTH_LONG).show();
             } else {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // request permission
                     int hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
                     if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
@@ -194,13 +191,27 @@ public class CameraActivity extends AppCompatActivity {
 
             }
         }
-
-        mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
-        mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
+        mScoreType = (WheelPicker) findViewById(R.id.score_type);
+        mScoreValue = (WheelPicker) findViewById(R.id.score_value);
         mScoreNumber = (TextView) findViewById(R.id.score_number);
+        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+
+        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
+        mCustomPagerAdapterScores = new CustomPagerAdapter(this, mScoreResources);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+//        if (mCustomPagerAdapter != null) {
+//            mViewPager.setAdapter(mCustomPagerAdapter);
+//        } else {
+//            mViewPager.setAdapter(new CustomPagerAdapter(this, mPegResources));
+//        }
+
+        initTypeSpinners();
+        initScoreSpinner("Peg");
+        mViewPager.setCurrentItem(0);
+        mViewPager.setVisibility(View.GONE);
         mScoreValue.setVisibility(View.GONE);
         mScoreType.setVisibility(View.GONE);
-        initTypeSpinners();
+        mScoreTypeBackground.setVisibility(View.GONE);
         Util.initialize(this);
         mContentResolver = this.getContentResolver();
         mNamedImages = new NamedImages();
@@ -222,7 +233,7 @@ public class CameraActivity extends AppCompatActivity {
             mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
                     THUMBSIZE, THUMBSIZE));
         }
-        mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
+        mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
         mBackButton = (ImageButton) findViewById(R.id.button_back);
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
@@ -231,8 +242,7 @@ public class CameraActivity extends AppCompatActivity {
         mLogoText = (ImageView) findViewById(R.id.logo_text);
         mLogoText.setVisibility(View.GONE);
 
-        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
-        mScoreTypeBackground.setVisibility(View.GONE);
+
 
         preview = (FrameLayout) findViewById(R.id.camera_preview);
         Camera.getCameraInfo(cameraId, mCameraInfo);
@@ -244,6 +254,7 @@ public class CameraActivity extends AppCompatActivity {
         mCamera.setParameters(mParameters);
         determineDisplayOrientation();
         preview.addView(mPreview);
+
 
 
     }
@@ -284,7 +295,7 @@ public class CameraActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
                 return false;
             } else {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // request permission
                     int hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
                     if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
@@ -317,48 +328,43 @@ public class CameraActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "onResume");
             if (mCamera == null) {
+                Log.d(TAG, "onResume:mCamera:null");
                 setContentView(R.layout.activity_camera);
                 mCamera = openBackFacingCamera();
                 mPreview = new CameraPreview(this, mCamera);
                 FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
                 preview.addView(mPreview);
-                mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
-                mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
-                mSaveImageButton = (ImageButton) findViewById(R.id.button_save_image);
-                mBackButton = (ImageButton) findViewById(R.id.button_back);
-                mViewPager = (ViewPager) findViewById(R.id.pager);
-                mLogoText = (ImageView) findViewById(R.id.logo_text);
-                mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
-                mScoreType = (Spinner) findViewById(R.id.camera_score_type_spinner);
-                mScoreValue = (Spinner) findViewById(R.id.camera_score_spinner);
-                mScoreNumber = (TextView) findViewById(R.id.score_number);
-                mScoreValue.setVisibility(View.GONE);
-                mScoreType.setVisibility(View.GONE);
-                initTypeSpinners();
-                mLogoText.setVisibility(View.GONE);
-                if (mCustomPagerAdapter != null) {
-                    mViewPager.setAdapter(mCustomPagerAdapter);
-                } else {
-                    mViewPager.setAdapter(new CustomPagerAdapter(this, mScorePins));
-                }
+            }
+            mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
+            mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+            mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
+            mBackButton = (ImageButton) findViewById(R.id.button_back);
+            mViewPager = (ViewPager) findViewById(R.id.pager);
+            mLogoText = (ImageView) findViewById(R.id.logo_text);
+            mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+            mScoreType = (WheelPicker) findViewById(R.id.score_type);
+            mScoreValue = (WheelPicker) findViewById(R.id.score_value);
+            mScoreNumber = (TextView) findViewById(R.id.score_number);
+            mScoreValue.setVisibility(View.GONE);
+            mScoreType.setVisibility(View.GONE);
+            mScoreTypeBackground.setVisibility(View.GONE);
+            mLogoText.setVisibility(View.GONE);
+            initTypeSpinners();
+            initScoreSpinner("Peg");
+            mViewPager.setVisibility(View.GONE);
+            mSaveImageButton.setVisibility(View.GONE);
+            mBackButton.setVisibility(View.GONE);
+            mTakePhotoButton.setVisibility(View.VISIBLE);
+            mScoreNumber.setVisibility(View.GONE);
 
-                mViewPager.setVisibility(View.GONE);
-                mSaveImageButton.setVisibility(View.GONE);
-                mBackButton.setVisibility(View.GONE);
-                mTakePhotoButton.setVisibility(View.VISIBLE);
-                mScoreTypeBackground.setVisibility(View.GONE);
-                mScoreNumber.setVisibility(View.GONE);
-
-                if (mRecentlySavedImageFilePath != null) {
-                    mPreviousImageThumbnail.setVisibility(View.VISIBLE);
-                    mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
-                            THUMBSIZE, THUMBSIZE));
-                }
-
+            if (mRecentlySavedImageFilePath != null) {
+                mPreviousImageThumbnail.setVisibility(View.VISIBLE);
+                mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
+                        THUMBSIZE, THUMBSIZE));
             }
 
         } catch (Exception e) {
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.e(TAG, "Error starting camera preview: " + e.getMessage());
         }
 
     }
@@ -404,7 +410,7 @@ public class CameraActivity extends AppCompatActivity {
         mPreviousImageThumbnail.setEnabled(true);
         mPreviousImageThumbnail.setVisibility(View.VISIBLE);
 
-        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue);
+        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue.toString());
         String title = mNamedImages.getTitle();
         long date = mNamedImages.getDate();
         Camera.Size s = mParameters.getPictureSize();
@@ -415,13 +421,15 @@ public class CameraActivity extends AppCompatActivity {
 //        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logotext, options);
         Bitmap pin = null;
 //        (String)mScoreType.getSelectedItem()
-        Log.d(TAG, "ScoreType:"+mScoreType.getSelectedItem());
-        if ((mScoreType.getSelectedItem()).equals("Score")) {
+        String scoreType = spinnerTypes[mScoreType.getCurrentItemPosition()];
+        Log.d(TAG, "ScoreType:"+scoreType);
+        Log.d(TAG, "ScoreValue:"+mScoreNumberValue);
+        if ((scoreType.equals("Score"))) {
             Log.d(TAG, "mScoreTYpe:SCORE");
-            pin = drawableToBitmap(getResources().getDrawable(R.drawable.picture_score_image));
+            pin = drawableToBitmap(getResources().getDrawable(updateScoreDisplay(mScoreNumberValue)));
         } else {
             Log.d(TAG, "mScoreTYpe:PEG");
-            pin = drawableToBitmap(getResources().getDrawable(mScorePins[mViewPager.getCurrentItem()]));
+            pin = drawableToBitmap(getResources().getDrawable(mPegResources[mViewPager.getCurrentItem()]));
         }
 
         Bitmap logo = drawableToBitmap(getResources().getDrawable(R.drawable.logotext));
@@ -441,7 +449,7 @@ public class CameraActivity extends AppCompatActivity {
             if (date == -1) date = mCaptureStartTime;
             if (result) {
                 Log.e(TAG, "attempting async save");
-                mMediaSaver.addImage(mJPEGdata, logo, pin, mScoreNumberValue, title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
+                mMediaSaver.addImage(mJPEGdata, logo, pin, String.valueOf(mScoreNumberValue), title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
 
             }
         }
@@ -453,6 +461,8 @@ public class CameraActivity extends AppCompatActivity {
     public void onBackButtonClick(View view) {
         Log.d(TAG, "onBackButtonClick:resetting camera");
         mCamera.startPreview();
+        initTypeSpinners();
+        initScoreSpinner("Peg");
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
@@ -466,6 +476,7 @@ public class CameraActivity extends AppCompatActivity {
         mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
         mPreviousImageThumbnail.setVisibility(View.VISIBLE);
+
 
     }
     public void onReviewLatestPhotoClick(View view) {
@@ -521,12 +532,15 @@ public class CameraActivity extends AppCompatActivity {
             mScoreType.setEnabled(true);
             mScoreValue.setEnabled(true);
             mScoreType.setVisibility(View.VISIBLE);
+            mScoreType.setSelectedItemPosition(0);
             mScoreValue.setVisibility(View.VISIBLE);
             initTypeSpinners();
+            initScoreSpinner("Peg");
+
             mTakePhotoButton.setVisibility(View.GONE);
             mLogoText.setVisibility(View.VISIBLE);
-            mScoreTypeBackground.setVisibility(View.VISIBLE);
-            mScoreNumber.setVisibility(View.VISIBLE);
+//            mScoreTypeBackground.setVisibility(View.VISIBLE);
+//            mScoreNumber.setVisibility(View.VISIBLE);
             mPreviousImageThumbnail.setVisibility(View.GONE);
             mPreviousImageThumbnail.setEnabled(false);
 
@@ -632,9 +646,9 @@ public class CameraActivity extends AppCompatActivity {
 
     private void setPegDisplay(int item) {
 
-        mCustomPagerAdapter = new CustomPagerAdapter(this, mScorePins);
+        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mCustomPagerAdapter);
+        mViewPager.setAdapter(mCustomPagerAdapterPegs);
         mViewPager.setVisibility(View.VISIBLE);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -656,10 +670,28 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+    private int updateScoreDisplay(Object item) {
+        Log.d(TAG, "updateScoreDisplay:score:"+item);
+        if (item == "RH") {
+            mScoreTypeBackground.setImageResource(mScoreResources[0]);
+            return mScoreResources[0];
+        } else if ( 0 <= (int)item && (int)item <= 179 ) {
+            mScoreTypeBackground.setImageResource(mScoreResources[1]);
+            return mScoreResources[1];
+        } else if( ((int) item) == 180 ) {
+            mScoreTypeBackground.setImageResource(mScoreResources[2]);
+            return mScoreResources[2];
+        } else {
+            return 0;
+        }
+
+    }
+
     private void updatePegDisplay(int score) {
-        if ( 40 <= score && score < 50) {
+        Log.d(TAG, "updatePegDisplay:score:"+score);
+        if ( 2 <= score && score < 60) {
             mViewPager.setCurrentItem(0);
-        } else if (50 <= score && score < 60) {
+        } else if (60 <= score && score < 70) {
             mViewPager.setCurrentItem(1);
         } else if (70 <= score && score < 80) {
             mViewPager.setCurrentItem(2);
@@ -683,6 +715,8 @@ public class CameraActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(11);
         } else if (170 <= score && score < 180) {
             mViewPager.setCurrentItem(12);
+        } else {
+            Log.d(TAG, "updatePegDisplay:invalidValue:"+score);
         }
 
     }
@@ -693,113 +727,149 @@ public class CameraActivity extends AppCompatActivity {
         }
         return ret;
     }
+    private List<Object> makeScores() {
+        List<Object> ret = new ArrayList<>();
+        ret.add("RH");
+        for (int i=0; i<=180; i++) {
+            ret.add(i);
+        }
+        return ret;
+    }
     private List<Integer> makePegs() {
         List<Integer> ret = new ArrayList<>();
-        ret.add(170);
-        ret.add(167);
+        for (int i=2; i<=158; i++) {
+            ret.add(i);
+        }
+        ret.add(160);
+        ret.add(161);
         ret.add(164);
+        ret.add(167);
+        ret.add(170);
+
         return ret;
     }
 
     private void initTypeSpinners() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, spinnerTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mScoreType.setAdapter(adapter);
-        mScoreType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        List data = Arrays.asList(spinnerTypes);
+        mScoreType.setData(data);
+        mScoreType.setVisibleItemCount(2);
+        mScoreType.setCyclic(false);
+        mScoreType.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String type = (String) mScoreType.getItemAtPosition(i);
+            public void onItemSelected(WheelPicker picker, Object data, int position) {
+                String type = (String) picker.getData().get(position);
                 Log.d(TAG, "onItemSelected:"+type);
                 initScoreSpinner(type);
                 if (type.equals("Score")) {
                     scoreType = "SCORE";
+                    //Set Default value for score spinner
+                    mScoreNumberValue = "RH";
+
                     mViewPager.setEnabled(false);
                     mViewPager.setVisibility(View.GONE);
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mViewPager.setAdapter(mCustomPagerAdapterScores);
+                    mCustomPagerAdapterScores.notifyDataSetChanged();
 
                 } else if (type.equals("Peg")) {
                     scoreType = "PEG";
+                    mViewPager.setAdapter(mCustomPagerAdapterPegs);
                     if (mViewPager != null) {
+                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
                         mViewPager.setEnabled(true);
                         mViewPager.setVisibility(View.VISIBLE);
-
                     }
-                    mCustomPagerAdapter.notifyDataSetChanged();
-
+                    mScoreNumberValue = makePegs().get(0);
+                    mCustomPagerAdapterPegs.notifyDataSetChanged();
+                    mScoreNumber.setVisibility(View.GONE);
                     mScoreTypeBackground.setVisibility(View.GONE);
 
                 }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
     }
     private void initScoreSpinner(String type) {
-        ArrayAdapter<Integer> adapter = null;
+        List data = null;
+
         Log.d(TAG, "initScoreSpinner:type:"+type);
         switch (type) {
             case "Score":
                 Log.d(TAG, "initScoreSpinner:type:Score");
-                adapter = new ArrayAdapter<>(
-                        this, android.R.layout.simple_spinner_item, makeSequence(0, 180));
+                data = makeScores();
+                mScoreNumber.setText(String.format(Locale.US, "%s", data.get(0)));
+                mScoreNumber.setVisibility(View.VISIBLE);
                 scoreType = "SCORE";
                 break;
             case "Peg":
                 Log.d(TAG, "initScoreSpinner:type:Peg");
-                adapter = new ArrayAdapter<>(
-                        this, android.R.layout.simple_spinner_item, makePegs());
+                data = makePegs();
+                if (mViewPager != null) {
+                    Log.d(TAG, "initScoreSpinner:mViewPager:NULL!!!!!");
+                    mViewPager.setEnabled(true);
+                    mScoreNumberValue = makePegs().get(0);
+                    mViewPager.setVisibility(View.VISIBLE);
+
+                }
+                mScoreNumberValue = makePegs().get(0);
+                mScoreTypeBackground.setVisibility(View.GONE);
                 scoreType = "PEG";
                 break;
             default:
                 Log.d(TAG, "initScoreSpinner:type:default(score)");
-                adapter = new ArrayAdapter<>(
-                        this, android.R.layout.simple_spinner_item, makeSequence(0, 180));
+                data = makeScores();
                 scoreType = "SCORE";
                 break;
         }
-        mScoreValue.setAdapter(adapter);
-        mScoreValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mScoreValue.setData(data);
+        mScoreValue.setVisibleItemCount(3);
+        Log.d(TAG, "initScoreSpinner:data:0:"+data.get(0));
+        mScoreValue.setSelectedItemPosition(0);
+
+
+        mScoreNumber.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
+        mScoreTypeBackground.setImageResource(mScoreResources[0]);
+
+        mScoreValue.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemSelected(WheelPicker picker, Object data, int position) {
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:");
-                int value = (int) mScoreValue.getItemAtPosition(i);
+                Object value = picker.getData().get(position);
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:score:"+value);
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:scoreType:"+scoreType);
                 if (scoreType.equals("PEG")) {
-                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:score");
-                    updatePegDisplay(value);
-//                    mScoreNumber.setText(Integer.toString(value));
-                    mScoreNumber.setVisibility(View.GONE);
+                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
+                    updatePegDisplay((int)value);
                     mViewPager.setTag(value);
+                    //mscoreNumberValue fetched from CustomPagerAdapter to display number on peg
                     mScoreNumberValue = value;
-                    mCustomPagerAdapter.notifyDataSetChanged();
+                    mCustomPagerAdapterPegs.notifyDataSetChanged();
+                    mScoreTypeBackground.setVisibility(View.GONE);
+                    mScoreNumber.setVisibility(View.GONE);
+
 
 
                 } else if (scoreType.equals("SCORE")) {
-                    mScoreNumber.setVisibility(View.VISIBLE);
-                    mScoreNumber.setText(Integer.toString(value));
-                    mScoreNumberValue = value;
+                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
+                    updateScoreDisplay(value);
+                    if (value != "RH") {
+                        mScoreNumber.setVisibility(View.VISIBLE);
+                        mScoreNumber.setText(String.format(Locale.US, "%s", value));
+                        mScoreNumberValue = value;
+                    } else {
+                        mScoreNumber.setVisibility(View.GONE);
+                        mScoreNumberValue = "RH";
+                    }
+
                 }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
 
     }
-
 
 
     private static class NamedImages {
@@ -809,7 +879,7 @@ public class CameraActivity extends AppCompatActivity {
         public NamedImages() {
             mQueue = new ArrayList<NamedEntity>();
         }
-        public void nameNewImage(ContentResolver resolver, long date, int score) {
+        public void nameNewImage(ContentResolver resolver, long date, String score) {
             NamedEntity r = new NamedEntity();
             r.title = Util.createJpegName(date, score);
             r.date = date;

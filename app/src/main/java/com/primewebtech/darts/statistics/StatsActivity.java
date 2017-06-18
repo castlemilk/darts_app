@@ -18,10 +18,30 @@ public class StatsActivity  extends FragmentActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
 
+        Bundle b = getIntent().getExtras();
+
+        String scoreType = "one";
+        if (b != null) {
+            scoreType = b.getString("scoreType");
+        }
+
         mStatsPagerAdapter = new StatsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
         mViewPager.setAdapter(mStatsPagerAdapter);
+        if (scoreType != null) {
+            switch (scoreType) {
+                case "one":
+                    mViewPager.setCurrentItem(0);
+                    break;
+                case "hundred":
+                    mViewPager.setCurrentItem(1);
+                    break;
+                default:
+                    mViewPager.setCurrentItem(0);
+                    break;
+            }
+        }
     }
 
 }

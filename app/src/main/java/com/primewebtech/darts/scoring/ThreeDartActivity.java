@@ -77,15 +77,15 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     SharedPreferences prefs = null;
 
     int[] mPinBoards = {
-            R.drawable.pin_90s,
-            R.drawable.pin_100s,
+            R.drawable.pin_99sf,
+            R.drawable.pin_100sf,
             R.drawable.pin_110sf,
             R.drawable.pin_120s,
             R.drawable.pin_130sf,
             R.drawable.pin_140sf,
             R.drawable.pin_150s,
             R.drawable.pin_160sf,
-            R.drawable.pin_170s,
+            R.drawable.pin_170sf,
 
     };
 

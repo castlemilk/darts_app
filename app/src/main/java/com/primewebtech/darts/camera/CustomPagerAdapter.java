@@ -2,6 +2,7 @@ package com.primewebtech.darts.camera;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,21 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 
+import java.util.Locale;
+
 /**
  * Created by benebsworth on 4/5/17.
  */
 
 public class CustomPagerAdapter extends PagerAdapter{
 
+    private static final String TAG = CustomPagerAdapter.class.getSimpleName();
+
     Context mContext;
     LayoutInflater mLayoutInflater;
     private int[] mResources;
     public TextView scoreNumber;
+    private int score;
 
 
     public CustomPagerAdapter(Context context, int[] resources) {
@@ -28,6 +34,8 @@ public class CustomPagerAdapter extends PagerAdapter{
         mResources = resources;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
+
 
     @Override
     public int getCount() {
@@ -47,10 +55,12 @@ public class CustomPagerAdapter extends PagerAdapter{
 
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
         imageView.setImageResource(mResources[position]);
-        scoreNumber = (TextView) itemView.findViewById(R.id.score_number);
+        scoreNumber = (TextView) itemView.findViewById(R.id.pager_score_number);
         CameraActivity cameraActivity = (CameraActivity) mContext;
-        scoreNumber.setText(Integer.toString(cameraActivity.mScoreNumberValue));
-
+        scoreNumber.setText(String.format(Locale.US, "%s", cameraActivity.mScoreNumberValue));
+        scoreNumber.setVisibility(View.VISIBLE);
+//        scoreNumber.setText(String.format(Locale.US, "%d", ));
+        Log.d(TAG, "Setting text score:"+cameraActivity.mScoreNumberValue);
 
         container.addView(itemView);
         itemView.setTag("pager_view");
