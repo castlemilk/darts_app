@@ -57,9 +57,11 @@ public class Storage {
             Log.e(TAG, "Failed to write data", e);
         } finally {
             try {
+                out.flush();
                 out.close();
                 Log.d(TAG, String.format("wrote file in %dms", System.currentTimeMillis() - t0));
             } catch (Exception e) {
+                Log.e(TAG, "Failed to close file output stream", e);
             }
         }
     }

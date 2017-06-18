@@ -3,6 +3,7 @@ package com.primewebtech.darts.gallery;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +60,8 @@ public class GalleryActivity extends AppCompatActivity
     public ActionMode mActionMode;
     public boolean selectedAll = false;
     private ShareActionProvider mShareActionProvider;
+    public static final String DIRECTORY_PICTURES = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES).toString();
 
 
 
@@ -374,8 +377,14 @@ public class GalleryActivity extends AppCompatActivity
                 List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
                 for (File file : files) {
                     Log.d(TAG, "onActionItemClicked:DELETE:file:"+file.getPath());
-                    file.delete();
-                    Log.d(TAG, "onActionItemClicked:DELETE:file:done");
+                    if (file.delete()) {
+                        Log.d(TAG, "onActionItemClicked:DELETE:file:done");
+                    } else {
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                    }
+
                 }
                 mAdapter.removeItems(mAdapter.getSelectedPositions());
 //                Log.d(TAG, "onActionItemClicked:deleted_items:"+mAdapter.getDeletedItems().toString());

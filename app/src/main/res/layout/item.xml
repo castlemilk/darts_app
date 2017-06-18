@@ -15,7 +15,6 @@
         android:textColor="#999999"
         android:textStyle="bold"
         android:textSize="22sp"
-        android:background="@drawable/item_background"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="8dp"
