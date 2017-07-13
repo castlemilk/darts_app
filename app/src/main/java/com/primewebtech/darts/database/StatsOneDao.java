@@ -217,6 +217,16 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         Log.d(TAG, "getLastMonthsDate:"+df.format(lastMonth));
         return df.format(lastMonth);
     }
+
+    public String getPreviousDate(int previousDateIndex) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cal.add(Calendar.DAY_OF_YEAR, -1 * previousDateIndex);
+        Date previousDate = cal.getTime();
+        Log.d(TAG, "PreviousDateIndex:"+previousDateIndex);
+        Log.d(TAG, "getPreviousDate:"+df.format(previousDate));
+        return df.format(previousDate);
+    }
     public PegRecord getTodayPegValue(int pegValue, int type) {
 
         final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
@@ -241,6 +251,29 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 
         }
         return null;
+    }
+
+    public int getPreviousScore(int pegValue, int previousDayIndex) {
+
+        PegRecord pegRecord;
+
+        final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                getPreviousDate(previousDayIndex)};
+
+        cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                pegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "foundMatch:"+pegRecord.toString());
+                cursor.close();
+                return pegRecord.getPegCount();
+            }
+
+
+        }
+        return 0;
+
     }
 
     public ContentValues setContentValues(PegRecord scoreRecord) {

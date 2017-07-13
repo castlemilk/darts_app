@@ -138,6 +138,7 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
         Date yesterday = cal.getTime();
         return df.format(yesterday);
     }
+
     public PegRecord getTodayPegValue(int pegValue, int type) {
 
         final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
@@ -163,6 +164,8 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
         }
         return null;
     }
+
+
 
     public ContentValues setContentValues(PegRecord scoreRecord) {
         ContentValues contentValues = new ContentValues();

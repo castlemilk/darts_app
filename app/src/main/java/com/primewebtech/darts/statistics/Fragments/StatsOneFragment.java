@@ -21,99 +21,48 @@ import java.util.Locale;
 public class StatsOneFragment extends Fragment {
 
     private static final String TAG = StatsOneFragment.class.getSimpleName();
-    public int[] mStatsRow40 = {
-            R.id.row_40_d,
-            R.id.row_40_w,
-            R.id.row_40_m,
-    };
-    public int[] mStatsRow32 = {
-            R.id.row_32_d,
-            R.id.row_32_w,
-            R.id.row_32_m,
-    };
-    public int[] mStatsRow24 = {
-            R.id.row_24_d,
-            R.id.row_24_w,
-            R.id.row_24_m,
-    };
-    public int[] mStatsRow36 = {
-            R.id.row_36_d,
-            R.id.row_36_w,
-            R.id.row_36_m,
-    };
-    public int[] mStatsRow50 = {
-            R.id.row_50_d,
-            R.id.row_50_w,
-            R.id.row_50_m,
-    };
-    public int[] mStatsRow2 = {
-            R.id.row_2_d,
-            R.id.row_2_w,
-            R.id.row_2_m,
+
+    public int[] mStatsRowLD = {
+            R.id.row_ld_2,
+            R.id.row_ld_3,
+            R.id.row_ld_4,
+            R.id.row_ld_5,
+            R.id.row_ld_6,
     };
 
+    public int[] mStatsRowLW = {
+            R.id.row_lw_2,
+            R.id.row_lw_3,
+            R.id.row_lw_4,
+            R.id.row_lw_5,
+            R.id.row_lw_6,
+    };
+
+    public int[] mStatsRowLM = {
+            R.id.row_lm_2,
+            R.id.row_lm_3,
+            R.id.row_lm_4,
+            R.id.row_lm_5,
+            R.id.row_lm_6,
+    };
     public ArrayList<int[]> mStatsRows;
-    public int[] mStatsDay = {
-            R.id.row_40_d,
-            R.id.row_32_d,
-            R.id.row_24_d,
-            R.id.row_36_d,
-            R.id.row_50_d,
-            R.id.row_2_d,
-    };
 
-    public int[] mStatsWeek = {
-            R.id.row_40_w,
-            R.id.row_32_w,
-            R.id.row_24_w,
-            R.id.row_36_w,
-            R.id.row_50_w,
-            R.id.row_2_w,
-    };
 
-    public int[] mStatsMonth = {
-            R.id.row_40_m,
-            R.id.row_32_m,
-            R.id.row_24_m,
-            R.id.row_36_m,
-            R.id.row_50_m,
-            R.id.row_2_m,
-    };
-
-    public int[] mScoreNodes = {
-            R.id.row_40_d,
-            R.id.row_40_w,
-            R.id.row_40_m,
-            R.id.row_32_d,
-            R.id.row_32_w,
-            R.id.row_32_m,
-            R.id.row_24_d,
-            R.id.row_24_w,
-            R.id.row_24_m,
-            R.id.row_36_d,
-            R.id.row_36_w,
-            R.id.row_36_m,
-            R.id.row_50_d,
-            R.id.row_50_w,
-            R.id.row_50_m,
-            R.id.row_2_d,
-            R.id.row_2_w,
-            R.id.row_2_m,
-    };
     int[] pegValues = {
             40,
             32,
             24,
             36,
             50,
-            2
+            4
     };
     private String type;
+    private int pegValue;
 
-    public static StatsOneFragment newInstance() {
+    public static StatsOneFragment newInstance(int pegValue) {
         StatsOneFragment statsOneFragment = new StatsOneFragment();
         Bundle args = new Bundle();
-        args.putString("type", "one");
+        args.putInt("PEG_VALUE", pegValue);
         statsOneFragment.setArguments(args);
         return statsOneFragment;
     }
@@ -122,6 +71,7 @@ public class StatsOneFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         type = getArguments().getString("type");
+        pegValue = getArguments().getInt("PEG_VALUE");
     }
 
     @Override
@@ -130,51 +80,63 @@ public class StatsOneFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_stats_one, container, false);
 
         mStatsRows = new ArrayList<>();
-        mStatsRows.add(mStatsRow40);
-        mStatsRows.add(mStatsRow32);
-        mStatsRows.add(mStatsRow24);
-        mStatsRows.add(mStatsRow36);
-        mStatsRows.add(mStatsRow50);
-        mStatsRows.add(mStatsRow2);
-
+        mStatsRows.add(mStatsRowLD);
+        mStatsRows.add(mStatsRowLW);
+        mStatsRows.add(mStatsRowLM);
         int index = 0;
         for ( int[] statRow : mStatsRows) {
 
 
-            TextView statsScoreDay = (TextView) rootView.findViewById(statRow[0]);
-            TextView statsScoreWeek = (TextView) rootView.findViewById(statRow[1]);
-            TextView statsScoreMonth = (TextView) rootView.findViewById(statRow[2]);
-            int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
-            int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
-            int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);
-            if (dailyScore > 1000) {
-
-                statsScoreDay.setTextSize(12);
-
-            }
-            if (weeklyScore > 1000) {
-                statsScoreWeek.setTextSize(12);
-
-            }
-            if (monthlyScore > 1000) {
-                statsScoreMonth.setTextSize(12);
+            TextView statsScorePosOne = (TextView) rootView.findViewById(statRow[0]);
+            TextView statsScorePosTwo = (TextView) rootView.findViewById(statRow[1]);
+            TextView statsScorePosThree = (TextView) rootView.findViewById(statRow[2]);
+            TextView statsScorePosFour = (TextView) rootView.findViewById(statRow[3]);
+            TextView statsScorePosFive = (TextView) rootView.findViewById(statRow[4]);
+            TextView statsScorePosSix = (TextView) rootView.findViewById(statRow[5]);
+            int last_day_index = 0; //this is the first previous day
+            for ( int resourceID : statRow) {
+                TextView rowNode = (TextView) rootView.findViewById(resourceID);
+                int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue, last_day_index);
+                if (previousScore > 1000) {
+                    rowNode.setTextSize(12);
+                }
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
             statsScoreDay.setTextColor(Color.BLACK);
-            statsScoreDay.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+            if (dailyScore != 0) {
+                statsScoreDay.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreDay.setTextColor(Color.BLACK);
+            } else {
+                statsScoreDay.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreDay.setTextColor(Color.WHITE);
+            }
+
             //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
                     weeklyScore));
-            statsScoreWeek.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            statsScoreWeek.setTextColor(Color.BLACK);
+            if (weeklyScore != 0) {
+                statsScoreWeek.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreWeek.setTextColor(Color.BLACK);
+            } else {
+                statsScoreWeek.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreWeek.setTextColor(Color.WHITE);
+            }
             //Set Month element:
-            statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore ));
-            statsScoreMonth.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            statsScoreMonth.setTextColor(Color.BLACK);
+            statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore));
+            if (weeklyScore != 0) {
+                statsScoreMonth.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreMonth.setTextColor(Color.BLACK);
+            } else {
+                statsScoreMonth.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreMonth.setTextColor(Color.WHITE);
+            }
 
             index++;
         }

@@ -10,8 +10,8 @@ import com.primewebtech.darts.R;
  * Created by benebsworth on 17/6/17.
  */
 
-public class StatsActivity  extends FragmentActivity{
-    StatsPagerAdapter mStatsPagerAdapter;
+public class StatsSummaryActivity extends FragmentActivity{
+    StatsSummaryPagerAdapter mStatsPagerAdapter;
     ViewPager mViewPager;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -20,12 +20,12 @@ public class StatsActivity  extends FragmentActivity{
 
         Bundle b = getIntent().getExtras();
 
-        String scoreType = "one";
+        String scoreType = "SUMMARY";
         if (b != null) {
-            scoreType = b.getString("scoreType");
+            scoreType = b.getString("SUMMARY");
         }
 
-        mStatsPagerAdapter = new StatsPagerAdapter(getSupportFragmentManager());
+        mStatsPagerAdapter = new StatsSummaryPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
         mViewPager.setAdapter(mStatsPagerAdapter);

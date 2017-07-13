@@ -25,7 +25,7 @@ import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
-import com.primewebtech.darts.statistics.StatsActivity;
+import com.primewebtech.darts.statistics.StatsSummaryActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -112,7 +112,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
             @Override
             public void onClick(View view) {
-                Intent statsIntent = new Intent(OneDartActivity.this, StatsActivity.class);
+                Intent statsIntent = new Intent(OneDartActivity.this, StatsSummaryActivity.class);
                 Bundle b = new Bundle();
                 b.putString("scoreType", "one");
                 statsIntent.putExtras(b);

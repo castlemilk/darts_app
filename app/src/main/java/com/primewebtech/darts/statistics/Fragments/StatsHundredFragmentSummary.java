@@ -18,9 +18,9 @@ import java.util.Locale;
  * Created by benebsworth on 18/6/17.
  */
 
-public class StatsHundredFragment extends Fragment {
+public class StatsHundredFragmentSummary extends Fragment {
 
-    private static final String TAG = StatsHundredFragment.class.getSimpleName();
+    private static final String TAG = StatsHundredFragmentSummary.class.getSimpleName();
     public int[] mStatsRow100 = {
             R.id.row_100_d,
             R.id.row_100_w,
@@ -43,12 +43,12 @@ public class StatsHundredFragment extends Fragment {
         180,
     };
     private String type;
-    public static StatsHundredFragment newInstance() {
-        StatsHundredFragment statsHundredFragment = new StatsHundredFragment();
+    public static StatsHundredFragmentSummary newInstance() {
+        StatsHundredFragmentSummary statsHundredFragmentSummary = new StatsHundredFragmentSummary();
         Bundle args = new Bundle();
         args.putString("type", "one");
-        statsHundredFragment.setArguments(args);
-        return statsHundredFragment;
+        statsHundredFragmentSummary.setArguments(args);
+        return statsHundredFragmentSummary;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class StatsHundredFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_stats_hundred, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_stats_hundred_summary, container, false);
 
         mStatsRows = new ArrayList<>();
         mStatsRows.add(mStatsRow100);
@@ -86,20 +86,38 @@ public class StatsHundredFragment extends Fragment {
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
-            statsScoreDay.setTextColor(Color.BLACK);
-            statsScoreDay.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+            if (dailyScore != 0) {
+                statsScoreDay.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreDay.setTextColor(Color.BLACK);
+            } else {
+                statsScoreDay.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreDay.setTextColor(Color.WHITE);
+            }
             //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
                     weeklyScore));
-            statsScoreWeek.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            statsScoreWeek.setTextColor(Color.BLACK);
+            if (weeklyScore != 0) {
+                statsScoreWeek.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreWeek.setTextColor(Color.BLACK);
+            } else {
+                statsScoreWeek.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreWeek.setTextColor(Color.WHITE);
+            }
             //Set Month element:
             statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore ));
-            statsScoreMonth.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            statsScoreMonth.setTextColor(Color.BLACK);
+            if (monthlyScore != 0) {
+                statsScoreMonth.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                statsScoreMonth.setTextColor(Color.BLACK);
+            } else {
+                statsScoreMonth.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                statsScoreMonth.setTextColor(Color.WHITE);
+            }
             index++;
         }
         return rootView;
