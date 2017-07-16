@@ -20,13 +20,13 @@ public class StatsOnePagerAdapter extends FragmentPagerAdapter {
                 return StatsOneFragment.newInstance(40);
             case 1:
                 return StatsOneFragment.newInstance(32);
-            case 3:
+            case 2:
                 return StatsOneFragment.newInstance(24);
-            case 4:
+            case 3:
                 return StatsOneFragment.newInstance(36);
-            case 5:
+            case 4:
                 return StatsOneFragment.newInstance(50);
-            case 6:
+            case 5:
                 return StatsOneFragment.newInstance(4);
 
             default:

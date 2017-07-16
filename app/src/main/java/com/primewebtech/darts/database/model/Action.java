@@ -60,7 +60,7 @@ public class Action extends BaseRecord implements ActionSchema {
         }
     }
     public String toString() {
-        return "pegValue = " + pegValue + ", pegType = " + type + ", pegCount = " + pegCount+ ", actionType = " +
+        return "pegValue = " + pegValue + ", pegType = " + type + ", pegCount = " + pegCount + ", actionType = " +
                 actionType + ", actionValue = " + actionValue +
                 ", date = " + dateStored + ", id = " + id;
     }
