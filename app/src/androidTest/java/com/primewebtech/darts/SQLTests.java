@@ -28,6 +28,11 @@ public class SQLTests {
             50,
             4
     };
+    final int pegValuesHundred[] = {
+            100,
+            140,
+            180
+    };
     @Test
     public void TestAddPegScore() throws Exception {
         // Context of the app under test.
@@ -45,6 +50,26 @@ public class SQLTests {
             System.out.println("PegCount: "+String.valueOf(randomScore));
             PegRecord pegRecord = new PegRecord(date, TYPE_2, pegValues[randomPegIndex], randomScore);
             ScoreDatabase.mScoreOneDoa.addPegValue(pegRecord);
+        }
+
+    }
+    @Test
+    public void TestAddPegScoreHundred() throws Exception {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        mDatabase = new ScoreDatabase(appContext);
+        mDatabase.open();
+        for (int i = 0; i < 100; i++) {
+            int randomDay = 1 + (int)(Math.random() * 27);
+            int randomMonth = 4 + (int)(Math.random() * 4);
+            int randomScore = (int)(Math.random() * 200);
+            int randomPegIndex = (int)(Math.random() * 3); // 0-6
+            String date = String.format("2017-%02d-%02d", randomMonth, randomDay);
+            System.out.println(date);
+            System.out.println("PegValue: "+String.valueOf(pegValuesHundred[randomPegIndex]));
+            System.out.println("PegCount: "+String.valueOf(randomScore));
+            PegRecord pegRecord = new PegRecord(date, TYPE_2, pegValuesHundred[randomPegIndex], randomScore);
+            ScoreDatabase.mScoreHundredDoa.addPegValue(pegRecord);
         }
 
     }

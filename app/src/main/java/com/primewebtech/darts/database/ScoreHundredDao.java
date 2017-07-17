@@ -53,8 +53,10 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
         } else {
             return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
         }
-
-
+    }
+    public boolean addPegValue(PegRecord scoreRecord) throws IOException {
+        Log.d(TAG, "addPegValue:" + scoreRecord.toString());
+        return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
     }
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

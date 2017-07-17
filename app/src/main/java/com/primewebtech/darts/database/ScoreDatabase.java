@@ -26,7 +26,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     public static ScoreHundredDao mScoreHundredDoa;
     public static ActionDao mActionDoa;
     public static StatsOneDao mStatsOneDoa;
-    public static StatsHundredDao mStatsHundredDoa;
+    public static StatsHundredDao mStatsOneDoa;
 
 
     public ScoreDatabase open() throws SQLException {
@@ -39,7 +39,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
         mScoreHundredDoa = new ScoreHundredDao(mDatabase);
         mActionDoa = new ActionDao(mDatabase);
         mStatsOneDoa = new StatsOneDao(mDatabase);
-        mStatsHundredDoa = new StatsHundredDao(mDatabase);
+        mStatsOneDoa = new StatsHundredDao(mDatabase);
 
 
         Log.d(TAG, "completed initialisation");

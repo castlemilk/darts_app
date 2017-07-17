@@ -25,7 +25,7 @@ import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
-import com.primewebtech.darts.statistics.StatsSummaryActivity;
+import com.primewebtech.darts.statistics.StatsHundredActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -116,9 +116,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
 
             @Override
             public void onClick(View view) {
-                Intent statsIntent = new Intent(HundredDartActivity.this, StatsSummaryActivity.class);
+                Intent statsIntent = new Intent(HundredDartActivity.this, StatsHundredActivity.class);
                 Bundle b = new Bundle();
                 b.putString("scoreType", "hundred");
+                b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentItem()]);
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
                 finish();

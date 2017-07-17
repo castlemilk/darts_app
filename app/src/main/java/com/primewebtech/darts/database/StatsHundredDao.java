@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -25,6 +26,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     private static final String TAG = StatsHundredDao.class.getSimpleName();
 
     private Cursor cursor;
+    protected String getScoreTableBest() { return SCORE_TABLE_BEST; }
 
     protected String getScoreTableName() {
         return SCORE_TABLE_HUNDRED;
@@ -53,13 +55,172 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         } else {
             return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
         }
+    }
 
+    public boolean addPegValue(PegRecord scoreRecord) throws IOException {
+        Log.d(TAG, "addPegValue:" + scoreRecord.toString());
+        return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
+    }
+
+    public boolean setBestScore(String period, int pegValue, int pegCount) {
+        /**
+         * On the detection of a new personal best score being made for a given peg value then we
+         * update the the value in the best scores table. This activity will be carried it out when
+         * viewing the stats view. Alternatively this functionality could be implemented via a
+         * set trigger.
+         */
+        Log.d(TAG, "addNewBestScore:period:"+period);
+        Log.d(TAG, "addNewBestScore:pegValue:"+pegValue);
+        Log.d(TAG, "addNewBestScore:pegCount:"+pegValue);
+        if (getPeriodsHighestScore(pegValue, period) != null) {
+            return updateBestScore(period, pegValue, pegCount);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBest(), contentValues) > 0;
+        }
+    }
+
+    public boolean updateBestScore(String period, int pegValue, int pegCount){
+        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
+        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PEG_VALUE, pegValue);
+        contentValues.put(PERIOD, period);
+        contentValues.put(TYPE, TYPE_2);
+        contentValues.put(PEG_COUNT, pegCount);
+        contentValues.put(LAST_MODIFIED, getDateNow());
+        return super.update(getScoreTableBest(), contentValues, selection,
+                selectionArgs) > 0;
+    }
+
+    public PegRecord getPeriodsHighestScore(int pegValue, String period) {
+        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                period};
+        PegRecord pegRecord;
+        cursor = super.query(getScoreTableBest(), BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                pegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
+                cursor.close();
+                return pegRecord;
+            }
+        }
+        return new PegRecord(getDateNow(), TYPE_3, pegValue, 0);
+    }
+
+    public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
+
+        PegRecord pegRecord;
+        if (period.equals("DAY")){
+            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
+            final String selectionArgs[] = { String.valueOf(pegValue),
+                    getPreviousDay(previousPeriodIndex)};
+
+            cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    pegRecord = cursorToEntity(cursor);
+                    Log.d(TAG, "foundMatch[day]:"+pegRecord.toString());
+                    cursor.close();
+                    return pegRecord.getPegCount();
+                }
+
+
+            }
+            return 0;
+        } else if (period.equals("WEEK")) {
+            HashMap<String, String> datePeriod = getPreviousWeek(previousPeriodIndex);
+            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                    " AND " + LAST_MODIFIED + ">='" + datePeriod.get("start") + "'" +
+                    " AND " + LAST_MODIFIED + "<='" + datePeriod.get("end")+"';";
+            Log.d(TAG, "Query: "+queryString);
+
+            cursor = super.rawQuery(queryString, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
+                    int maxPegValue = cursor.getInt(0);
+                    cursor.close();
+                    return maxPegValue;
+                }
+
+
+            }
+            return 0;
+
+        } else if (period.equals("MONTH")) {
+            HashMap<String, String> datePeriod = getPreviousMonth(previousPeriodIndex);
+            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                    " AND " + LAST_MODIFIED + ">='" + datePeriod.get("start") +"'"+
+                    " AND " + LAST_MODIFIED + "<='" + datePeriod.get("end")+"';";
+            Log.d(TAG, "Query: "+queryString);
+
+            cursor = super.rawQuery(queryString, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    Log.d(TAG, "foundMax[month]:"+cursor.getInt(0));
+                    int maxPegValue = cursor.getInt(0);
+                    cursor.close();
+                    return maxPegValue;
+                }
+
+
+            }
+            return 0;
+
+        } else {
+            return 0;
+        }
 
     }
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date now = new Date();
         return dateFormat.format(now);
+    }
+    public String getPreviousDay(int previousDayIndex) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cal.add(Calendar.DAY_OF_YEAR, -1 * previousDayIndex);
+        Date previousDate = cal.getTime();
+        Log.d(TAG, "PreviousDateIndex:"+previousDayIndex);
+        Log.d(TAG, "getPreviousDate:"+df.format(previousDate));
+        return df.format(previousDate);
+    }
+    public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
+        HashMap<String, String> previousWeekWindow = new HashMap<>();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cal.add(Calendar.DATE, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
+        previousWeekWindow.put("start", df.format(cal.getTime()));
+        cal.add(Calendar.DATE, 6); //1: +6, 2: +6
+        previousWeekWindow.put("end", df.format(cal.getTime()));
+        Log.d(TAG, "PreviousWeekIndex:"+previousWeekIndex);
+
+        return previousWeekWindow;
+    }
+    public HashMap<String, String> getPreviousMonth(int previousMonthIndex) {
+        HashMap<String, String> previousMonthWindow = new HashMap<>();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MONTH, -1 * previousMonthIndex);
+        previousMonthWindow.put("start", df.format(cal.getTime()));
+        cal.add(Calendar.MONTH, 1); //1: +6, 2: +6
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+        previousMonthWindow.put("end", df.format(cal.getTime()));
+        Log.d(TAG, "PreviousMonthIndex:"+previousMonthIndex);
+
+        return previousMonthWindow;
     }
 
     public boolean increaseTodayPegValue(int pegValue, int type, int increment) {
