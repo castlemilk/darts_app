@@ -46,6 +46,7 @@ public class GalleryActivity extends AppCompatActivity
         FlexibleAdapter.OnItemLongClickListener,
         FlexibleAdapter.OnUpdateListener,
         FlexibleAdapter.OnDeleteCompleteListener, FastScroller.OnScrollStateChangeListener {
+    //TODO: add score labelling on gallery items based on filename
 
 
     /**

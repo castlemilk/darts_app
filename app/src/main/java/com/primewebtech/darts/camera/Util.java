@@ -58,9 +58,9 @@ public class Util {
                 context.getString(R.string.image_file_name_format));
     }
 
-    public static String createJpegName(long dateTaken, String score) {
+    public static String createJpegName(long dateTaken, String score, String scoreType) {
         synchronized (sImageFileNamer) {
-            return sImageFileNamer.generateName(dateTaken, score);
+            return sImageFileNamer.generateName(dateTaken, score, scoreType);
         }
     }
 
@@ -239,7 +239,7 @@ public class Util {
             mFormat = new SimpleDateFormat(format);
         }
 
-        public String generateName(long dateTaken, String score) {
+        public String generateName(long dateTaken, String score, String scoreType) {
             Date date = new Date(dateTaken);
             String result = mFormat.format(date);
             // If the last name was generated for the same second,
@@ -251,7 +251,7 @@ public class Util {
                 mLastDate = dateTaken;
                 mSameSecondCount = 0;
             }
-            return result+score;
+            return result + "_" + scoreType + "_" + score;
         }
     }
 
@@ -269,7 +269,7 @@ public class Util {
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
             Log.d(TAG + "URI:", pictureFile.toURI().toString());
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            image.compress(Bitmap.CompressFormat.JPEG, 99, fos);
             Log.d(TAG, "Image saved");
             fos.close();
         } catch (FileNotFoundException e) {

@@ -410,7 +410,8 @@ public class CameraActivity extends AppCompatActivity {
         mPreviousImageThumbnail.setEnabled(true);
         mPreviousImageThumbnail.setVisibility(View.VISIBLE);
 
-        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue.toString());
+        mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue.toString(),
+                spinnerTypes[mScoreType.getSelectedItemPosition()]);
         String title = mNamedImages.getTitle();
         long date = mNamedImages.getDate();
         Camera.Size s = mParameters.getPictureSize();
@@ -422,6 +423,7 @@ public class CameraActivity extends AppCompatActivity {
         Bitmap pin = null;
 //        (String)mScoreType.getSelectedItem()
         String scoreType = spinnerTypes[mScoreType.getCurrentItemPosition()];
+        Log.d(TAG, "title: "+title);
         Log.d(TAG, "ScoreType:"+scoreType);
         Log.d(TAG, "ScoreValue:"+mScoreNumberValue);
         if ((scoreType.equals("Score"))) {
@@ -879,9 +881,9 @@ public class CameraActivity extends AppCompatActivity {
         public NamedImages() {
             mQueue = new ArrayList<NamedEntity>();
         }
-        public void nameNewImage(ContentResolver resolver, long date, String score) {
+        public void nameNewImage(ContentResolver resolver, long date, String score, String scoreType) {
             NamedEntity r = new NamedEntity();
-            r.title = Util.createJpegName(date, score);
+            r.title = Util.createJpegName(date, score, scoreType);
             r.date = date;
             mQueue.add(r);
             Log.d(TAG +"nameNewImage:title:", r.title);

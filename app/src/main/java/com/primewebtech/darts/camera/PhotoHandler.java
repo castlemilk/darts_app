@@ -133,9 +133,9 @@ public class PhotoHandler implements Camera.PictureCallback {
         public NamedImages() {
             mQueue = new ArrayList<NamedEntity>();
         }
-        public void nameNewImage(ContentResolver resolver, long date, String score) {
+        public void nameNewImage(ContentResolver resolver, long date, String score, String scoreType) {
             NamedEntity r = new NamedEntity();
-            r.title = Util.createJpegName(date, score);
+            r.title = Util.createJpegName(date, score, scoreType);
             r.date = date;
             mQueue.add(r);
         }

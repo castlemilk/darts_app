@@ -33,12 +33,9 @@ public class MainApplication extends android.app.Application {
         // Do first run stuff here then set 'firstrun' as false
         // using the following line to edit/commit prefs
         Log.i(TAG,"first_run:initialising DB");
-//        clearPreference();
         mDatabase = new ScoreDatabase(this);
         mDatabase.open();
         mDatabase.update();
-
-
         if (sharedPreferences.getBoolean("firstrun", true)) {
             Log.i(TAG, "FIRST_RUN:initialising system");
             initialisePegCounts();
