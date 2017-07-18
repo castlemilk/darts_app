@@ -16,7 +16,6 @@ import com.primewebtech.darts.database.model.PegRecord;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by benebsworth on 17/6/17.
@@ -59,11 +58,11 @@ public class StatsHundredFragment extends Fragment {
     private int pegValue;
 
     public static StatsHundredFragment newInstance(int pegValue) {
-        StatsHundredFragment statsOneFragment = new StatsHundredFragment();
+        StatsHundredFragment statsHundredFragment = new StatsHundredFragment();
         Bundle args = new Bundle();
         args.putInt("PEG_VALUE", pegValue);
-        statsOneFragment.setArguments(args);
-        return statsOneFragment;
+        statsHundredFragment.setArguments(args);
+        return statsHundredFragment;
     }
 
     @Override
@@ -76,14 +75,7 @@ public class StatsHundredFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_stats_one, container, false);
-
-        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
-                .getPegCount();
-        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
-                .getPegCount();
-        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
-                .getPegCount();
+        View rootView = inflater.inflate(R.layout.fragment_stats_hundred, container, false);
 
 
 
@@ -91,25 +83,20 @@ public class StatsHundredFragment extends Fragment {
 
 
         TextView scoreTodayTotal = (TextView) rootView.findViewById(R.id.score_today_total);
-        int totalScoreToday = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValue);
+        int totalScoreToday = ScoreDatabase.mStatsHundredDoa.getTotalPegCountDay(pegValue);
         scoreTodayTotal.setText(String.valueOf(totalScoreToday));
 
         TextView scoreWeekTotal = (TextView) rootView.findViewById(R.id.score_week_total);
-        int totalScoreThisWeek = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValue);
+        int totalScoreThisWeek = ScoreDatabase.mStatsHundredDoa.getTotalPegCountWeek(pegValue);
         scoreWeekTotal.setText(String.valueOf(totalScoreThisWeek));
 
         TextView scoreMonthTotal = (TextView) rootView.findViewById(R.id.score_month_total);
-        int totalScoreThisMonth =  ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValue);
+        int totalScoreThisMonth =  ScoreDatabase.mStatsHundredDoa.getTotalPegCountMonth(pegValue);
         scoreMonthTotal.setText(String.valueOf(totalScoreThisMonth));
         int[] currentBestScores = {
                 totalScoreToday,
                 totalScoreThisWeek,
                 totalScoreThisMonth,
-        };
-        int[] allTimeBestScores = {
-                bestScoreDaily,
-                bestScoreWeekly,
-                bestScoreMonthly,
         };
 
         mStatsRows.add(mStatsRowLD);
@@ -125,19 +112,19 @@ public class StatsHundredFragment extends Fragment {
             for ( int resourceID : statRow) {
                 // iterate over the 6 items for each period
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
-                int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue,
+                int previousScore = ScoreDatabase.mStatsHundredDoa.getPreviousScore(pegValue,
                         periods[period_index], previous_period_index+1);
-                int allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
-                        .getPeriodsHighestScore(pegValue, periods[period_index]).getPegCount();
+                PegRecord allTimeHighestScoreForPeriod = ScoreDatabase.mStatsHundredDoa
+                        .getPeriodsHighestScore(pegValue, periods[period_index]);
                 scores.add(previousScore);
                 if (previousScore > 1000) {
                     rowNode.setTextSize(12);
                 }
-                PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsOneDoa.
+                PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsHundredDoa.
                         getPeriodsHighestScore(pegValue, periods[period_index]);
-                if ( savedHighestScoreForIndex == null ) {
+                if ( savedHighestScoreForIndex == null || allTimeHighestScoreForPeriod == null) {
                     // initialisation of the stored/saved bested values
-                    ScoreDatabase.mStatsOneDoa.setBestScore(periods[period_index], pegValue, previousScore);
+                    ScoreDatabase.mStatsHundredDoa.setBestScore(periods[period_index], pegValue, previousScore);
                     if (previousScore > 0) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background_white));
@@ -148,7 +135,7 @@ public class StatsHundredFragment extends Fragment {
                     // saved value exists
                     if (previousScore >= savedHighestScoreForIndex.getPegCount() &&
                             previousScore >= currentBestScores[period_index] &&
-                            previousScore >= allTimeHighestScoreForPeriod) {
+                            previousScore >= allTimeHighestScoreForPeriod.getPegCount()) {
                         Log.d(TAG, "--- NEW BEST SCORE ----");
                         Log.d(TAG, "previousScore: "+previousScore);
                         Log.d(TAG, "savedHighestScore: "+savedHighestScoreForIndex.toString());
@@ -159,14 +146,14 @@ public class StatsHundredFragment extends Fragment {
                             rowNode.setBackground(
                                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                             rowNode.setTextColor(Color.BLACK);
-                            ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, previousScore);
+                            ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, previousScore);
                         }
 
-                    } else if (previousScore < allTimeHighestScoreForPeriod) {
+                    } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod);
+                        ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
                     } else {
                         rowNode.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background));
@@ -187,7 +174,7 @@ public class StatsHundredFragment extends Fragment {
         period_index = 0;
         for ( int[] statRow : mStatsRows) {
             int previous_period_index = 0; //this is the first previous period
-            int allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
+            int allTimeHighestScoreForPeriod = ScoreDatabase.mStatsHundredDoa
                     .getPeriodsHighestScore(pegValue, periods[period_index]).getPegCount();
             for ( int resourceID : statRow) {
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
@@ -207,32 +194,16 @@ public class StatsHundredFragment extends Fragment {
             period_index++;
         }
 
-//        if (previousScore >= bestForPeriod) {
-//            rowNode.setBackground(
-//                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-//            rowNode.setTextColor(Color.BLACK);
-//        } else {
-//            rowNode.setBackground(
-//                    getResources().getDrawable(R.drawable.peg_stats_score_background));
-//            rowNode.setTextColor(Color.WHITE);
-//        }
-
-
-        bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
+        int bestScoreDaily = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "DAY")
                 .getPegCount();
-        bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
+        int bestScoreWeekly = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "WEEK")
                 .getPegCount();
-        bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
+        int bestScoreMonthly = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "MONTH")
                 .getPegCount();
         Log.d (TAG, "--- SETTING BEST SCORES ---");
         Log.d(TAG, "bestScoreDaily:" + bestScoreDaily);
         Log.d(TAG, "bestScoreWeekly:" + bestScoreWeekly);
         Log.d(TAG, "bestScoreMonthly:" + bestScoreMonthly);
-        for (Map.Entry<String, ArrayList<Integer>> row : scoreMap.entrySet()) {
-            for ( Integer score : row.getValue() ) {
-
-            }
-        }
 
         // DAILY BEST EVER SCORE
 
@@ -280,7 +251,7 @@ public class StatsHundredFragment extends Fragment {
         pegValueIndicator.setText(String.valueOf(pegValue));
 
         TextView pegValueTotal = (TextView) rootView.findViewById(R.id.stats_total_peg_count);
-        int totalPegCount = ScoreDatabase.mStatsOneDoa.getTotalPegCount(pegValue);
+        int totalPegCount = ScoreDatabase.mStatsHundredDoa.getTotalPegCount(pegValue);
         if (totalPegCount > 1000) {
             pegValueTotal.setTextSize(12);
 

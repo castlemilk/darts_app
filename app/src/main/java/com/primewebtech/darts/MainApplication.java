@@ -36,6 +36,7 @@ public class MainApplication extends android.app.Application {
 //        clearPreference();
         mDatabase = new ScoreDatabase(this);
         mDatabase.open();
+        mDatabase.update();
 
 
         if (sharedPreferences.getBoolean("firstrun", true)) {

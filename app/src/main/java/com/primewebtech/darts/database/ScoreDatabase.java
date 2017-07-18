@@ -26,20 +26,21 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     public static ScoreHundredDao mScoreHundredDoa;
     public static ActionDao mActionDoa;
     public static StatsOneDao mStatsOneDoa;
-    public static StatsHundredDao mStatsOneDoa;
+    public static StatsHundredDao mStatsHundredDoa;
+    private SQLiteDatabase mDatabase;
 
 
     public ScoreDatabase open() throws SQLException {
         Log.d(TAG, "Opening DB");
         mDbHelper = new DatabaseHelper(mContext);
-        SQLiteDatabase mDatabase = mDbHelper.getWritableDatabase();
+        mDatabase = mDbHelper.getWritableDatabase();
         mScoreOneDoa = new ScoreOneDao(mDatabase);
         mScoreTwoDoa = new ScoreTwoDao(mDatabase);
         mScoreThreeDoa = new ScoreThreeDao(mDatabase);
         mScoreHundredDoa = new ScoreHundredDao(mDatabase);
         mActionDoa = new ActionDao(mDatabase);
         mStatsOneDoa = new StatsOneDao(mDatabase);
-        mStatsOneDoa = new StatsHundredDao(mDatabase);
+        mStatsHundredDoa = new StatsHundredDao(mDatabase);
 
 
         Log.d(TAG, "completed initialisation");
@@ -47,6 +48,9 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
     }
     public void close() {
         mDbHelper.close();
+    }
+    public void update() {
+        mDbHelper.onCreate(mDatabase);
     }
 
 
@@ -73,6 +77,7 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL(CREATE_ACTION_TABLE);
             db.execSQL(deleteActionTrigger());
         }
+
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion,

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.primewebtech.darts.statistics.Fragments.StatsOneFragment;
+import com.primewebtech.darts.statistics.Fragments.StatsHundredFragment;
 
 public class StatsHundredPagerAdapter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 3;
@@ -17,14 +17,14 @@ public class StatsHundredPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position) {
             case 0:
-                return StatsOneFragment.newInstance(100);
+                return StatsHundredFragment.newInstance(100);
             case 1:
-                return StatsOneFragment.newInstance(140);
+                return StatsHundredFragment.newInstance(140);
             case 2:
-                return StatsOneFragment.newInstance(180);
+                return StatsHundredFragment.newInstance(180);
 
             default:
-                return StatsOneFragment.newInstance(100);
+                return StatsHundredFragment.newInstance(100);
         }
     }
     @Override

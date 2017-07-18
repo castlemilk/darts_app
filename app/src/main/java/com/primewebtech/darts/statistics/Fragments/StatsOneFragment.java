@@ -78,15 +78,6 @@ public class StatsOneFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stats_one, container, false);
 
-        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
-                .getPegCount();
-        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
-                .getPegCount();
-        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
-                .getPegCount();
-
-
-
         mStatsRows = new ArrayList<>();
 
 
@@ -105,11 +96,6 @@ public class StatsOneFragment extends Fragment {
                 totalScoreToday,
                 totalScoreThisWeek,
                 totalScoreThisMonth,
-        };
-        int[] allTimeBestScores = {
-                bestScoreDaily,
-                bestScoreWeekly,
-                bestScoreMonthly,
         };
 
         mStatsRows.add(mStatsRowLD);
@@ -207,22 +193,11 @@ public class StatsOneFragment extends Fragment {
             period_index++;
         }
 
-//        if (previousScore >= bestForPeriod) {
-//            rowNode.setBackground(
-//                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-//            rowNode.setTextColor(Color.BLACK);
-//        } else {
-//            rowNode.setBackground(
-//                    getResources().getDrawable(R.drawable.peg_stats_score_background));
-//            rowNode.setTextColor(Color.WHITE);
-//        }
-
-
-        bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
+        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
                 .getPegCount();
-        bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
+        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
                 .getPegCount();
-        bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
+        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
                 .getPegCount();
         Log.d (TAG, "--- SETTING BEST SCORES ---");
         Log.d(TAG, "bestScoreDaily:" + bestScoreDaily);

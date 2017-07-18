@@ -112,7 +112,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                 return pegRecord;
             }
         }
-        return new PegRecord(getDateNow(), TYPE_3, pegValue, 0);
+        return null;
     }
 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
