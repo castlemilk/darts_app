@@ -75,6 +75,7 @@ public class ItemHolder extends AbstractSectionableItem<ItemHolder.ItemViewHolde
     public void bindViewHolder(final FlexibleAdapter adapter, final ItemViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
 
+
     }
 
 
@@ -86,6 +87,7 @@ public class ItemHolder extends AbstractSectionableItem<ItemHolder.ItemViewHolde
         public ImageView unselected;
         @BindView(R.id.thumbnail)
         public ImageView thumbnail;
+
 
         /**
          * Default constructor.

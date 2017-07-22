@@ -41,6 +41,8 @@ public final class Utils {
     private Utils() {
     }
 
+
+
     public static Point getScreenDimensions(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();

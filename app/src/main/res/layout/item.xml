@@ -10,7 +10,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-
         android:layout_margin="4dp"
         android:textColor="#999999"
         android:textStyle="bold"
@@ -30,8 +29,8 @@
     </ImageView>
     <ImageView
         android:id="@+id/unselected"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         android:gravity="center"
         android:textColor="#999999"
@@ -39,16 +38,13 @@
         android:textSize="22sp"
         android:background="@drawable/selector_button_unselected"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         app:layout_constraintRight_toRightOf="parent">
 
     </ImageView>
     <ImageView
         android:id="@+id/selected"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         android:gravity="center"
         android:textColor="#999999"
@@ -56,9 +52,6 @@
         android:textSize="22sp"
         android:background="@drawable/selector_button_selected"
         android:src="@drawable/selector_button_selected_image"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -66,11 +59,8 @@
     <eu.davidea.flipview.FlipView
         android:id="@+id/image"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="@dimen/icon_width"
-        android:layout_height="@dimen/icon_height"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -80,6 +70,47 @@
         app:frontBackgroundColor="@color/material_color_grey_500"
         app:frontImage="@drawable/ic_touch_app_white_24dp"
         app:rearBackgroundColor="@color/material_color_light_blue_700"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginRight="4dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="4dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/material_color_red_100"
+            android:alpha="0.8"
+            android:layout_margin="0dp"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/image_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/imageView2" />
+
+        <TextView
+            android:id="@+id/image_description"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_margin="0dp"
+            android:textColor="@color/colorBlack"
+            android:gravity="center|center_vertical"
+            app:layout_constraintRight_toRightOf="@+id/imageView2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
+    </android.support.constraint.ConstraintLayout>
 
 
 

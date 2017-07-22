@@ -33,6 +33,7 @@
         </provider>
 
         <activity android:name=".homepage.HomePageActivity"
+            android:theme="@style/AppTheme.Black.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +42,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".scoring.ScoringActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Black.NoActionBar"/>
         <activity android:name=".scoring.OneDartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">
@@ -99,7 +101,7 @@
             android:screenOrientation="portrait"
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
+            android:theme="@style/AppTheme.Black.NoActionBar" />
     </application>
 
 </manifest>

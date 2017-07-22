@@ -79,7 +79,7 @@ public class GalleryActivity extends AppCompatActivity
         Log.d(TAG, "onCreate");
         FlexibleAdapter.enableLogs(true);
         if (savedInstanceState == null) {
-            GalleryDatabaseService.getInstance().createHeadersSectionsGalleryDataset();
+            GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDataset();
         }
         initializeRecylerView(savedInstanceState);
 //        initializeActionModeHelper(0);
@@ -128,7 +128,7 @@ public class GalleryActivity extends AppCompatActivity
 
     private void initializeRecylerView(Bundle savedInstanceState) {
 
-        mAdapter = new GalleryAdapter(GalleryDatabaseService.getInstance().getDatabaseList(), this);
+        mAdapter = new GalleryAdapter(GalleryDatabaseService.getInstance(this).getDatabaseList(), this);
         mAdapter.setAnimationOnScrolling(false);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
@@ -164,22 +164,30 @@ public class GalleryActivity extends AppCompatActivity
 
     @Override
     public boolean onItemClick(int position) {
-        PhotoItem photoItem = (PhotoItem) mAdapter.getItem(position);
-        Log.d(TAG, "onItemClick:Clicked:postition:"+position);
+
+
         if (mActionMode != null && position != RecyclerView.NO_POSITION) {
             toggleSelection(position);
             return true;
         } else {
+            try {
+                PhotoItem photoItem = (PhotoItem) mAdapter.getItem(position);
+                Log.d(TAG, "onItemClick:Clicked:postition:"+position);
 
-            Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            Uri photoURI = FileProvider.getUriForFile(this,
-                    getApplicationContext().getPackageName() + ".fileprovider",
-                    photoItem.getFile());
-            intent.setDataAndType(photoURI, "image/*");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
-            return false;
+                Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        getApplicationContext().getPackageName() + ".fileprovider",
+                        photoItem.getFile());
+                intent.setDataAndType(photoURI, "image/*");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+                return false;
+            } catch ( Exception e) {
+                return true;
+            }
+
+
         }
 
         //TODO: navigate to selected image
@@ -201,22 +209,6 @@ public class GalleryActivity extends AppCompatActivity
     private void toggleSelection(int position) {
         mAdapter.toggleSelection(position);
         int count = mAdapter.getSelectedItemCount();
-//        ImageView unselected;
-//        ImageView selected;
-//        PhotoItem item = (PhotoItem) mAdapter.getItem(position);
-//        Log.d(TAG, "toggleActivaition:position:"+position);
-//
-//        unselected = (ImageView) mRecyclerView.getChildAt(position).findViewById(R.id.unselected);
-//        selected = (ImageView) mRecyclerView.getChildAt(position).findViewById(R.id.selected);
-//        if (mAdapter.isSelected(position)) {
-//            Log.d(TAG, "toggleActivaition:selecting");
-//            selected.setVisibility(View.VISIBLE);
-//            unselected.setVisibility(View.GONE);
-//        } else {
-//            Log.d(TAG, "toggleActivaition:unselecting");
-//            selected.setVisibility(View.GONE);
-//            unselected.setVisibility(View.VISIBLE);
-//        }
 
         if (count == 0) {
             mActionMode.finish();
@@ -227,9 +219,6 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     private void setContextTitle(int count) {
-//        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
-//                getString(R.string.action_selected_one) :
-//                getString(R.string.action_selected_many)));
         Log.d(TAG, "SHARING:"+mAdapter.getSelectedPositions().toString());
         mActionMode.setTitle(count == 1 ?
                 getString(R.string.action_selected_one, Integer.toString(count)) :
@@ -248,14 +237,21 @@ public class GalleryActivity extends AppCompatActivity
         View emptyView = findViewById(R.id.empty_view);
         TextView emptyText = (TextView) findViewById(R.id.empty_text);
         if (emptyText != null)
+            Log.d(TAG, "onUpdateEmptyView:empty:display:empty_view");
             emptyText.setText(getString(R.string.no_items));
+
         if (size > 0) {
             fastScroller.setVisibility(View.VISIBLE);
-//            mRefreshHandler.removeMessages(2);
+            emptyText.setAlpha(0);
             emptyView.setAlpha(0);
+
+
         } else {
-            emptyView.setAlpha(0);
-//            mRefreshHandler.sendEmptyMessage(2);
+            emptyView.setAlpha(1);
+            emptyText.setAlpha(1);
+            if (mRecyclerView != null) {
+                mRecyclerView.setAlpha(0);
+            }
             fastScroller.setVisibility(View.GONE);
         }
         if (mAdapter != null) {
@@ -317,10 +313,10 @@ public class GalleryActivity extends AppCompatActivity
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         if (Utils.hasMarshmallow()) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccentDark_light, this.getTheme()));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack, this.getTheme()));
         } else if (Utils.hasLollipop()) {
             //noinspection deprecation
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorAccentDark_light));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack));
         }
         mode.getMenuInflater().inflate(R.menu.gallery_selection, menu);
 //        mAdapter.setMode(FlexibleAdapter.MODE_MULTI);
@@ -365,17 +361,22 @@ public class GalleryActivity extends AppCompatActivity
                 toggleSelectAll();
                 return true;
             case R.id.menu_delete:
-//                StringBuilder message = new StringBuilder();
-//                message.append(getString(R.string.action_deleted)).append(" ");
-//
-//                for (Integer pos : mAdapter.getSelectedPositions()) {
-////                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
-//                    if (mAdapter.getSelectedItemCount() > 1)
-//                        message.append(", ");
-//                }
                 Log.d(TAG, "onActionItemClicked:DELETE");
+                List<File> files = new ArrayList<>();
+                for ( Integer position: mAdapter.getSelectedPositions()) {
+                    if ( mAdapter.getItem(position) != null) {
+                        files.add(((PhotoItem) mAdapter.getItem(position)).getFile());
+                        GalleryDatabaseService.getInstance(this).removeItem(mAdapter.getItem(position));
+                        mAdapter.removeItem(position);
+                        if (mAdapter.getSectionItems(
+                                mAdapter.getHeaderOf(mAdapter.getItem(position))).isEmpty() ||
+                    mAdapter.getSectionItems(mAdapter.getHeaderOf(mAdapter.getItem(position))).size() == 1) {
+                            mAdapter.removeScrollableHeader((HeaderItem) mAdapter.getHeaderOf(mAdapter.getItem(position)));
+                        }
+                    }
 
-                List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+
+                }
                 for (File file : files) {
                     Log.d(TAG, "onActionItemClicked:DELETE:file:"+file.getPath());
                     if (file.delete()) {
@@ -385,18 +386,16 @@ public class GalleryActivity extends AppCompatActivity
                             file.delete();
                         }
                     }
-
                 }
-                mAdapter.removeItems(mAdapter.getSelectedPositions());
-//                Log.d(TAG, "onActionItemClicked:deleted_items:"+mAdapter.getDeletedItems().toString());
-//                for ( AbstractFlexibleItem photo : mAdapter.getDeletedItems()) {
-//                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+((PhotoItem) photo).getFile());
-//                    ((PhotoItem) photo).getFile().delete();
-//                }
-                return true;
+
+                Log.d(TAG, "onActionItemClicked:DELETE:itemsCount:"+mAdapter.getItemCount());
+                Log.d(TAG, "onActionItemClicked:DELETE:items:"+mAdapter.getDeletedItems());
+                mode.finish();
+                return false;
+            default:
+                return false;
 
         }
-        return false;
     }
 
     public void toggleSelectAll() {
@@ -418,7 +417,11 @@ public class GalleryActivity extends AppCompatActivity
         Intent shareIntent  = new Intent(Intent.ACTION_SEND_MULTIPLE);
         ArrayList<Uri> imageUris = new ArrayList<>();
         Log.d(TAG, "shareIntentMaker:SHARING:"+mAdapter.getSelectedPositions().toString());
-        List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+//        List<File> files = GalleryDatabaseService.getInstance().getSelectedItems(mAdapter.getSelectedPositions());
+        List<File> files = new ArrayList<>();
+        for ( Integer position: mAdapter.getSelectedPositions()) {
+            files.add(((PhotoItem) mAdapter.getItem(position)).getFile());
+        }
 
         for ( File file : files) {
             Log.d(TAG, "shareIntentMaker:file:"+file.getPath());
@@ -457,10 +460,26 @@ public class GalleryActivity extends AppCompatActivity
         mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
         mActionMode = null;
         mAdapter.clearSelection();
+        Log.d(TAG, "onDestroyActionMode:itemsCount:"+mAdapter.getItemCount());
+        Log.d(TAG, "onDestroyActionMode:items:"+mAdapter.getDeletedItems());
+        Log.d(TAG, "onDestroyActionMode:items:DB:"+GalleryDatabaseService.getInstance(this).getDatabaseList().toString());
+        Log.d(TAG, "onDestroyActionMode:adapter:isEmpty:"+mAdapter.isEmpty());
+        Log.d(TAG, "onDestroyActionMode:db:isEmpty:"+GalleryDatabaseService.getInstance(this).isEmpty());
+
+        if (GalleryDatabaseService.getInstance(this).isEmpty()) {
+            this.onUpdateEmptyView(0);
+        }
         ImageView unselected;
         ImageView selected;
         FlipView flipView;
-        inActionMode = true;
+        inActionMode = false;
+        if (Utils.hasMarshmallow()) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack, this.getTheme()));
+        } else if (Utils.hasLollipop()) {
+            //noinspection deprecation
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack));
+        }
+
         for (int i =0; i< mRecyclerView.getChildCount(); i++) {
             unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
             selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);

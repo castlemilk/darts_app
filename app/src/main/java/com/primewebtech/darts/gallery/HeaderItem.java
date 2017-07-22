@@ -15,7 +15,6 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.items.ISectionable;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
 /**
@@ -27,7 +26,7 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
 
     private String id;
     private String title;
-    private String subtitle;
+//    private String subtitle;
 
     public HeaderItem(String id) {
         super();
@@ -65,13 +64,13 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
         this.title = title;
     }
 
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
+//    public String getSubtitle() {
+//        return subtitle;
+//    }
+//
+//    public void setSubtitle(String subtitle) {
+//        this.subtitle = subtitle;
+//    }
 
 
     @Override
@@ -92,10 +91,10 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
         } else {
             holder.mTitle.setText(getTitle());
         }
-        List<ISectionable> sectionableList = adapter.getSectionItems(this);
-        String subTitle = (sectionableList.isEmpty() ? "Empty section" :
-                sectionableList.size() + " section items");
-        holder.mSubtitle.setText(subTitle);
+//        List<ISectionable> sectionableList = adapter.getSectionItems(this);
+//        String subTitle = (sectionableList.isEmpty() ? "Empty section" :
+//                sectionableList.size() + " section items");
+//        holder.mSubtitle.setText(subTitle);
     }
 
     @Override
@@ -112,7 +111,7 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
         HeaderViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);//True for sticky
             mTitle = (TextView) view.findViewById(R.id.title);
-            mSubtitle = (TextView) view.findViewById(R.id.subtitle);
+//            mSubtitle = (TextView) view.findViewById(R.id.subtitle);
             mTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

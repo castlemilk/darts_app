@@ -1,9 +1,12 @@
 package com.primewebtech.darts.gallery;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.File;
@@ -39,11 +42,11 @@ public class GalleryDatabaseService {
     private Map<StaggeredItemStatus, StaggeredHeaderItem> headers;
     private File pictureDirectory;
     private DateOrganiser mDateOrganiser;
+    private Context mContext;
 
 
-    private GalleryDatabaseService() {
-
-
+    private GalleryDatabaseService(Context context) {
+        mContext = context;
     }
 
     public void createHolderGalleryDataset() {
@@ -96,9 +99,9 @@ public class GalleryDatabaseService {
         }
     }
 
-    public static GalleryDatabaseService getInstance() {
+    public static GalleryDatabaseService getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new GalleryDatabaseService();
+            mInstance = new GalleryDatabaseService(context);
         }
         return mInstance;
     }
@@ -118,7 +121,7 @@ public class GalleryDatabaseService {
     /*
      * Creates a Header item.
      */
-    public static HeaderItem newHeader(int index, Date date) {
+    public HeaderItem newHeader(int index, Date date) {
         HeaderItem header = new HeaderItem("H"+ index);
         header.setTitle(new SimpleDateFormat("EEE, MMM d", Locale.US).format(date));
         //header is hidden and un-selectable by default!
@@ -129,10 +132,11 @@ public class GalleryDatabaseService {
 	 * Creates a normal item with a Header linked.
 	 */
 
-    public static PhotoItem newPhotoItem(int i, File file, IHeader header) {
-        PhotoItem item = new PhotoItem("I" + i,file,  (HeaderItem) header);
+    public PhotoItem newPhotoItem(int i, File file, IHeader header) {
+        PhotoItem item = new PhotoItem("I" + i,file, (HeaderItem) header);
         item.setTitle("Simple Item " + i);
         item.setFile(file);
+        item.setDescription(getDescription(file));
         return item;
     }
 
@@ -168,6 +172,55 @@ public class GalleryDatabaseService {
         Log.i(TAG, "getDatabaseList");
         //Return a copy of the DB: we will perform some tricky code on this list.
         return new ArrayList<>(mItems);
+    }
+
+    public String getDescription(File file) {
+
+        Cursor mCursor;
+        String[] mProjection = {
+                MediaStore.Images.ImageColumns.TITLE,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.DESCRIPTION
+        };
+
+        String selectionClause = MediaStore.Images.ImageColumns.DATA + " = ?";
+        String[] selectionArgs = { file.getPath() };
+        Log.d(TAG, "getDescription:file:path:"+file.getPath());
+        mCursor = mContext.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                mProjection,
+                selectionClause,
+                selectionArgs,
+                null
+        );
+        int titleIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE);
+        int dateIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN);
+        int descriptionIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DESCRIPTION);
+        if (mCursor == null) {
+            // Some providers return null if an error occurs whereas others throw an exception
+            return null;
+        }
+        else if (mCursor.getCount() < 1) {
+            // No matches found
+            return null;
+        }
+        else {
+
+            while (mCursor.moveToFirst()) {
+                String title = mCursor.getString(titleIndex);
+                String date = mCursor.getString(dateIndex);
+                String description = mCursor.getString(descriptionIndex);
+
+                // Dumps "ID: 1 Word: NewWord Locale: en_US"
+                // I added this via Settings > Language & Input > Personal Dictionary
+                Log.d(TAG, "Title = " + title +
+                        ", Date=" + date +
+                        ", Descriptione= "+ description);
+                return description;
+            }
+
+        }
+        return null;
     }
     public void removeItem(IFlexible item) {
         mItems.remove(item);
@@ -352,6 +405,9 @@ public class GalleryDatabaseService {
 
     }
 
+    public boolean isEmpty() {
+        return mItems == null || mItems.isEmpty();
+    }
     /**
      * A simple item comparator by Id.
      */

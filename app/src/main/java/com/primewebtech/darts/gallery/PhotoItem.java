@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,6 +38,7 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
     private static final String TAG = PhotoItem.class.getSimpleName();
     HeaderItem header;
     private File file;
+    private String description;
 
 
     public PhotoItem(String id) {
@@ -78,6 +80,14 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
     public void setFile(File file) {
         this.file = file;
 
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+
+    }
+    public String getDescription() {
+        return description;
     }
 
     public int getSpanSize(int spanCount, int position) {
@@ -127,6 +137,7 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 //
 //        }
         Log.d(TAG, "filepath:"+"file:///"+file.getPath());
+        holder.description.setText(description);
         Glide.clear(holder.thumbnail);
         Glide.with(context).load("file:///"+file.getPath()).crossFade(500).into(holder.thumbnail);
 
@@ -139,6 +150,7 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
         ImageView selected;
         ImageView unselected;
         FlipView mFlipView;
+        TextView description;
         public boolean swiped = false;
         private boolean inActionMode = false;
 
@@ -151,6 +163,7 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
             this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
             this.selected = (ImageView) view.findViewById(R.id.selected);
             this.unselected = (ImageView) view.findViewById(R.id.unselected);
+            this.description = (TextView) view.findViewById(R.id.image_description);
             mFlipView = (FlipView) view.findViewById(R.id.image);
             mFlipView.setVisibility(View.GONE);
 //            selected.setVisibility(View.GONE);

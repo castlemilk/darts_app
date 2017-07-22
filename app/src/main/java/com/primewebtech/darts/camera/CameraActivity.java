@@ -451,7 +451,9 @@ public class CameraActivity extends AppCompatActivity {
             if (date == -1) date = mCaptureStartTime;
             if (result) {
                 Log.e(TAG, "attempting async save");
-                mMediaSaver.addImage(mJPEGdata, logo, pin, String.valueOf(mScoreNumberValue), title, date, mLocation, width, height, 0,  mOnMediaSavedListener);
+                mMediaSaver.addImage(mJPEGdata, logo, pin, title, scoreType,
+                        String.valueOf(mScoreNumberValue), date, mLocation,
+                        width, height, 0,  mOnMediaSavedListener);
 
             }
         }

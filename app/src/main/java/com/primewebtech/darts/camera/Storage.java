@@ -67,7 +67,7 @@ public class Storage {
     }
 
     // Save the image and add it to media store.
-    public static Uri addImage(ContentResolver resolver, String title,
+    public static Uri addImage(ContentResolver resolver, String title, String score_type, String score,
                                 long date, Location location, int orientation, byte[] jpeg,
                                 int width, int height) {
         // Save the image.
@@ -79,7 +79,7 @@ public class Storage {
         Log.d(TAG, "addImage:path:"+path);
         writeFile(path, jpeg);
         Log.d(TAG, String.format("writeFile took %dms", System.currentTimeMillis() - t0));
-        return addImage(resolver, title, date, location, orientation,
+        return addImage(resolver, title, score_type, score, date, location, orientation,
                 jpeg.length, path, width, height);
     }
 //    public static Uri addImage(ContentResolver resolver, String title,
@@ -98,12 +98,12 @@ public class Storage {
 //    }
 
     // Add the image to media store.
-    public static Uri addImage(ContentResolver resolver, String title,
+    public static Uri addImage(ContentResolver resolver, String title, String score_type, String score,
                                long date, Location location, int orientation, int jpegLength,
                                String path, int width, int height) {
         // Insert into MediaStore.
         final long t0 = System.currentTimeMillis();
-        ContentValues values = new ContentValues(9);
+        ContentValues values = new ContentValues(12);
         values.put(ImageColumns.TITLE, title);
         values.put(ImageColumns.BUCKET_ID, BUCKET_ID);
         values.put(ImageColumns.DISPLAY_NAME, title + ".jpg");
@@ -113,6 +113,7 @@ public class Storage {
         values.put(ImageColumns.ORIENTATION, orientation);
         values.put(ImageColumns.DATA, path);
         values.put(ImageColumns.SIZE, jpegLength);
+        values.put(ImageColumns.DESCRIPTION, score_type+": "+score);
         setImageSize(values, width, height);
         if (location != null) {
             values.put(ImageColumns.LATITUDE, location.getLatitude());
@@ -192,7 +193,7 @@ public class Storage {
                 return null;
             }
         }
-
+        //TODO: potentially add score and type within the file path for image.
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;

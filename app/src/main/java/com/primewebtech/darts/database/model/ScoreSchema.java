@@ -15,6 +15,8 @@ public interface ScoreSchema {
     String PERIOD                           = "period";
     String PEG_VALUE                        = "peg_value"; //i.e peg 40
     String TYPE                             = "peg_type"; //i.e 2 darts or three darts
+    String SCORE_TYPE                       = "score_type";
+    String SCORE                            = "score";
     int TYPE_2                              = 2;
     int TYPE_3                              = 3;
     String PEG_COUNT                        = "peg_count"; //i.e 40 times

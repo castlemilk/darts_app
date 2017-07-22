@@ -35,13 +35,15 @@ public class MediaSaver extends Thread {
         return (mQueue.size() >= SAVE_QUEUE_LIMIT);
     }
     // Runs in main thread
-    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, String score, String title, long date, Location loc,
+    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, String title, String score_type,
+                         String score, long date, Location loc,
                          int width, int height, int orientation, OnMediaSavedListener l) {
         SaveRequest r = new SaveRequest();
         r.data = data;
         r.logo = logo;
         r.pin = pin;
         r.score = score;
+        r.score_type = score_type;
         r.date = date;
         r.title = title;
         r.loc = (loc == null) ? null : new Location(loc);  // make a copy
@@ -86,7 +88,7 @@ public class MediaSaver extends Thread {
                 notifyAll();  // the main thread may wait in addImage
             }
             final long t0 = System.currentTimeMillis();
-            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(r.data, r.logo, r.pin, r.score)), r.title, r.date, r.loc, r.width, r.height,
+            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(r.data, r.logo, r.pin, r.score)), r.title, r.score_type, r.score, r.date, r.loc, r.width, r.height,
                     r.orientation);
             Log.d(TAG, String.format("storeImage took %dms", System.currentTimeMillis() - t0));
             r.listener.onMediaSaved(uri);
@@ -106,9 +108,9 @@ public class MediaSaver extends Thread {
     }
 
     // Runs in saver thread
-    private Uri storeImage(final byte[] data, String title, long date,
-                           Location loc, int width, int height, int orientation) {
-        Uri uri = Storage.addImage(mContentResolver, title, date, loc,
+    private Uri storeImage(final byte[] data, String title, String score_type, String score,
+                           long date, Location loc, int width, int height, int orientation) {
+        Uri uri = Storage.addImage(mContentResolver, title, score_type, score, date, loc,
                 orientation, data, width, height);
         return uri;
     }
@@ -127,6 +129,7 @@ public class MediaSaver extends Thread {
         Bitmap logo;
         Bitmap pin;
         String score;
+        String score_type;
         Location loc;
         int width, height;
         int orientation;
