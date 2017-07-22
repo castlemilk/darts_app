@@ -472,7 +472,7 @@ public class GalleryActivity extends AppCompatActivity
         ImageView unselected;
         ImageView selected;
         FlipView flipView;
-        inActionMode = false;
+        inActionMode = true;
         if (Utils.hasMarshmallow()) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack, this.getTheme()));
         } else if (Utils.hasLollipop()) {
@@ -481,13 +481,13 @@ public class GalleryActivity extends AppCompatActivity
         }
 
         for (int i =0; i< mRecyclerView.getChildCount(); i++) {
-            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
-            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
+//            unselected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.unselected);
+//            selected = (ImageView) mRecyclerView.getChildAt(i).findViewById(R.id.selected);
             flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
 
-            if (unselected != null) {
-                unselected.setVisibility(View.GONE);
-                selected.setVisibility(View.GONE);
+            if (flipView != null) {
+//                unselected.setVisibility(View.GONE);
+//                selected.setVisibility(View.GONE);
                 flipView.setVisibility(View.GONE);
             }
         }

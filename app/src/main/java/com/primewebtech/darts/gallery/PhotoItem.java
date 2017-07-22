@@ -109,33 +109,12 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
     public void bindViewHolder(final FlexibleAdapter adapter, PhotoViewHolder holder, int position, List payloads) {
         final Context context = holder.itemView.getContext();
         final GalleryActivity activity = (GalleryActivity) context;
-//        holder.itemView.setActivated(adapter.isSelected(position));
-        // Background, when bound the first time
-//        if (payloads.size() == 0) {
-//            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-//                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-//                    DrawableUtils.getColorControlHighlight(context));
-//            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-////            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
-//        }
         if (activity.mActionMode != null) {
             holder.mFlipView.flipSilently(adapter.isSelected(position));
             holder.mFlipView.setVisibility(View.VISIBLE);
         } else {
             holder.mFlipView.setVisibility(View.GONE);
         }
-
-////        holder.mTitle.setText(getTitle());
-////        holder.mSubtitle.setText(getSubtitle());
-//        ImageSize targetSize = new ImageSize(80, 50);
-
-//        if (adapter.isSelected(position)) {
-//            Log.d(TAG, "ITEM IS SELECTED:position:"+position);
-//            holder.selected.setVisibility(View.VISIBLE);
-//            holder.unselected.setVisibility(View.GONE);
-//        } else {
-//
-//        }
         Log.d(TAG, "filepath:"+"file:///"+file.getPath());
         holder.description.setText(description);
         Glide.clear(holder.thumbnail);
@@ -147,8 +126,6 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 
         Context mContext;
         ImageView thumbnail;
-        ImageView selected;
-        ImageView unselected;
         FlipView mFlipView;
         TextView description;
         public boolean swiped = false;
@@ -161,28 +138,9 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
             final GalleryActivity activity = (GalleryActivity) mContext;
             inActionMode = activity.inActionMode;
             this.thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            this.selected = (ImageView) view.findViewById(R.id.selected);
-            this.unselected = (ImageView) view.findViewById(R.id.unselected);
             this.description = (TextView) view.findViewById(R.id.image_description);
             mFlipView = (FlipView) view.findViewById(R.id.image);
             mFlipView.setVisibility(View.GONE);
-//            selected.setVisibility(View.GONE);
-//            unselected.setVisibility(View.GONE);
-//            thumbnail.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if( mAdapter.mItemLongClickListener != null) {
-//                        mAdapter.mItemLongClickListener.onItemLongClick(getAdapterPosition());
-//                    if  (activity.mActionMode != null) {
-//
-//                        Toast.makeText(mContext, "ImageClick on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-//                        toggleActivation();
-//                    } else {
-//
-//                    }
-//                    }
-//                }
-//            });
 
         }
 

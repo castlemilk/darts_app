@@ -81,10 +81,6 @@ public class ItemHolder extends AbstractSectionableItem<ItemHolder.ItemViewHolde
 
     static class ItemViewHolder extends FlexibleViewHolder {
 
-        @BindView(R.id.selected)
-        public ImageView selected;
-        @BindView(R.id.unselected)
-        public ImageView unselected;
         @BindView(R.id.thumbnail)
         public ImageView thumbnail;
 

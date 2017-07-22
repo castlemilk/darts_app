@@ -6,8 +6,6 @@ package com.primewebtech.darts.gallery;
 
 public class ItemModel extends AbstractModel {
 
-    String description;
-
     public ItemModel(String id) {
         super(id);
     }
