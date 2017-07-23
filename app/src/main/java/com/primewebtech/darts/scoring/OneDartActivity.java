@@ -305,7 +305,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     scoreNumber.setGravity(Gravity.CENTER);
                     return scoreNumber;
                 }
-
                 @Override
                 public void removeView(int i, View view) {
 

@@ -62,8 +62,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="@color/material_color_red_100"
-            android:alpha="0.8"
+            android:background="@color/material_color_grey_500"
+            android:alpha="0.97"
             android:layout_margin="0dp"
             android:layout_alignParentBottom="true"
             app:layout_constraintRight_toRightOf="parent"

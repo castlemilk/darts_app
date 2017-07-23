@@ -101,7 +101,7 @@
             android:screenOrientation="portrait"
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:theme="@style/AppTheme.Black.NoActionBar" />
+            android:theme="@style/AppTheme.Black.ActionBar" />
     </application>
 
 </manifest>

@@ -781,15 +781,14 @@ public class CameraActivity extends AppCompatActivity {
     }
     private List<Integer> makePegs() {
         List<Integer> ret = new ArrayList<>();
-        for (int i=2; i<=158; i++) {
+        ret.add(170);
+        ret.add(167);
+        ret.add(164);
+        ret.add(161);
+        ret.add(160);
+        for (int i=158; i>=2; i--) {
             ret.add(i);
         }
-        ret.add(160);
-        ret.add(161);
-        ret.add(164);
-        ret.add(167);
-        ret.add(170);
-
         return ret;
     }
 
