@@ -154,7 +154,14 @@ public class StatsHundredFragment extends Fragment {
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
                         ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
-                    } else {
+                    } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
+                            currentBestScores[period_index] > previousScore) {
+                        rowNode.setBackground(
+                                getResources().getDrawable(R.drawable.peg_stats_score_background));
+                        rowNode.setTextColor(Color.WHITE);
+                        ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, currentBestScores[period_index]);
+
+                    }else {
                         rowNode.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);

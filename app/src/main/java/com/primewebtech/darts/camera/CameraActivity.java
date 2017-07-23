@@ -20,7 +20,9 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aigestudio.wheelpicker.WheelPicker;
+import com.primewebtech.darts.BuildConfig;
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.homepage.HomePageActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -78,6 +82,7 @@ public class CameraActivity extends AppCompatActivity {
     private ContentResolver mContentResolver;
     private Camera.CameraInfo mCameraInfo;
     public long mCaptureStartTime;
+    private boolean cameraPermissionGranted = false;
     private ArrayList permissionsToRequest;
     private ArrayList permissionsRejected = new ArrayList();
     private ArrayList permissions = new ArrayList();
@@ -158,12 +163,66 @@ public class CameraActivity extends AppCompatActivity {
             if (savedInstanceState.getString(LATEST_PICTRUE) != null) {
                 mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
             } else {
+                File lastPicture = getLastPicture();
+                if (lastPicture != null) {
+                    mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+                } else {
+                    mRecentlySavedImageURI = null;
+                }
+            }
+        } else {
+            File lastPicture = getLastPicture();
+            if (lastPicture != null) {
+                Log.d(TAG, "onCreate:lastPicture"+lastPicture.toString());
+                mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+                Log.d(TAG, "onCreate:mRecentlySavedImageURI:"+mRecentlySavedImageURI);
+            } else {
                 mRecentlySavedImageURI = null;
             }
-
         }
         setContentView(R.layout.activity_camera);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mScoreType = (WheelPicker) findViewById(R.id.score_type);
+        mScoreValue = (WheelPicker) findViewById(R.id.score_value);
+        mScoreNumber = (TextView) findViewById(R.id.score_number);
+        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+        mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
+        mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+        mLogoText = (ImageView) findViewById(R.id.logo_text);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
+        mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
+        mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+
+        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
+        mCustomPagerAdapterScores = new CustomPagerAdapter(this, mScoreResources);
+
+        mViewPager.setVisibility(View.GONE);
+        mScoreValue.setVisibility(View.GONE);
+        mScoreType.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
+        mSaveImageButton.setVisibility(View.GONE);
+        mBackButton.setVisibility(View.GONE);
+        mTakePhotoButton.setVisibility(View.VISIBLE);
+        initTypeSpinners();
+        initScoreSpinner("Peg");
+        mViewPager.setCurrentItem(0);
+
+
+        Util.initialize(this);
+        mContentResolver = this.getContentResolver();
+        mNamedImages = new NamedImages();
+        mMediaSaver = new MediaSaver(mContentResolver);
+        mPreviousImageThumbnail.setEnabled(false);
+        if (mRecentlySavedImageURI != null) {
+            Log.d(TAG, "onCreate:mPreviewImageThumbnail:path:"+mRecentlySavedImageURI);
+            mPreviousImageThumbnail.setEnabled(true);
+            mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
+                    THUMBSIZE, THUMBSIZE));
+        }
+
+
+        mLogoText.setVisibility(View.GONE);
         if (!getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
@@ -184,76 +243,30 @@ public class CameraActivity extends AppCompatActivity {
                         return;
                     }
                     Log.d(TAG, "getCameraPermission:openingCamera:done");
+                    cameraPermissionGranted = true;
                 } else {
                     Log.d(TAG, "getCameraPermission:OLD_VERSION:openingCamera:done");
+                    cameraPermissionGranted = true;
 
                 }
 
             }
         }
-        mScoreType = (WheelPicker) findViewById(R.id.score_type);
-        mScoreValue = (WheelPicker) findViewById(R.id.score_value);
-        mScoreNumber = (TextView) findViewById(R.id.score_number);
-        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
 
-        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
-        mCustomPagerAdapterScores = new CustomPagerAdapter(this, mScoreResources);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-//        if (mCustomPagerAdapter != null) {
-//            mViewPager.setAdapter(mCustomPagerAdapter);
-//        } else {
-//            mViewPager.setAdapter(new CustomPagerAdapter(this, mPegResources));
-//        }
-
-        initTypeSpinners();
-        initScoreSpinner("Peg");
-        mViewPager.setCurrentItem(0);
-        mViewPager.setVisibility(View.GONE);
-        mScoreValue.setVisibility(View.GONE);
-        mScoreType.setVisibility(View.GONE);
-        mScoreTypeBackground.setVisibility(View.GONE);
-        Util.initialize(this);
-        mContentResolver = this.getContentResolver();
-        mNamedImages = new NamedImages();
-        mMediaSaver = new MediaSaver(mContentResolver);
-        mCamera = openBackFacingCamera();
-
-        if (mCamera != null) {
-            mParameters = mCamera.getParameters();
+        if (cameraPermissionGranted) {
+            mCamera = openBackFacingCamera();
+            if (mCamera != null) {
+                mParameters = mCamera.getParameters();
+            }
+            Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraId, mCameraInfo);
+            mPreview = new CameraPreview(this, mCamera);
+            mCamera.setDisplayOrientation(90);
+            mCamera.setParameters(mParameters);
+            determineDisplayOrientation();
+            preview.addView(mPreview);
         }
-        Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
 
-
-
-        mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
-        mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
-        mPreviousImageThumbnail.setEnabled(false);
-        if (mRecentlySavedImageFilePath != null) {
-            mPreviousImageThumbnail.setEnabled(true);
-            mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
-                    THUMBSIZE, THUMBSIZE));
-        }
-        mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
-        mBackButton = (ImageButton) findViewById(R.id.button_back);
-        mSaveImageButton.setVisibility(View.GONE);
-        mBackButton.setVisibility(View.GONE);
-        mTakePhotoButton.setVisibility(View.VISIBLE);
-
-        mLogoText = (ImageView) findViewById(R.id.logo_text);
-        mLogoText.setVisibility(View.GONE);
-
-
-
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
-        Camera.getCameraInfo(cameraId, mCameraInfo);
-        mPreview = new CameraPreview(this, mCamera);
-
-
-
-        mCamera.setDisplayOrientation(90);
-        mCamera.setParameters(mParameters);
-        determineDisplayOrientation();
-        preview.addView(mPreview);
 
 
 
@@ -269,11 +282,13 @@ public class CameraActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-                super.onCreate(null);
+                cameraPermissionGranted = true;
 
             } else {
 
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                Intent homePageIntent = new Intent(CameraActivity.this, HomePageActivity.class);
+                startActivity(homePageIntent);
 
             }
 
@@ -327,7 +342,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onResume();
         try {
             Log.d(TAG, "onResume");
-            if (mCamera == null) {
+            if (mCamera == null && cameraPermissionGranted) {
                 Log.d(TAG, "onResume:mCamera:null");
                 setContentView(R.layout.activity_camera);
                 mCamera = openBackFacingCamera();
@@ -351,15 +366,28 @@ public class CameraActivity extends AppCompatActivity {
             mLogoText.setVisibility(View.GONE);
             initTypeSpinners();
             initScoreSpinner("Peg");
+            mViewPager.setCurrentItem(0);
             mViewPager.setVisibility(View.GONE);
             mSaveImageButton.setVisibility(View.GONE);
             mBackButton.setVisibility(View.GONE);
             mTakePhotoButton.setVisibility(View.VISIBLE);
             mScoreNumber.setVisibility(View.GONE);
+            Util.initialize(this);
+            mContentResolver = this.getContentResolver();
+            mNamedImages = new NamedImages();
+            mMediaSaver = new MediaSaver(mContentResolver);
+            File lastPicture = getLastPicture();
+            if (lastPicture != null) {
+                Log.d(TAG, "onCreate:lastPicture"+lastPicture.toString());
+                mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+                Log.d(TAG, "onCreate:mRecentlySavedImageURI:"+mRecentlySavedImageURI);
+            } else {
+                mRecentlySavedImageURI = null;
+            }
 
-            if (mRecentlySavedImageFilePath != null) {
+            if (mRecentlySavedImageURI != null) {
                 mPreviousImageThumbnail.setVisibility(View.VISIBLE);
-                mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageFilePath),
+                mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
                         THUMBSIZE, THUMBSIZE));
             }
 
@@ -454,7 +482,6 @@ public class CameraActivity extends AppCompatActivity {
                 mMediaSaver.addImage(mJPEGdata, logo, pin, title, scoreType,
                         String.valueOf(mScoreNumberValue), date, mLocation,
                         width, height, 0,  mOnMediaSavedListener);
-
             }
         }
 
@@ -485,9 +512,22 @@ public class CameraActivity extends AppCompatActivity {
     }
     public void onReviewLatestPhotoClick(View view) {
         Intent galleryIntent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryIntent.setDataAndType(mRecentlySavedImageURI, "image/*");
-        galleryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(galleryIntent);
+        File lastPicture = getLastPicture();
+        if (lastPicture != null) {
+            Log.d(TAG, "onCreate:lastPicture"+lastPicture.toString());
+            mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+            Log.d(TAG, "onCreate:mRecentlySavedImageURI:"+mRecentlySavedImageURI);
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider",
+                    new File(mRecentlySavedImageURI.getPath()));
+            galleryIntent.setDataAndType(photoURI, "image/*");
+            galleryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            galleryIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(galleryIntent);
+        } else {
+            mRecentlySavedImageURI = null;
+        }
+
     }
 
     @Override
@@ -951,6 +991,32 @@ public class CameraActivity extends AppCompatActivity {
         mLayoutOrientation  = degrees;
 
         mCamera.setDisplayOrientation(displayOrientation);
+    }
+
+    public File getLastPicture() {
+        String[] projection = new String[]{
+                MediaStore.Images.ImageColumns._ID,
+                MediaStore.Images.ImageColumns.DATA,
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.MIME_TYPE
+        };
+        final Cursor cursor = getContentResolver()
+                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
+                        null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
+
+// Put it in the image view
+        if (cursor.moveToFirst()) {
+            String imageLocation = cursor.getString(1);
+            Log.d(TAG, "getLastPicture:path:"+imageLocation);
+            File imageFile = new File(imageLocation);
+            if (imageFile.exists()) {   // TODO: is there a better way to do this?
+                return imageFile;
+            } else {
+                return null;
+            }
+        }
+        return null;
     }
 
 

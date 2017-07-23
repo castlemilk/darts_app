@@ -176,7 +176,7 @@ public class GalleryActivity extends AppCompatActivity
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        getApplicationContext().getPackageName() + ".fileprovider",
+                        getApplicationContext().getPackageName() + ".provider",
                         photoItem.getFile());
                 intent.setDataAndType(photoURI, "image/*");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -364,32 +364,26 @@ public class GalleryActivity extends AppCompatActivity
                 Log.d(TAG, "onActionItemClicked:DELETE");
                 List<File> files = new ArrayList<>();
                 for ( Integer position: mAdapter.getSelectedPositions()) {
-                    if ( mAdapter.getItem(position) != null) {
-                        files.add(((PhotoItem) mAdapter.getItem(position)).getFile());
-                        GalleryDatabaseService.getInstance(this).removeItem(mAdapter.getItem(position));
-                        mAdapter.removeItem(position);
-                        if (mAdapter.getSectionItems(
-                                mAdapter.getHeaderOf(mAdapter.getItem(position))).isEmpty() ||
-                    mAdapter.getSectionItems(mAdapter.getHeaderOf(mAdapter.getItem(position))).size() == 1) {
-                            mAdapter.removeScrollableHeader((HeaderItem) mAdapter.getHeaderOf(mAdapter.getItem(position)));
-                        }
-                    }
-
-
-                }
-                for (File file : files) {
-                    Log.d(TAG, "onActionItemClicked:DELETE:file:"+file.getPath());
-                    if (file.delete()) {
-                        Log.d(TAG, "onActionItemClicked:DELETE:file:done");
-                    } else {
-                        if (file.exists()) {
-                            file.delete();
-                        }
+                    if ( mAdapter.getItem(position) != null &&
+                            mAdapter.getItem(position).isSelectable()) {
+                            GalleryDatabaseService.getInstance(this).removeItem(mAdapter.getItem(position));
+                            File file = ((PhotoItem) mAdapter.getItem(position)).getFile();
+                            if (file.delete()) {
+                                Log.d(TAG, "onActionItemClicked:DELETE:file:done");
+                            } else {
+                                if (file.exists()) {
+                                    file.delete();
+                                }
+                            }
+//                            if (mAdapter.getSectionItems(
+//                                    mAdapter.getHeaderOf(mAdapter.getItem(position))).isEmpty() ||
+//                                    mAdapter.getSectionItems(mAdapter.getHeaderOf(mAdapter.getItem(position))).size() == 1) {
+//                                mAdapter.removeItem(mAdapter.getGlobalPositionOf(mAdapter.getHeaderOf(mAdapter.getItem(position))));
+//                        }
+//
                     }
                 }
-
-                Log.d(TAG, "onActionItemClicked:DELETE:itemsCount:"+mAdapter.getItemCount());
-                Log.d(TAG, "onActionItemClicked:DELETE:items:"+mAdapter.getDeletedItems());
+                mAdapter.removeAllSelectedItems();
                 mode.finish();
                 return false;
             default:
@@ -426,7 +420,7 @@ public class GalleryActivity extends AppCompatActivity
         for ( File file : files) {
             Log.d(TAG, "shareIntentMaker:file:"+file.getPath());
             imageUris.add(FileProvider.getUriForFile(this,
-                    getPackageName() + ".fileprovider", file));
+                    getPackageName() + ".provider", file));
         }
         Log.d(TAG, imageUris.toString());
         shareIntent.setType("image/*");

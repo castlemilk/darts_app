@@ -32,6 +32,7 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
         super();
         this.id = id;
         setDraggable(false);
+        setSelectable(false);
     }
 
 

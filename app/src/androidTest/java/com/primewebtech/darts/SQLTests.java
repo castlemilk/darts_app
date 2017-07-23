@@ -39,7 +39,7 @@ public class SQLTests {
         Context appContext = InstrumentationRegistry.getTargetContext();
         mDatabase = new ScoreDatabase(appContext);
         mDatabase.open();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             int randomDay = 1 + (int)(Math.random() * 27);
             int randomMonth = 4 + (int)(Math.random() * 4);
             int randomScore = (int)(Math.random() * 200);
@@ -59,7 +59,7 @@ public class SQLTests {
         Context appContext = InstrumentationRegistry.getTargetContext();
         mDatabase = new ScoreDatabase(appContext);
         mDatabase.open();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             int randomDay = 1 + (int)(Math.random() * 27);
             int randomMonth = 4 + (int)(Math.random() * 4);
             int randomScore = (int)(Math.random() * 200);

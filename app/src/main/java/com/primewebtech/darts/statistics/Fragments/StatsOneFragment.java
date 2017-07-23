@@ -113,15 +113,15 @@ public class StatsOneFragment extends Fragment {
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
                 int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue,
                         periods[period_index], previous_period_index+1);
-                int allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
-                        .getPeriodsHighestScore(pegValue, periods[period_index]).getPegCount();
+                PegRecord allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
+                        .getPeriodsHighestScore(pegValue, periods[period_index]);
                 scores.add(previousScore);
                 if (previousScore > 1000) {
                     rowNode.setTextSize(12);
                 }
                 PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsOneDoa.
                         getPeriodsHighestScore(pegValue, periods[period_index]);
-                if ( savedHighestScoreForIndex == null ) {
+                if ( savedHighestScoreForIndex == null  || allTimeHighestScoreForPeriod == null) {
                     // initialisation of the stored/saved bested values
                     ScoreDatabase.mStatsOneDoa.setBestScore(periods[period_index], pegValue, previousScore);
                     if (previousScore > 0) {
@@ -131,15 +131,16 @@ public class StatsOneFragment extends Fragment {
                     }
 
                 } else {
+                    Log.d(TAG, "previousScore: "+previousScore);
+                    Log.d(TAG, "savedHighestScore: "+savedHighestScoreForIndex.toString());
+                    Log.d(TAG, "currentBestScore: "+String.valueOf(currentBestScores[period_index]));
+                    Log.d(TAG, "allTimeBestScore: "+String.valueOf(allTimeHighestScoreForPeriod));
                     // saved value exists
                     if (previousScore >= savedHighestScoreForIndex.getPegCount() &&
                             previousScore >= currentBestScores[period_index] &&
-                            previousScore >= allTimeHighestScoreForPeriod) {
+                            previousScore >= allTimeHighestScoreForPeriod.getPegCount()) {
                         Log.d(TAG, "--- NEW BEST SCORE ----");
-                        Log.d(TAG, "previousScore: "+previousScore);
-                        Log.d(TAG, "savedHighestScore: "+savedHighestScoreForIndex.toString());
-                        Log.d(TAG, "currentBestScore: "+String.valueOf(currentBestScores[period_index]));
-                        Log.d(TAG, "allTimeBestScore: "+String.valueOf(allTimeHighestScoreForPeriod));
+
                         // Found a new highest previous score, paint view and update DB
                         if (previousScore > 0) {
                             rowNode.setBackground(
@@ -148,11 +149,18 @@ public class StatsOneFragment extends Fragment {
                             ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, previousScore);
                         }
 
-                    } else if (previousScore < allTimeHighestScoreForPeriod) {
+                    } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod);
+                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
+                    } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
+                            currentBestScores[period_index] > previousScore) {
+                        rowNode.setBackground(
+                                getResources().getDrawable(R.drawable.peg_stats_score_background));
+                        rowNode.setTextColor(Color.WHITE);
+                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, currentBestScores[period_index]);
+
                     } else {
                         rowNode.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background));
@@ -167,6 +175,13 @@ public class StatsOneFragment extends Fragment {
             scoreMap.put(periods[period_index], scores);
             period_index++;
         }
+
+        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
+                .getPegCount();
+        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
+                .getPegCount();
+        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
+                .getPegCount();
         // POST PAINT ACTIVITY: we now determine what needs to be highlighted as PB's. This is to
         // save us re-evaluating any SQL or building more SQL functions etc. could be a TODO.
         Log.d(TAG, "scoreMap: "+scoreMap.toString());
@@ -178,7 +193,12 @@ public class StatsOneFragment extends Fragment {
             for ( int resourceID : statRow) {
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
                 int previousScore = scoreMap.get(periods[period_index]).get(previous_period_index);
-                if (previousScore >= allTimeHighestScoreForPeriod && previousScore > 0) {
+                Log.d(TAG, "Painting:white:previousScore:"+previousScore);
+                Log.d(TAG, "Painting:white:period"+periods[period_index]);
+                Log.d(TAG, "Painting:white:alltimehighest:"+allTimeHighestScoreForPeriod);
+                if (previousScore >= allTimeHighestScoreForPeriod &&
+                        previousScore > 0) {
+
                     rowNode.setBackground(
                             getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                     rowNode.setTextColor(Color.BLACK);
@@ -193,12 +213,7 @@ public class StatsOneFragment extends Fragment {
             period_index++;
         }
 
-        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "DAY")
-                .getPegCount();
-        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "WEEK")
-                .getPegCount();
-        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScore(pegValue, "MONTH")
-                .getPegCount();
+
         Log.d (TAG, "--- SETTING BEST SCORES ---");
         Log.d(TAG, "bestScoreDaily:" + bestScoreDaily);
         Log.d(TAG, "bestScoreWeekly:" + bestScoreWeekly);

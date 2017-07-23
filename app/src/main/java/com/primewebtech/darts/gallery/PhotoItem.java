@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.primewebtech.darts.R;
@@ -146,13 +145,13 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(mContext, "Click on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "Click on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
             super.onClick(view);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            Toast.makeText(mContext, "LongClick on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "LongClick on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
             return super.onLongClick(view);
         }
 

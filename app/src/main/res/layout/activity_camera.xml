@@ -34,6 +34,7 @@
 
         <ImageView
             android:id="@+id/score_type_background"
+            android:visibility="gone"
             android:layout_width="100dp"
             android:layout_height="80dp"
             android:layout_marginBottom="8dp"
@@ -97,6 +98,7 @@
 
     <ImageButton
         android:id="@+id/button_back"
+        android:visibility="gone"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
@@ -114,6 +116,7 @@
 
     <ImageButton
         android:id="@+id/save_photo"
+        android:visibility="gone"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
@@ -134,6 +137,7 @@
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:background="#000000"
+        android:visibility="gone"
         aigestudio:wheel_atmospheric="true"
         aigestudio:wheel_curved="true"
         aigestudio:wheel_cyclic="true"
@@ -148,6 +152,7 @@
     <com.aigestudio.wheelpicker.WheelPicker
         android:id="@+id/score_type"
         android:layout_width="100dp"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:background="#000000"
         aigestudio:wheel_atmospheric="true"
@@ -163,6 +168,7 @@
 
     <ImageView
         android:id="@+id/logo_text"
+        android:visibility="gone"
         android:layout_width="203dp"
         android:layout_height="79dp"
         app:srcCompat="@drawable/logotext"
@@ -177,6 +183,7 @@
 
     <TextView
         android:id="@+id/score_number"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""

@@ -17,6 +17,7 @@ public class StatsOneActivity extends FragmentActivity{
      */
     StatsOnePagerAdapter mStatsPagerAdapter;
     ViewPager mViewPager;
+    String type;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +27,7 @@ public class StatsOneActivity extends FragmentActivity{
 
         String scoreType = "SUMMARY";
         if (b != null) {
+            type = b.getString("type");
             scoreType = b.getString("SUMMARY");
         }
 
@@ -34,14 +36,27 @@ public class StatsOneActivity extends FragmentActivity{
         // TODO: display the score stats thats currently been selected by the user. I.e if the user
         // is scoring on peg 40, then when they select stats, it should should the stats for peg 40.
         mViewPager.setAdapter(mStatsPagerAdapter);
-        if (scoreType != null) {
-            switch (scoreType) {
-                case "one":
+        if (b != null) {
+            switch (type) {
+                case "40":
                     mViewPager.setCurrentItem(0);
                     break;
-                case "hundred":
+                case "32":
                     mViewPager.setCurrentItem(1);
                     break;
+                case "24":
+                    mViewPager.setCurrentItem(2);
+                    break;
+                case "36":
+                    mViewPager.setCurrentItem(3);
+                    break;
+                case "50":
+                    mViewPager.setCurrentItem(4);
+                    break;
+                case "4":
+                    mViewPager.setCurrentItem(5);
+                    break;
+
                 default:
                     mViewPager.setCurrentItem(0);
                     break;
