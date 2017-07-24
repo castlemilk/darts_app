@@ -3,11 +3,12 @@ package com.primewebtech.darts.scoring;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
 import com.primewebtech.darts.statistics.StatsHundredActivity;
+
+import org.malcdevelop.cyclicview.CyclicAdapter;
+import org.malcdevelop.cyclicview.CyclicView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -61,7 +65,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private ImageView pin;
     private int pegsCompleted;
     private HashMap<Integer, Integer> scoreCounts;
-    private ViewPager mViewPager;
+    private CyclicView mViewPager;
     private Button mCountButton;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
@@ -119,7 +123,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 Intent statsIntent = new Intent(HundredDartActivity.this, StatsHundredActivity.class);
                 Bundle b = new Bundle();
                 b.putString("scoreType", "hundred");
-                b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentItem()]);
+                b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentPosition()]);
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
                 finish();
@@ -156,16 +160,16 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_HUNDRED);
                 if (action != null) {
-                    int currentIndex = mViewPager.getCurrentItem();
+                    int currentIndex = mViewPager.getCurrentPosition();
                     if (mPegs[currentIndex] == action.getPegValue()) {
                         Log.d(TAG, "UNDO:ON_ACTIVE_PEG");
-                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         ScoreDatabase.mScoreHundredDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());
                         updateCountIndicators(mPegs[currentIndex]);
                     } else {
 
-                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         Log.d(TAG, "UNDO:ON_NON_ACTIVE_PEG:CHANGING PEG:"+getPegIndex(action.getPegValue()));
                         ScoreDatabase.mScoreHundredDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());
@@ -184,7 +188,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100 = (Button) findViewById(R.id.increment_100plus);
         mIncrement140 = (Button) findViewById(R.id.increment_140plus);
         mIncrement180 = (Button) findViewById(R.id.increment_180plus);
-        int currentIndex = mViewPager.getCurrentItem();
+        int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
         if (pegRecord != null) {
             mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()));
@@ -204,7 +208,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreHundredDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
@@ -222,10 +226,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
 
                 if ( mPegs[currentIndex] != 100) {
-                    mViewPager.setCurrentItem(getPegIndex(100));
+                    mViewPager.setCurrentPosition(getPegIndex(100));
                     updateCountIndicators(100);
                 }
                 PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[getPegIndex(100)], TYPE_2);
@@ -246,10 +250,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
 
                 if ( mPegs[currentIndex] != 140) {
-                    mViewPager.setCurrentItem(getPegIndex(140));
+                    mViewPager.setCurrentPosition(getPegIndex(140));
                     updateCountIndicators(140);
                 }
                 PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[getPegIndex(140)], TYPE_2);
@@ -270,9 +274,9 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
                 if ( mPegs[currentIndex] != 180) {
-                    mViewPager.setCurrentItem(getPegIndex(180));
+                    mViewPager.setCurrentPosition(getPegIndex(180));
                     updateCountIndicators(180);
                 }
                 PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[getPegIndex(180)], TYPE_2);
@@ -431,40 +435,44 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     }
 
     public void initialisePager() {
-        mViewPager = (ViewPager) findViewById(R.id.pager_hundred_dart);
-
-        if (mScoringAdapter != null) {
-            mViewPager.setAdapter(mScoringAdapter);
-        } else {
-            mViewPager.setAdapter(new ScorePagerAdapter(this, mPegs));
-        }
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
+        mViewPager.setAdapter(new CyclicAdapter() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public int getItemsCount() {
+                return 3;
             }
 
             @Override
-            public void onPageSelected(int position) {
-                PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[position], TYPE_2);
+            public View createView(int i) {
+                TextView scoreNumber = new TextView(HundredDartActivity.this);
+                scoreNumber.setText(String.valueOf(mPegs[i]));
+                scoreNumber.setTextSize(55);
+                scoreNumber.setTextColor(Color.BLACK);
+                scoreNumber.setGravity(Gravity.CENTER);
+                return scoreNumber;
+            }
+            @Override
+            public void removeView(int i, View view) {
+
+            }
+        });
+        mViewPager.addOnPositionChangeListener(new CyclicView.OnPositionChangeListener() {
+            @Override
+            public void onPositionChange(int i) {
+                PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[i], TYPE_2);
                 if (pegRecord != null) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()));
-                    updateCountIndicators(mPegs[position]);
+                    updateCountIndicators(mPegs[i]);
                 } else {
-                    PegRecord newPegRecord = new PegRecord(getDate(), TYPE_2, mPegs[position], 0);
+                    PegRecord newPegRecord = new PegRecord(getDate(), TYPE_2, mPegs[i], 0);
                     try {
                         ScoreDatabase.mScoreHundredDoa.addTodayPegValue(newPegRecord);
                         mCountButton.setText(String.format(Locale.getDefault(),"%d", 0));
-                        updateCountIndicators(mPegs[position]);
+                        updateCountIndicators(mPegs[i]);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
             }
         });
     }

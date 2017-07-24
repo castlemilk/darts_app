@@ -15,12 +15,14 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.camera.CameraActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,7 +113,26 @@ public class GalleryActivity extends AppCompatActivity
     /* ======================
 	 * INITIALIZATION METHODS
 	 * ====================== */
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.gallery_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_take_photo:
+                Intent cameraIntent = new Intent(GalleryActivity.this, CameraActivity.class);
+                startActivity(cameraIntent);
+                return true;
+            default:
+                return false;
+        }
+    }
     private void initializeActionModeHelper(int mode) {
 
         mActionModeHelper = new ActionModeHelper(mAdapter, R.menu.gallery_selection, this) {
@@ -408,6 +429,7 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     private Intent shareIntentMaker() {
+        //TODO: fix this so it actually shares all selected photos
         Intent shareIntent  = new Intent(Intent.ACTION_SEND_MULTIPLE);
         ArrayList<Uri> imageUris = new ArrayList<>();
         Log.d(TAG, "shareIntentMaker:SHARING:"+mAdapter.getSelectedPositions().toString());

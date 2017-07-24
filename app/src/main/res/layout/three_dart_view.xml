@@ -36,15 +36,24 @@
         android:layout_marginRight="10dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="10dp" />
-    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/pager_three_dart"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="110dp"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/pin"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/pin"-->
+        <!--app:layout_constraintRight_toLeftOf="@+id/pin"-->
+        <!--app:layout_constraintLeft_toRightOf="@+id/pin">-->
+    <!--</android.support.v4.view.ViewPager>-->
+    <org.malcdevelop.cyclicview.CyclicView
         android:id="@+id/pager_three_dart"
-        android:layout_width="100dp"
-        android:layout_height="110dp"
+        android:layout_width="170dp"
+        android:layout_height="190dp"
         app:layout_constraintBottom_toTopOf="@+id/pin"
         app:layout_constraintTop_toBottomOf="@+id/pin"
         app:layout_constraintRight_toLeftOf="@+id/pin"
         app:layout_constraintLeft_toRightOf="@+id/pin">
-    </android.support.v4.view.ViewPager>
+    </org.malcdevelop.cyclicview.CyclicView>
 
     <Button
         android:id="@+id/increment_three"

@@ -284,10 +284,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
-//
-//        if (mScoringAdapter != null) {
-//            mViewPager.setAdapter(mScoringAdapter);
-//        } else {
             mViewPager.setAdapter(new CyclicAdapter() {
                 @Override
                 public int getItemsCount() {
@@ -296,9 +292,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
                 @Override
                 public View createView(int i) {
-//                    TextView scoreNumber = (TextView) findViewById(R.id.score_number_one_dart);
                     TextView scoreNumber = new TextView(OneDartActivity.this);
-//            cameraActivity = (CameraActivity) mContext;
                     scoreNumber.setText(String.valueOf(mPegs[i]));
                     scoreNumber.setTextSize(75);
                     scoreNumber.setTextColor(Color.BLACK);

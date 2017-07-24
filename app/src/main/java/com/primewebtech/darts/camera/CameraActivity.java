@@ -47,6 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
 public class CameraActivity extends AppCompatActivity {
@@ -60,7 +62,7 @@ public class CameraActivity extends AppCompatActivity {
     private int THUMBSIZE = 100;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private MediaSaver mMediaSaver;
-    private ImageButton mPreviousImageThumbnail;
+    private CircleImageView mPreviousImageThumbnail;
     private String mRecentlySavedImageFilePath;
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
@@ -187,7 +189,7 @@ public class CameraActivity extends AppCompatActivity {
         mScoreNumber = (TextView) findViewById(R.id.score_number);
         mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
-        mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+        mPreviousImageThumbnail = (CircleImageView) findViewById(R.id.button_previous);
         mLogoText = (ImageView) findViewById(R.id.logo_text);
         preview = (FrameLayout) findViewById(R.id.camera_preview);
         mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
@@ -351,7 +353,7 @@ public class CameraActivity extends AppCompatActivity {
                 preview.addView(mPreview);
             }
             mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
-            mPreviousImageThumbnail = (ImageButton) findViewById(R.id.button_previous);
+            mPreviousImageThumbnail = (CircleImageView) findViewById(R.id.button_previous);
             mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
             mBackButton = (ImageButton) findViewById(R.id.button_back);
             mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -852,6 +854,7 @@ public class CameraActivity extends AppCompatActivity {
                     Log.d(TAG, "initScoreSpinner:mViewPager:NULL!!!!!");
                     mViewPager.setEnabled(true);
                     mScoreNumberValue = makePegs().get(0);
+                    mScoreValue.setCyclic(false);
                     mViewPager.setVisibility(View.VISIBLE);
 
                 }
@@ -892,6 +895,7 @@ public class CameraActivity extends AppCompatActivity {
                     mCustomPagerAdapterPegs.notifyDataSetChanged();
                     mScoreTypeBackground.setVisibility(View.GONE);
                     mScoreNumber.setVisibility(View.GONE);
+                    mScoreValue.setCyclic(false);
 
 
 

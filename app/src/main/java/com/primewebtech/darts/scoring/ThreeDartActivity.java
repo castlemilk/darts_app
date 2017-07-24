@@ -3,12 +3,13 @@ package com.primewebtech.darts.scoring;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ import com.primewebtech.darts.database.model.ActionSchema;
 import com.primewebtech.darts.database.model.PegRecord;
 import com.primewebtech.darts.database.model.ScoreSchema;
 import com.primewebtech.darts.homepage.HomePageActivity;
+
+import org.malcdevelop.cyclicview.CyclicAdapter;
+import org.malcdevelop.cyclicview.CyclicView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -60,7 +64,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
      */
 
     private static final String TAG = ThreeDartActivity.class.getSimpleName();
-    private ViewPager mViewPager;
+    private CyclicView mViewPager;
     private TwoDartActivity.ScorePagerAdapter mScoringAdapter;
     private ImageView pin;
     private List<Integer> mPinValues;
@@ -137,7 +141,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public void onClick(View view) {
                 Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_THREE);
                 if (action != null) {
-                    int currentIndex = mViewPager.getCurrentItem();
+                    int currentIndex = mViewPager.getCurrentPosition();
                     if (mPinValues.get(currentIndex) == action.getPegValue()) {
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
@@ -148,7 +152,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
 
 
                     } else {
-                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
+                        mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
                             mCountButtonThree.setText(action.getRollBackValue());
@@ -178,7 +182,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
-        int currentIndex = mViewPager.getCurrentItem();
+        int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
             mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
@@ -196,7 +200,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
                 if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
@@ -213,7 +217,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public void onClick(View view) {
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentItem();
+                int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
                 if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
@@ -243,48 +247,60 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
 
     public void movePagerForwardTen() {
         //TODO: answer question: do we want to always arrive at the start of the next interval
-        int currentIndex = mViewPager.getCurrentItem();
+        int currentIndex = mViewPager.getCurrentPosition();
         if ( mPinValues.get(currentIndex) < 110) {
-            mViewPager.setCurrentItem(8);
+            mViewPager.setCurrentPosition(8);
         } else if (currentIndex+10 > mPinValues.size() ){
-            mViewPager.setCurrentItem(mPinValues.size());
+            mViewPager.setCurrentPosition(mPinValues.size());
         } else {
-            mViewPager.setCurrentItem(currentIndex+10);
+            mViewPager.setCurrentPosition(currentIndex+10);
         }
     }
     public void movePagerBackwardsTen() {
         //TODO: answer question: do we want to always arrive at the start of the next interval
-        int currentIndex = mViewPager.getCurrentItem();
+        int currentIndex = mViewPager.getCurrentPosition();
         if ( currentIndex-10 < 0) {
-            mViewPager.setCurrentItem(0);
+            mViewPager.setCurrentPosition(0);
         } else if (currentIndex > mPinValues.size() - 4) {
-            mViewPager.setCurrentItem(currentIndex-4);
+            mViewPager.setCurrentPosition(currentIndex-4);
         } else {
-            mViewPager.setCurrentItem(currentIndex-10);
+            mViewPager.setCurrentPosition(currentIndex-10);
         }
     }
 
     public void initialisePager() {
-        mViewPager = (ViewPager) findViewById(R.id.pager_three_dart);
-
-        if (mScoringAdapter != null) {
-            mViewPager.setAdapter(mScoringAdapter);
-        } else {
-            mViewPager.setAdapter(new ScorePagerAdapter(this, mPinValues));
-        }
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager = (CyclicView) findViewById(R.id.pager_three_dart);
+        final int size = generatePinValues().size();
+        mViewPager.setAdapter(new CyclicAdapter() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public int getItemsCount() {
+                return size;
             }
 
             @Override
-            public void onPageSelected(int position) {
-                updatePinBoard(mPinValues.get(position));
-                PegRecord pegRecord3 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(position), TYPE_3);
+            public View createView(int i) {
+                TextView scoreNumber = new TextView(ThreeDartActivity.this);
+                scoreNumber.setText(String.valueOf(mPinValues.get(i)));
+                scoreNumber.setTextSize(55);
+                scoreNumber.setTextColor(Color.BLACK);
+                scoreNumber.setGravity(Gravity.CENTER);
+                return scoreNumber;
+            }
+            @Override
+            public void removeView(int i, View view) {
+
+            }
+        });
+        mViewPager.addOnPositionChangeListener(new CyclicView.OnPositionChangeListener() {
+
+            @Override
+            public void onPositionChange(int i) {
+                updatePinBoard(mPinValues.get(i));
+                PegRecord pegRecord3 = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(i), TYPE_3);
                 if (pegRecord3 != null) {
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
-                    PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(position) , 0);
+                    PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(i) , 0);
                     try {
                         ScoreDatabase.mScoreThreeDoa.addTodayPegValue(newPegRecord3);
                         mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", 0));
@@ -292,11 +308,6 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         e.printStackTrace();
                     }
                 }
-
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
             }
         });
     }
