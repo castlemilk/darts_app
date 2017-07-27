@@ -147,8 +147,8 @@ public class Util {
         int pictureHeight = rotatedImg.getHeight();
 //        int pictureWidth = pictureImg.getWidth();
 //        int pictureHeight = pictureImg.getHeight();
-        Double pinSize = pictureWidth * 0.2;
-        int textSize = (int) (pictureHeight * 0.03f);
+        Double pinSize = pictureWidth * 0.3;
+        int textSize = (int) (pictureHeight * 0.04f);
         int pinSizeInt = pinSize.intValue();
         Double logoWidth = pictureWidth * 0.5;
         Double logoHeight = pictureHeight * 0.12;
@@ -163,8 +163,8 @@ public class Util {
 //        float logoFloatTop = pictureHeight - logoSizeIntHeight - pictureHeight * 0.05f;
         float logoFloatTop = pictureHeight - logoSizeIntHeight - pictureHeight * 0.05f;
 
-        float pinFloatLeft = pictureWidth - pinSizeInt - pictureWidth * 0.05f;
-        float pinFloatTop = pictureHeight - pinSizeInt - pictureHeight * 0.05f;
+        float pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - pictureWidth * 0.05f;
+        float pinFloatTop = pictureHeight - pinSizeInt * 0.9f - pictureHeight * 0.05f;
 
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));

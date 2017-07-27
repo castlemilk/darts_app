@@ -145,7 +145,7 @@ public class PhotoItem extends AbstractItem<PhotoItem.PhotoViewHolder>
 
         @Override
         public void onClick(View view) {
-//            Toast.makeText(mContext, "Click on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "click on position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
             super.onClick(view);
         }
 

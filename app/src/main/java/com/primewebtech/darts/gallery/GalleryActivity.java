@@ -157,8 +157,10 @@ public class GalleryActivity extends AppCompatActivity
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter.setFastScroller((FastScroller) findViewById(R.id.fast_scroller),
+        FastScroller fastScroller = (FastScroller) findViewById(R.id.fast_scroller);
+        mAdapter.setFastScroller(fastScroller,
                 Utils.getColorAccent(this), this);
+
         mAdapter.setDisplayHeadersAtStartUp(true)
                 .setStickyHeaders(true)
                 .showAllHeaders();

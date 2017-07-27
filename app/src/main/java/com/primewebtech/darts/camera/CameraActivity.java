@@ -15,7 +15,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.MediaScannerConnection;
+import android.media.SoundPool;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -95,6 +98,16 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView mScoreTypeBackground;
     private TextView mScoreNumber;
     public Object mScoreNumberValue;
+    // Stream type.
+    private static final int streamType = AudioManager.STREAM_MUSIC;
+    private SoundPool soundPool;
+    private AudioManager audioManager;
+    private boolean loaded;
+    private float volume;
+    // Maximumn sound stream.
+    private static final int MAX_STREAMS = 1;
+    private int soundIdScroll;
+    private int soundIdClick;
 
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
@@ -208,7 +221,9 @@ public class CameraActivity extends AppCompatActivity {
         mTakePhotoButton.setVisibility(View.VISIBLE);
         initTypeSpinners();
         initScoreSpinner("Peg");
+        initialiseSound();
         mViewPager.setCurrentItem(0);
+
 
 
         Util.initialize(this);
@@ -272,6 +287,64 @@ public class CameraActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public void initialiseSound() {
+        // AudioManager audio settings for adjusting the volume
+                audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        // Current volumn Index of particular stream type.
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
+
+        // Get the maximum volume index for a particular stream type.
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
+
+        // Volumn (0 --> 1)
+        this.volume = currentVolumeIndex / maxVolumeIndex;
+
+        // Suggests an audio stream whose volume should be changed by
+        // the hardware volume controls.
+        this.setVolumeControlStream(streamType);
+
+        // For Android SDK >= 21
+        if (Build.VERSION.SDK_INT >= 21 ) {
+
+            AudioAttributes audioAttrib = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            SoundPool.Builder builder= new SoundPool.Builder();
+            builder.setAudioAttributes(audioAttrib).setMaxStreams(MAX_STREAMS);
+
+            this.soundPool = builder.build();
+        }
+        // for Android SDK < 21
+        else {
+            // SoundPool(int maxStreams, int streamType, int srcQuality)
+            this.soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                       int status) {
+                loaded = true;
+            }
+        });
+        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
+        soundIdClick = soundPool.load(this, R.raw.click, 1);
+
+    }
+
+    public void playSoundScroll() {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, 2f);
+
+        }
     }
 
     @Override
@@ -368,6 +441,7 @@ public class CameraActivity extends AppCompatActivity {
             mLogoText.setVisibility(View.GONE);
             initTypeSpinners();
             initScoreSpinner("Peg");
+            initialiseSound();
             mViewPager.setCurrentItem(0);
             mViewPager.setVisibility(View.GONE);
             mSaveImageButton.setVisibility(View.GONE);
@@ -556,12 +630,15 @@ public class CameraActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         stopCamera();
+        soundPool.release();
+        soundPool = null;
     }
     private void stopCamera() {
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
+            soundPool.release();
         }
 
     }
@@ -796,6 +873,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private void initTypeSpinners() {
 
+
         List data = Arrays.asList(spinnerTypes);
         mScoreType.setData(data);
         mScoreType.setVisibleItemCount(2);
@@ -819,12 +897,24 @@ public class CameraActivity extends AppCompatActivity {
 
                 } else if (type.equals("Peg")) {
                     scoreType = "PEG";
-                    mViewPager.setAdapter(mCustomPagerAdapterPegs);
+
                     if (mViewPager != null) {
-                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
                         mViewPager.setEnabled(true);
                         mViewPager.setVisibility(View.VISIBLE);
+                    } else {
+                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
                     }
+                    mScoreTypeBackground.setVisibility(View.GONE);
+                    mViewPager.setAdapter(mCustomPagerAdapterPegs);
+                    if (mViewPager != null) {
+                        mViewPager.setEnabled(true);
+                        mViewPager.setVisibility(View.VISIBLE);
+                        updatePegDisplay((int)170);
+                        mViewPager.setTag(170);
+                    } else {
+                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
+                    }
+
                     mScoreNumberValue = makePegs().get(0);
                     mCustomPagerAdapterPegs.notifyDataSetChanged();
                     mScoreNumber.setVisibility(View.GONE);
@@ -851,11 +941,12 @@ public class CameraActivity extends AppCompatActivity {
                 Log.d(TAG, "initScoreSpinner:type:Peg");
                 data = makePegs();
                 if (mViewPager != null) {
-                    Log.d(TAG, "initScoreSpinner:mViewPager:NULL!!!!!");
                     mViewPager.setEnabled(true);
                     mScoreNumberValue = makePegs().get(0);
                     mScoreValue.setCyclic(false);
                     mViewPager.setVisibility(View.VISIBLE);
+                    updatePegDisplay((int)170);
+                    mViewPager.setTag(170);
 
                 }
                 mScoreNumberValue = makePegs().get(0);
@@ -877,6 +968,23 @@ public class CameraActivity extends AppCompatActivity {
         mScoreNumber.setVisibility(View.GONE);
         mScoreTypeBackground.setVisibility(View.GONE);
         mScoreTypeBackground.setImageResource(mScoreResources[0]);
+
+        mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
+            @Override
+            public void onWheelScrolled(int offset) {
+
+            }
+
+            @Override
+            public void onWheelSelected(int position) {
+
+            }
+
+            @Override
+            public void onWheelScrollStateChanged(int state) {
+                playSoundScroll();
+            }
+        });
 
         mScoreValue.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
 
@@ -1004,9 +1112,11 @@ public class CameraActivity extends AppCompatActivity {
                 MediaStore.Images.ImageColumns.DATE_TAKEN,
                 MediaStore.Images.ImageColumns.MIME_TYPE
         };
+        String selectionClause = MediaStore.Images.ImageColumns.DATA + " LIKE ?";
+        String[] selectionArgs = { "%Darts%" };
         final Cursor cursor = getContentResolver()
-                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
-                        null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
+                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selectionClause,
+                        selectionArgs, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
 
 // Put it in the image view
         if (cursor.moveToFirst()) {
@@ -1021,8 +1131,6 @@ public class CameraActivity extends AppCompatActivity {
         }
         return null;
     }
-
-
 
     public static Camera getCameraInstance(){
 

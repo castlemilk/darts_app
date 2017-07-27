@@ -162,7 +162,7 @@ public final class Utils {
         if (colorAccent < 0) {
             int accentAttr = eu.davidea.flexibleadapter.utils.Utils.hasLollipop() ? android.R.attr.colorAccent : R.attr.colorAccent;
             TypedArray androidAttr = context.getTheme().obtainStyledAttributes(new int[] { accentAttr });
-            colorAccent = androidAttr.getColor(0, 0xFF009688); //Default: material_deep_teal_500
+            colorAccent = androidAttr.getColor(0, 0xFFFFFFFF); //Default: material_deep_teal_500
             androidAttr.recycle();
         }
         return colorAccent;
