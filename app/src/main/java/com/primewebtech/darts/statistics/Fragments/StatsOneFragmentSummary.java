@@ -1,5 +1,6 @@
 package com.primewebtech.darts.statistics.Fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.database.ScoreDatabase;
+import com.primewebtech.darts.statistics.StatsOneActivity;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -108,6 +110,15 @@ public class StatsOneFragmentSummary extends Fragment {
             50,
             2
     };
+
+    public int[] mRowPegValues = {
+            R.id.row_40,
+            R.id.row_32,
+            R.id.row_24,
+            R.id.row_36,
+            R.id.row_50,
+            R.id.row_2,
+    };
     private String type;
 
     public static StatsOneFragmentSummary newInstance() {
@@ -136,6 +147,21 @@ public class StatsOneFragmentSummary extends Fragment {
         mStatsRows.add(mStatsRow36);
         mStatsRows.add(mStatsRow50);
         mStatsRows.add(mStatsRow2);
+        for (int i = 0; i<6; i++) {
+            final int j = i;
+            TextView rowPegValue = (TextView) rootView.findViewById(mRowPegValues[j]);
+            rowPegValue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent statsIntent;
+                    statsIntent = new Intent(getActivity(), StatsOneActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("type", String.valueOf(pegValues[j]));
+                    statsIntent.putExtras(b);
+                    startActivity(statsIntent);
+                }
+            });
+        }
 
         int index = 0;
         for ( int[] statRow : mStatsRows) {

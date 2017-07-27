@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -78,6 +82,17 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private Button mIncrement100;
     private Button mIncrement140;
     private Button mIncrement180;
+    // Stream type.
+    private static final int streamType = AudioManager.STREAM_MUSIC;
+    private SoundPool soundPool;
+    private AudioManager audioManager;
+    private boolean loaded;
+    private float volume;
+    // Maximumn sound stream.
+    private static final int MAX_STREAMS = 1;
+    private int soundIdScroll;
+    private int soundIdClick;
+
 
     SharedPreferences prefs = null;
     private int[] mPegs = {
@@ -110,8 +125,66 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         initialiseCountButtons();
         initialiseMenuButton();
         initialiseBackButton();
+        initialiseSound();
         initialiseStatsButton();
         updateCountIndicators(100);
+    }
+
+    public void initialiseSound() {
+        // AudioManager audio settings for adjusting the volume
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        // Current volumn Index of particular stream type.
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
+
+        // Get the maximum volume index for a particular stream type.
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
+
+        // Volumn (0 --> 1)
+        this.volume = currentVolumeIndex / maxVolumeIndex;
+
+        // Suggests an audio stream whose volume should be changed by
+        // the hardware volume controls.
+        this.setVolumeControlStream(streamType);
+
+        // For Android SDK >= 21
+        if (Build.VERSION.SDK_INT >= 21 ) {
+
+            AudioAttributes audioAttrib = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            SoundPool.Builder builder= new SoundPool.Builder();
+            builder.setAudioAttributes(audioAttrib).setMaxStreams(MAX_STREAMS);
+
+            this.soundPool = builder.build();
+        }
+        // for Android SDK < 21
+        else {
+            // SoundPool(int maxStreams, int streamType, int srcQuality)
+            this.soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                       int status) {
+                loaded = true;
+            }
+        });
+        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
+        soundIdClick = soundPool.load(this, R.raw.click, 1);
+
+    }
+    public void playSoundClick(float speed) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
+
+        }
     }
 
     public void initialiseStatsButton() {
@@ -203,24 +276,24 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             }
         }
 
-        mCountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: increment number via DB service
-                Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentPosition();
-                PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
-                if(ScoreDatabase.mScoreHundredDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
-                    mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(MODE_HUNDRED, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
-                    ScoreDatabase.mActionDoa.addAction(action);
-                    updateCountIndicators(mPegs[currentIndex]);
-                } else {
-                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-                }
-
-            }
-        });
+//        mCountButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //TODO: increment number via DB service
+//                Log.d(TAG, "Increment button Clicked");
+//                int currentIndex = mViewPager.getCurrentPosition();
+//                PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
+//                if(ScoreDatabase.mScoreHundredDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
+//                    mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+//                    Action action = new Action(MODE_HUNDRED, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
+//                    ScoreDatabase.mActionDoa.addAction(action);
+//                    updateCountIndicators(mPegs[currentIndex]);
+//                } else {
+//                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+//                }
+//
+//            }
+//        });
         mIncrement100.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +316,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
+                playSoundClick(1);
             }
         });
         mIncrement140.setOnClickListener(new View.OnClickListener() {
@@ -267,6 +341,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
+                playSoundClick(1);
             }
         });
         mIncrement180.setOnClickListener(new View.OnClickListener() {
@@ -288,6 +363,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
+                playSoundClick(1);
             }
         });
     }

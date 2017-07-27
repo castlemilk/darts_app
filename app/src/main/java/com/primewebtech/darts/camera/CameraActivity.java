@@ -336,13 +336,24 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
-    public void playSoundScroll() {
+    public void playSoundClick(float speed) {
         Log.d(TAG, "playSoundScroll");
         if(loaded)  {
             Log.d(TAG, "playSoundScroll:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, 2f);
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
+
+        }
+    }
+
+    public void playSoundScroll(float speed) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
 
         }
     }
@@ -972,7 +983,7 @@ public class CameraActivity extends AppCompatActivity {
         mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
             @Override
             public void onWheelScrolled(int offset) {
-
+                playSoundScroll(1);
             }
 
             @Override
@@ -982,7 +993,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onWheelScrollStateChanged(int state) {
-                playSoundScroll();
+//                playSoundScroll(1);
             }
         });
 
