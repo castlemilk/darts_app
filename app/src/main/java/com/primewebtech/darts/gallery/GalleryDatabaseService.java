@@ -2,9 +2,7 @@ package com.primewebtech.darts.gallery;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -12,16 +10,13 @@ import android.util.Log;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -39,7 +34,6 @@ public class GalleryDatabaseService {
     private static final String TAG = GalleryDatabaseService.class.getSimpleName();
     private static GalleryDatabaseService mInstance;
     private List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
-    private Map<StaggeredItemStatus, StaggeredHeaderItem> headers;
     private File pictureDirectory;
     private DateOrganiser mDateOrganiser;
     private Context mContext;
@@ -47,31 +41,6 @@ public class GalleryDatabaseService {
 
     private GalleryDatabaseService(Context context) {
         mContext = context;
-    }
-
-    public void createHolderGalleryDataset() {
-        pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
-        mDateOrganiser = new DateOrganiser(pictureDirectory);
-        HeaderHolder header = null;
-        Date dow = new Date();
-        int index = 0;
-        for (File file : mDateOrganiser.sortedFiles()) {
-            dow = mDateOrganiser.getDay(file);
-            header = !dow.equals(mDateOrganiser.getDay(file)) ? newHeaderHolder(index, dow) : header;
-            mItems.add(newItemHolder(index + 1, file, header));
-            index++;
-
-        }
-    }
-
-    public List<File> getSelectedItems(List<Integer> itemPositions) {
-        List<File> items = new ArrayList<>();
-        Log.d(TAG, "getSelectedItems:itemPositions:"+itemPositions.toString());
-        for ( Integer position: itemPositions) {
-            items.add(((PhotoItem) mItems.get(position - 1)).getFile());
-            Log.d(TAG, "getSelectedItems:file:"+((PhotoItem) mItems.get(position - 1)).getFile().getPath());
-        }
-        return items;
     }
 
     public void createHeadersSectionsGalleryDataset() {
@@ -145,9 +114,6 @@ public class GalleryDatabaseService {
     /*
  	 * Creates a staggered item with a Header linked.
  	 */
-    public static StaggeredItem newStaggeredItem(int i, StaggeredHeaderItem header) {
-        return new StaggeredItem(i, header);
-    }
     private HeaderHolder newHeaderHolder(int i, Date date) {
         HeaderModel model = new HeaderModel("H" + i);
         model.setTitle(new SimpleDateFormat("EEE, MMM d", Locale.US).format(date));
@@ -238,16 +204,6 @@ public class GalleryDatabaseService {
         return files;
     }
 
-    private boolean isSameDay(Date date1, Date date2) {
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.setTime(date1);
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTime(date2);
-        boolean sameYear = calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR);
-        boolean sameMonth = calendar1.get(Calendar.MONTH) == calendar2.get(Calendar.MONTH);
-        boolean sameDay = calendar1.get(Calendar.DAY_OF_MONTH) == calendar2.get(Calendar.DAY_OF_MONTH);
-        return (sameDay && sameMonth && sameYear);
-    }
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -270,25 +226,9 @@ public class GalleryDatabaseService {
 
         return inSampleSize;
     }
-    public static Bitmap decodeSampledBitmapFromFile(String path,
-                                                     int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
-    }
 
     public static class DateOrganiser {
         NavigableMap<Date, File> mDirectoryMap;
-        File[] mfileList;
         File mDirectory;
         List<File> mSortedFiles;
 
@@ -306,81 +246,16 @@ public class GalleryDatabaseService {
             Collections.sort(files, Collections.reverseOrder());
             return files;
         }
-        public List<File> groupByDay() {
-            List<File> files = mSortedFiles;
-            Collections.sort(files, new Comparator<File>() {
-                public int compare(File o1, File o2) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                        int result = getDay(o1) - getDay(o1);
-//                        return Long.compare(o1.lastModified(), o2.lastModified());
-                        return getDay(o1).compareTo(getDay(o2));
-                    } else {
-                        return Long.valueOf(o1.lastModified()).compareTo(o2.lastModified());
-                    }
-                }
-            });
-            return files;
-        }
         public Date getDay(File file) {
             return roundDay(new Date(file.lastModified()));
         }
 
-        public SortedMap<Date, File> todaysFiles() {
-            Calendar calendar = Calendar.getInstance();
-//            Map.Entry<Date, File> files = mDirectoryMap.floorEntry(round(calendar.getTime()));
-            SortedMap<Date, File> files = mDirectoryMap.tailMap(roundDay(calendar.getTime()));
-            Log.d(TAG, "todaysFiles:"+files.toString());
-            return files;
-        }
-        public boolean todaysFilesExist() {
-            Calendar calendar = Calendar.getInstance();
-//            Map.Entry<Date, File> files = mDirectoryMap.floorEntry(round(calendar.getTime()));
-            SortedMap<Date, File> files = mDirectoryMap.tailMap(roundDay(calendar.getTime()));
-            Log.d(TAG, "todaysFiles:"+files.toString());
-            if (!files.isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
         public SortedMap<Date, File> thisWeeksFiles() {
             Calendar calendar = Calendar.getInstance();
             SortedMap<Date, File> files = mDirectoryMap.subMap(roundWeek(calendar.getTime()), roundDay(calendar.getTime()));
             Log.d(TAG, "thisWeeksFiles:"+files.toString());
             return files;
         }
-        public boolean thisWeeksFilesExist() {
-            SortedMap<Date, File> files = thisWeeksFiles();
-            Log.d(TAG, "thisWeeksFiles:"+files.toString());
-            if (!files.isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        public List<Map.Entry<Integer, String>> getDayIndices() {
-            List<Map.Entry<Integer, String>> indices = new ArrayList<>();
-            List<File> sortedFiles = mSortedFiles;
-            Date dow = new Date();
-            int index = 0;
-            try {
-                for (File file : sortedFiles) {
-                    if (!dow.equals(getDay(file))) {
-                        dow = getDay(file);
-                        Log.d(TAG, "day: " + dow.toString());
-                        Map.Entry<Integer, String> item = new AbstractMap.SimpleEntry<>(index,
-                                new SimpleDateFormat("EEE, MMM d", Locale.US).format(dow));
-                        indices.add(item);
-                    }
-                    Log.d(TAG, new Date(file.lastModified()).toString());
-                    index++;
-                }
-                return indices;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
         public static Date roundDay(Date d) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
@@ -411,36 +286,6 @@ public class GalleryDatabaseService {
     /**
      * A simple item comparator by Id.
      */
-    public static class ItemComparatorById implements Comparator<AbstractFlexibleItem> {
-        @Override
-        public int compare(AbstractFlexibleItem lhs, AbstractFlexibleItem rhs) {
-            return ((StaggeredItem) lhs).getId() - ((StaggeredItem) rhs).getId();
-        }
-    }
-
-    /**
-     * A complex item comparator able to compare different item types for different view types:
-     * Sort by HEADER than by ITEM.
-     * <p>In this way items are always displayed in the corresponding section and position.</p>
-     */
-    public static class ItemComparatorByGroup implements Comparator<IFlexible> {
-        @Override
-        public int compare(IFlexible lhs, IFlexible rhs) {
-            int result = 0;
-            if (lhs instanceof StaggeredHeaderItem && rhs instanceof StaggeredHeaderItem) {
-                result = ((StaggeredHeaderItem) lhs).getOrder() - ((StaggeredHeaderItem) rhs).getOrder();
-            } else if (lhs instanceof StaggeredItem && rhs instanceof StaggeredItem) {
-                result = ((StaggeredItem) lhs).getHeader().getOrder() - ((StaggeredItem) rhs).getHeader().getOrder();
-                if (result == 0)
-                    result = ((StaggeredItem) lhs).getId() - ((StaggeredItem) rhs).getId();
-            } else if (lhs instanceof StaggeredItem && rhs instanceof StaggeredHeaderItem) {
-                result = ((StaggeredItem) lhs).getHeader().getOrder() - ((StaggeredHeaderItem) rhs).getOrder();
-            } else if (lhs instanceof StaggeredHeaderItem && rhs instanceof StaggeredItem) {
-                result = ((StaggeredHeaderItem) lhs).getOrder() - ((StaggeredItem) rhs).getHeader().getOrder();
-            }
-            return result;
-        }
-    }
 
 
 }

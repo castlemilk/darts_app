@@ -920,7 +920,7 @@ public class CameraActivity extends AppCompatActivity {
                     if (mViewPager != null) {
                         mViewPager.setEnabled(true);
                         mViewPager.setVisibility(View.VISIBLE);
-                        updatePegDisplay((int)170);
+                        updatePegDisplay(170);
                         mViewPager.setTag(170);
                     } else {
                         Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
@@ -956,7 +956,7 @@ public class CameraActivity extends AppCompatActivity {
                     mScoreNumberValue = makePegs().get(0);
                     mScoreValue.setCyclic(false);
                     mViewPager.setVisibility(View.VISIBLE);
-                    updatePegDisplay((int)170);
+                    updatePegDisplay(170);
                     mViewPager.setTag(170);
 
                 }

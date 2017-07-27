@@ -275,25 +275,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 e.printStackTrace();
             }
         }
-
-//        mCountButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO: increment number via DB service
-//                Log.d(TAG, "Increment button Clicked");
-//                int currentIndex = mViewPager.getCurrentPosition();
-//                PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
-//                if(ScoreDatabase.mScoreHundredDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
-//                    mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-//                    Action action = new Action(MODE_HUNDRED, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
-//                    ScoreDatabase.mActionDoa.addAction(action);
-//                    updateCountIndicators(mPegs[currentIndex]);
-//                } else {
-//                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-//                }
-//
-//            }
-//        });
         mIncrement100.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

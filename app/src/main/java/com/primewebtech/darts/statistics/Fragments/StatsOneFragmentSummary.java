@@ -55,53 +55,6 @@ public class StatsOneFragmentSummary extends Fragment {
     };
 
     public ArrayList<int[]> mStatsRows;
-    public int[] mStatsDay = {
-            R.id.row_40_d,
-            R.id.row_32_d,
-            R.id.row_24_d,
-            R.id.row_36_d,
-            R.id.row_50_d,
-            R.id.row_2_d,
-    };
-
-    public int[] mStatsWeek = {
-            R.id.row_40_w,
-            R.id.row_32_w,
-            R.id.row_24_w,
-            R.id.row_36_w,
-            R.id.row_50_w,
-            R.id.row_2_w,
-    };
-
-    public int[] mStatsMonth = {
-            R.id.row_40_m,
-            R.id.row_32_m,
-            R.id.row_24_m,
-            R.id.row_36_m,
-            R.id.row_50_m,
-            R.id.row_2_m,
-    };
-
-    public int[] mScoreNodes = {
-            R.id.row_40_d,
-            R.id.row_40_w,
-            R.id.row_40_m,
-            R.id.row_32_d,
-            R.id.row_32_w,
-            R.id.row_32_m,
-            R.id.row_24_d,
-            R.id.row_24_w,
-            R.id.row_24_m,
-            R.id.row_36_d,
-            R.id.row_36_w,
-            R.id.row_36_m,
-            R.id.row_50_d,
-            R.id.row_50_w,
-            R.id.row_50_m,
-            R.id.row_2_d,
-            R.id.row_2_w,
-            R.id.row_2_m,
-    };
     int[] pegValues = {
             40,
             32,

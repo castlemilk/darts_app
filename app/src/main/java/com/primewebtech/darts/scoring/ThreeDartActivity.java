@@ -1,20 +1,15 @@
 package com.primewebtech.darts.scoring;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,7 +60,6 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
 
     private static final String TAG = ThreeDartActivity.class.getSimpleName();
     private CyclicView mViewPager;
-    private TwoDartActivity.ScorePagerAdapter mScoringAdapter;
     private ImageView pin;
     private List<Integer> mPinValues;
     private String curTime;
@@ -370,51 +364,6 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             initialisePegCounts();
             return null;
         }
-    }
-    public class ScorePagerAdapter extends PagerAdapter {
-
-        Context mContext;
-        LayoutInflater mLayoutInflater;
-        private List<Integer> mResources;
-        public TextView scoreNumber;
-
-
-        public ScorePagerAdapter(Context context, List<Integer> resources) {
-            mContext = context;
-            mResources = resources;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return mResources.size();
-        }
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.pager_item_one_dart, container, false);
-            scoreNumber = (TextView) itemView.findViewById(R.id.score_number_one_dart);
-            scoreNumber.setText(String.valueOf(mResources.get(position)));
-            container.addView(itemView);
-            return itemView;
-        }
-
-        public void updateScoreValue(int score) {
-
-        }
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((FrameLayout) object);
-        }
-
-
     }
 
 }

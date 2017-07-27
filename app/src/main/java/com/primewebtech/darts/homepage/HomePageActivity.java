@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,17 +18,12 @@ import com.primewebtech.darts.camera.CameraActivity;
 import com.primewebtech.darts.gallery.GalleryActivity;
 import com.primewebtech.darts.scoring.HundredDartActivity;
 import com.primewebtech.darts.scoring.OneDartActivity;
-import com.primewebtech.darts.scoring.ScoringActivity;
 import com.primewebtech.darts.scoring.ThreeDartActivity;
 import com.primewebtech.darts.scoring.TwoDartActivity;
 import com.primewebtech.darts.statistics.StatsSummaryActivity;
 
-import java.io.File;
-
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = HomePageActivity.class.getSimpleName();
-    public static final String APP_DIRECTORY = Environment.getExternalStorageDirectory().getPath()+"/Pictures/Darts/";
-    private File[] allFiles ;
     private final int GALLERY_STORAGE_REQUEST = 101;
 
 
@@ -61,45 +55,33 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View view) {
-        Intent scoringIntent = new Intent(HomePageActivity.this, ScoringActivity.class);
         Intent oneDartIntent = new Intent(HomePageActivity.this, OneDartActivity.class);
         Intent twoDartIntent = new Intent(HomePageActivity.this, TwoDartActivity.class);
         Intent threeDartIntent = new Intent(HomePageActivity.this, ThreeDartActivity.class);
         Intent hundredDartIntent = new Intent(HomePageActivity.this, HundredDartActivity.class);
-//        Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
         Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
-//        Intent statsOneIntent = new Intent(HomePageActivity.this, StatsOneActivity.class);
         Intent statsOneIntent = new Intent(HomePageActivity.this, StatsSummaryActivity.class);
-//        Intent galleryIntent;
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
-//        } else {
-//            galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
-//        }
+        Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
 
         switch (view.getId()) {
             case R.id.darts1:
                 // route to darts1 based scoring
                 Log.d(TAG, "darts1:selected");
-                scoringIntent.putExtra("SCORING_TYPE", R.id.darts1);
                 startActivity(oneDartIntent);
                 break;
             case R.id.darts2:
                 // route to darts2 based scoring
                 Log.d(TAG, "darts2:selected");
-                scoringIntent.putExtra("SCORING_TYPE", R.id.darts2);
                 startActivity(twoDartIntent);
                 break;
             case R.id.darts3:
                 // route to darts3 based scoring
                 Log.d(TAG, "darts3:selected");
-                scoringIntent.putExtra("SCORING_TYPE", R.id.darts3);
                 startActivity(threeDartIntent);
                 break;
             case R.id.darts100:
                 // route to darts100 based scoring
                 Log.d(TAG, "darts100:selected");
-                scoringIntent.putExtra("SCORING_TYPE", R.id.darts100);
                 startActivity(hundredDartIntent);
                 break;
             case R.id.stats_button:

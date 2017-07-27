@@ -1,6 +1,5 @@
 package com.primewebtech.darts.scoring;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,15 +9,11 @@ import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -66,7 +61,6 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
      */
     private static final String TAG = OneDartActivity.class.getSimpleName();
     private CyclicView mViewPager;
-    private ScorePagerAdapter mScoringAdapter;
     private ImageView pin;
     private List<Integer> mPinValues;
     private String curTime;
@@ -260,41 +254,6 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 e.printStackTrace();
             }
         }
-
-//        mCountButtonTwo.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO: increment number via DB service
-//                Log.d(TAG, "Increment button Clicked");
-//                int currentIndex = mViewPager.getCurrentPosition();
-//                PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
-//                        mPinValues.get(currentIndex), TYPE_2);
-//                if(ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
-//                    mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-//                    Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
-//                    ScoreDatabase.mActionDoa.addAction(action);
-//                } else {
-//                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-//                }
-//            }
-//        });
-//        mCountButtonThree.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //TODO: increment number via DB service
-//                Log.d(TAG, "Increment button Clicked");
-//                int currentIndex = mViewPager.getCurrentPosition();
-//                PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
-//                        mPinValues.get(currentIndex), TYPE_3);
-//                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
-//                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-//                    Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-//                    ScoreDatabase.mActionDoa.addAction(action);
-//                } else {
-//                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-//                }
-//            }
-//        });
         mIncrementTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -496,52 +455,4 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         }
     }
 
-        /**
-     * Score Pager Adapter
-     */
-    public class ScorePagerAdapter extends PagerAdapter {
-
-        Context mContext;
-        LayoutInflater mLayoutInflater;
-        private List<Integer> mResources;
-        public TextView scoreNumber;
-
-
-        public ScorePagerAdapter(Context context, List<Integer> resources) {
-            mContext = context;
-            mResources = resources;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return mResources.size();
-        }
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.pager_item_one_dart, container, false);
-            scoreNumber = (TextView) itemView.findViewById(R.id.score_number_one_dart);
-            scoreNumber.setText(String.valueOf(mResources.get(position)));
-            container.addView(itemView);
-            return itemView;
-        }
-
-        public void updateScoreValue(int score) {
-
-        }
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((FrameLayout) object);
-        }
-
-
-    }
 }

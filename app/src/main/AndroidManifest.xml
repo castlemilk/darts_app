@@ -41,9 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".scoring.ScoringActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Black.NoActionBar"/>
         <activity android:name=".scoring.OneDartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Black.NoActionBar">

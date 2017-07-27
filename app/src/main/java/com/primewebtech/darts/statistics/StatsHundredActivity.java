@@ -23,11 +23,8 @@ public class StatsHundredActivity extends FragmentActivity{
         setContentView(R.layout.activity_stats);
 
         Bundle b = getIntent().getExtras();
-
-        String scoreType = "SUMMARY";
-        int pegValue = 100;
+        int pegValue = 0;
         if (b != null) {
-            scoreType = b.getString("SUMMARY");
             pegValue = b.getInt("PEG_VALUE");
         }
 
@@ -36,7 +33,7 @@ public class StatsHundredActivity extends FragmentActivity{
         // TODO: display the score stats thats currently been selected by the user. I.e if the user
         // is scoring on peg 140, then when they select stats, it should should the stats for peg 140.
         mViewPager.setAdapter(mStatsPagerAdapter);
-        if (scoreType != null) {
+        if (pegValue != 0) {
             switch (pegValue) {
                 case 100:
                     mViewPager.setCurrentItem(0);

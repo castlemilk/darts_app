@@ -103,7 +103,6 @@ public class StatsOneFragment extends Fragment {
         mStatsRows.add(mStatsRowLM);
         HashMap<String, ArrayList<Integer>> scoreMap = new HashMap<>();
         int period_index = 0;
-        int bestForPeriod = 100;
         for ( int[] statRow : mStatsRows) {
             // iterate over day, week then month
             int previous_period_index = 0; //this is the first previous period

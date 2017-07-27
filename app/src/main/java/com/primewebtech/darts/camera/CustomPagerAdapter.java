@@ -43,7 +43,7 @@ public class CustomPagerAdapter extends PagerAdapter{
     }
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((FrameLayout) object);
+        return view == object;
     }
     @Override
     public int getItemPosition(Object object) {

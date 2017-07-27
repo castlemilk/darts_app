@@ -25,10 +25,8 @@ public class StatsOneActivity extends FragmentActivity{
 
         Bundle b = getIntent().getExtras();
 
-        String scoreType = "SUMMARY";
         if (b != null) {
             type = b.getString("type");
-            scoreType = b.getString("SUMMARY");
         }
 
         mStatsPagerAdapter = new StatsOnePagerAdapter(getSupportFragmentManager());

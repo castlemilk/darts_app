@@ -22,7 +22,7 @@ public class MediaSaver extends Thread {
 
 
     public interface OnMediaSavedListener {
-        public void onMediaSaved(Uri uri);
+        void onMediaSaved(Uri uri);
     }
 
     public MediaSaver(ContentResolver resolver) {

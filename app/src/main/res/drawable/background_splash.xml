@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--<item android:drawable="@drawable/side_nav_bar"/>-->
-    <item android:drawable="@color/material_color_grey_300"/>
+    <item android:drawable="@color/material_color_grey_300" />
 
     <item>
 
