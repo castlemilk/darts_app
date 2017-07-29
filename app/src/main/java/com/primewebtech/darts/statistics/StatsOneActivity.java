@@ -1,10 +1,14 @@
 package com.primewebtech.darts.statistics;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.statistics.Fragments.StatsOneFragment;
+
+import org.malcdevelop.cyclicview.CyclicFragmentAdapter;
+import org.malcdevelop.cyclicview.CyclicView;
 
 /**
  * Created by benebsworth on 17/6/17.
@@ -16,8 +20,16 @@ public class StatsOneActivity extends FragmentActivity{
      * for each of the peg bords, 4,2,... etc in the one score mode.
      */
     StatsOnePagerAdapter mStatsPagerAdapter;
-    ViewPager mViewPager;
+    CyclicView mViewPager;
     String type;
+    int[] pegValues = {
+            40,
+            32,
+            24,
+            36,
+            50,
+            4
+    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,33 +42,44 @@ public class StatsOneActivity extends FragmentActivity{
         }
 
         mStatsPagerAdapter = new StatsOnePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = (CyclicView) findViewById(R.id.pager);
+        mViewPager.setChangePositionFactor(4000);
         // TODO: display the score stats thats currently been selected by the user. I.e if the user
         // is scoring on peg 40, then when they select stats, it should should the stats for peg 40.
-        mViewPager.setAdapter(mStatsPagerAdapter);
+        mViewPager.setAdapter(new CyclicFragmentAdapter(this, getSupportFragmentManager()) {
+            @Override
+            protected Fragment createFragment(int i) {
+                return StatsOneFragment.newInstance(pegValues[i]);
+            }
+
+            @Override
+            public int getItemsCount() {
+                return 6;
+            }
+        });
         if (b != null) {
             switch (type) {
                 case "40":
-                    mViewPager.setCurrentItem(0);
+                    mViewPager.setCurrentPosition(0);
                     break;
                 case "32":
-                    mViewPager.setCurrentItem(1);
+                    mViewPager.setCurrentPosition(1);
                     break;
                 case "24":
-                    mViewPager.setCurrentItem(2);
+                    mViewPager.setCurrentPosition(2);
                     break;
                 case "36":
-                    mViewPager.setCurrentItem(3);
+                    mViewPager.setCurrentPosition(3);
                     break;
                 case "50":
-                    mViewPager.setCurrentItem(4);
+                    mViewPager.setCurrentPosition(4);
                     break;
                 case "4":
-                    mViewPager.setCurrentItem(5);
+                    mViewPager.setCurrentPosition(5);
                     break;
 
                 default:
-                    mViewPager.setCurrentItem(0);
+                    mViewPager.setCurrentPosition(0);
                     break;
             }
         }

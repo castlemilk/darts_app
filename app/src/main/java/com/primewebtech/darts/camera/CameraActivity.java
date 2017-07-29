@@ -105,8 +105,8 @@ public class CameraActivity extends AppCompatActivity {
     private boolean loaded;
     private float volume;
     // Maximumn sound stream.
-    private static final int MAX_STREAMS = 1;
-    private int soundIdScroll;
+    private static final int MAX_STREAMS = 2;
+    private int soundIdScrolling;
     private int soundIdClick;
 
 
@@ -174,27 +174,6 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.getString(LATEST_PICTRUE) != null) {
-                mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
-            } else {
-                File lastPicture = getLastPicture();
-                if (lastPicture != null) {
-                    mRecentlySavedImageURI = Uri.fromFile(lastPicture);
-                } else {
-                    mRecentlySavedImageURI = null;
-                }
-            }
-        } else {
-            File lastPicture = getLastPicture();
-            if (lastPicture != null) {
-                Log.d(TAG, "onCreate:lastPicture"+lastPicture.toString());
-                mRecentlySavedImageURI = Uri.fromFile(lastPicture);
-                Log.d(TAG, "onCreate:mRecentlySavedImageURI:"+mRecentlySavedImageURI);
-            } else {
-                mRecentlySavedImageURI = null;
-            }
-        }
         setContentView(R.layout.activity_camera);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mScoreType = (WheelPicker) findViewById(R.id.score_type);
@@ -223,6 +202,7 @@ public class CameraActivity extends AppCompatActivity {
         initScoreSpinner("Peg");
         initialiseSound();
         mViewPager.setCurrentItem(0);
+        requestCameraPermission();
 
 
 
@@ -230,16 +210,32 @@ public class CameraActivity extends AppCompatActivity {
         mContentResolver = this.getContentResolver();
         mNamedImages = new NamedImages();
         mMediaSaver = new MediaSaver(mContentResolver);
-        mPreviousImageThumbnail.setEnabled(false);
-        if (mRecentlySavedImageURI != null) {
-            Log.d(TAG, "onCreate:mPreviewImageThumbnail:path:"+mRecentlySavedImageURI);
-            mPreviousImageThumbnail.setEnabled(true);
-            mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
-                    THUMBSIZE, THUMBSIZE));
-        }
 
 
         mLogoText.setVisibility(View.GONE);
+
+
+
+        if (cameraPermissionGranted) {
+            mCamera = openBackFacingCamera();
+            if (mCamera != null) {
+                mParameters = mCamera.getParameters();
+            }
+            Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraId, mCameraInfo);
+            mPreview = new CameraPreview(this, mCamera);
+            mCamera.setDisplayOrientation(90);
+            mCamera.setParameters(mParameters);
+            determineDisplayOrientation();
+            preview.addView(mPreview);
+        }
+
+
+
+
+    }
+
+    public void requestCameraPermission() {
         if (!getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
@@ -269,26 +265,38 @@ public class CameraActivity extends AppCompatActivity {
 
             }
         }
-
-        if (cameraPermissionGranted) {
-            mCamera = openBackFacingCamera();
-            if (mCamera != null) {
-                mParameters = mCamera.getParameters();
+    }
+    public void initialisePreviousImageThumbail(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getString(LATEST_PICTRUE) != null) {
+                mRecentlySavedImageURI = Uri.parse(savedInstanceState.getString(LATEST_PICTRUE));
+            } else {
+                File lastPicture = getLastPicture();
+                if (lastPicture != null) {
+                    mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+                } else {
+                    mRecentlySavedImageURI = null;
+                }
             }
-            Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(cameraId, mCameraInfo);
-            mPreview = new CameraPreview(this, mCamera);
-            mCamera.setDisplayOrientation(90);
-            mCamera.setParameters(mParameters);
-            determineDisplayOrientation();
-            preview.addView(mPreview);
+        } else {
+            File lastPicture = getLastPicture();
+            if (lastPicture != null) {
+                Log.d(TAG, "onCreate:lastPicture"+lastPicture.toString());
+                mRecentlySavedImageURI = Uri.fromFile(lastPicture);
+                Log.d(TAG, "onCreate:mRecentlySavedImageURI:"+mRecentlySavedImageURI);
+            } else {
+                mRecentlySavedImageURI = null;
+            }
+        }
+        mPreviousImageThumbnail.setEnabled(false);
+        if (mRecentlySavedImageURI != null) {
+            Log.d(TAG, "onCreate:mPreviewImageThumbnail:path:"+mRecentlySavedImageURI);
+            mPreviousImageThumbnail.setEnabled(true);
+            mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
+                    THUMBSIZE, THUMBSIZE));
         }
 
-
-
-
     }
-
     public void initialiseSound() {
         // AudioManager audio settings for adjusting the volume
                 audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -331,30 +339,39 @@ public class CameraActivity extends AppCompatActivity {
                 loaded = true;
             }
         });
-        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
-        soundIdClick = soundPool.load(this, R.raw.click, 1);
+        soundIdClick = soundPool.load(this, R.raw.click, 2);
+        soundIdScrolling = soundPool.load(this, R.raw.scrolling, 1);
 
     }
 
-    public void playSoundClick(float speed) {
+    public void playSoundSelected(float speed) {
         Log.d(TAG, "playSoundScroll");
         if(loaded)  {
             Log.d(TAG, "playSoundScroll:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 2, 0, speed);
 
         }
     }
-
-    public void playSoundScroll(float speed) {
+    public int playSoundScrolling(float speed) {
         Log.d(TAG, "playSoundScroll");
         if(loaded)  {
-            Log.d(TAG, "playSoundScroll:playing");
+
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
+            int scrollingId = this.soundPool.play(this.soundIdScrolling,leftVolumn, rightVolumn, 1, 160, speed);
 
+            Log.d(TAG, "playSoundScroll:playing:id"+scrollingId);
+            return scrollingId;
+        } else {
+            return 0;
+        }
+    }
+    public void stopSoundScrolling(int scrollingId) {
+        if (loaded) {
+            Log.d(TAG, "stopping:sound:"+scrollingId);
+            this.soundPool.stop(scrollingId);
         }
     }
 
@@ -492,6 +509,7 @@ public class CameraActivity extends AppCompatActivity {
                 mCamera.release();
                 mCamera = null;
                 Log.d(TAG, "onPause:complete");
+                soundPool.release();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -981,19 +999,34 @@ public class CameraActivity extends AppCompatActivity {
         mScoreTypeBackground.setImageResource(mScoreResources[0]);
 
         mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
+            int id = 0;
+            boolean playingScrollingSound = false;
+            int scrolls = 0;
             @Override
             public void onWheelScrolled(int offset) {
-                playSoundScroll(1);
             }
 
             @Override
             public void onWheelSelected(int position) {
+                stopSoundScrolling(id);
+                playSoundSelected(1);
+                playingScrollingSound = false;
+                scrolls = 0;
+
 
             }
 
             @Override
             public void onWheelScrollStateChanged(int state) {
-//                playSoundScroll(1);
+                scrolls++;
+                Log.d(TAG, "onWheelScrollStateChanged:scrolls:"+scrolls);
+                if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && scrolls > 20) {
+                    id = playSoundScrolling(1.1f);
+                    playingScrollingSound = true;
+                } else if (state == mScoreValue.SCROLL_STATE_IDLE ) {
+                    playingScrollingSound = false;
+                    stopSoundScrolling(id);
+                }
             }
         });
 

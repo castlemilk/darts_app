@@ -25,6 +25,8 @@ import com.primewebtech.darts.statistics.StatsSummaryActivity;
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = HomePageActivity.class.getSimpleName();
     private final int GALLERY_STORAGE_REQUEST = 101;
+    private final int CAMERA_STORAGE_REQUEST = 102;
+    private final int CAMERA_REQUEST = 103;
 
 
     @Override
@@ -105,7 +107,16 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             case R.id.camera_button:
                 // route to camera based scoring
                 Log.d(TAG, "camera:selected");
-                startActivity(cameraIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==
+                            PackageManager.PERMISSION_GRANTED) {
+                        startActivity(cameraIntent);
+
+                    } else {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                CAMERA_STORAGE_REQUEST);
+                    }
+                }
                 break;
         }
 
@@ -117,6 +128,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         if (requestCode == GALLERY_STORAGE_REQUEST && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Intent galleryIntent = new Intent(HomePageActivity.this, GalleryActivity.class);
             startActivity(galleryIntent);
+        }
+        if (requestCode == CAMERA_STORAGE_REQUEST && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Intent cameraIntent = new Intent(HomePageActivity.this, CameraActivity.class);
+            startActivity(cameraIntent);
         }
     }
 }

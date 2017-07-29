@@ -60,6 +60,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
      * Ranges frm 61 to 110 without 99 102 103 105 106 108 109, as they are not 2 dart pegs.
      */
     private static final String TAG = OneDartActivity.class.getSimpleName();
+    static final String STATE_PEGVALUE = "pegValue";
     private CyclicView mViewPager;
     private ImageView pin;
     private List<Integer> mPinValues;
@@ -83,7 +84,6 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     private float volume;
     // Maximumn sound stream.
     private static final int MAX_STREAMS = 1;
-    private int soundIdScroll;
     private int soundIdClick;
 
 
@@ -95,10 +95,27 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             R.drawable.pin_90s,
             R.drawable.pin_100s,
     };
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onPause() {
+        super.onPause();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
         setContentView(R.layout.two_dart_view);
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
@@ -115,7 +132,55 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             prefs.edit().putString("lastResetTime_two", curTime).apply();
         }
         updatePinBoard(0);
-        initialisePager();
+        initialisePager(0);
+        initialiseCountButtons();
+        initialiseBackButton();
+        initialiseMenuButton();
+        initialiseSound();
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if (mViewPager != null) {
+            Log.d(TAG, "onSaveInstanceState:mViewPagerStateSaving");
+            savedInstanceState.putInt(STATE_PEGVALUE, mViewPager.getCurrentPosition());
+            Log.d(TAG, "onSaveInstanceState:mViewPagerStateSaving:position:"+mViewPager.getCurrentPosition());
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.two_dart_view);
+        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        pin = (ImageView) findViewById(R.id.pin);
+        mPinValues = generatePinValues();
+        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+        lastResetTime = prefs.getString("lastResetTime_two", curTime);
+        Log.d(TAG, "CUR_TIME:"+curTime);
+        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+        if ( !curTime.equals(lastResetTime)) {
+            Log.d(TAG, "NEW_DAY:resetting counts");
+            new InitialisePegValueTask().execute();
+            prefs.edit().putString("lastResetTime_two", curTime).apply();
+        }
+
+
+        updatePinBoard(0);
+        if (savedInstanceState != null) {
+
+            int pegPosition = savedInstanceState.getInt(STATE_PEGVALUE);
+            Log.d(TAG, "onCreate:savedState:position:"+pegPosition);
+            initialisePager(pegPosition);
+        } else {
+            Log.d(TAG, "onCreate:savedState:empty");
+            initialisePager(0);
+        }
+
         initialiseCountButtons();
         initialiseBackButton();
         initialiseMenuButton();
@@ -205,17 +270,16 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 loaded = true;
             }
         });
-        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
 
     }
-    public void playSoundClick(float speed) {
+    public void playSoundClick(float speed, int loop) {
         Log.d(TAG, "playSoundScroll");
         if(loaded)  {
             Log.d(TAG, "playSoundScroll:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
 
         }
     }
@@ -237,6 +301,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementTwo = (Button) findViewById(R.id.increment_two);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementTwo.setSoundEffectsEnabled(false);
+        mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_2);
         if (pegRecord != null) {
@@ -250,6 +316,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 ScoreDatabase.mScoreTwoDoa.addTodayPegValue(peg3);
                 mCountButtonTwo.setText(String.format(Locale.getDefault(), "%d", peg2.getPegCount()));
                 mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", peg3.getPegCount()));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -266,11 +333,9 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                     mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
+                    playSoundClick(1, 2);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-                }
-                for (int i = 0; i<2; i++) {
-                    playSoundClick(1);
                 }
             }
         });
@@ -286,6 +351,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
+                    playSoundClick(1, 3);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -354,8 +420,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     }
 
 
-    public void initialisePager() {
+    public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_two_dart);
+        mViewPager.setChangePositionFactor(2000);
+
         final int size = generatePinValues().size();
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
@@ -377,6 +445,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 
             }
         });
+        mViewPager.setCurrentPosition(position);
         mViewPager.addOnPositionChangeListener(new CyclicView.OnPositionChangeListener() {
             @Override
             public void onPositionChange(int i) {

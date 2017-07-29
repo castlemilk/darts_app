@@ -91,7 +91,56 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private int[] mPegs = {
             40, 32, 24,36,50,4
     };
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.one_dart_view);
+
+
+        app = (MainApplication) getApplication();
+        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+
+        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+        lastResetTime = prefs.getString("lastResetTime", curTime);
+        Log.d(TAG, "CUR_TIME:"+curTime);
+        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+        if ( !curTime.equals(lastResetTime)) {
+            Log.d(TAG, "NEW_DAY:resetting counts");
+            //TODO: reset all the required variables and carry previous data into historical logs
+            initialisePegCounts();
+            initialiseCountButtons();
+            prefs.edit().putString("lastResetTime", curTime).apply();
+        }
+
+        pin = (ImageView) findViewById(R.id.pin);
+        pin.setImageResource(R.drawable.pin_40s);
+        initialiseSound();
+        initialisePager();
+        initialiseBackButton();
+        initialiseCountButtons();
+        initialiseMenuButton();
+        initialiseStatsButton();
+        initialiseSound();
+        updateCountIndicators(40); //always start on pegValue 40.
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,7 +262,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         });
         soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
-        soundIdClickFast = soundPool.load(this, R.raw.click_fast, 1);
+        soundIdClickFast = soundPool.load(this, R.raw.click, 1);
 
     }
     public int getPegIndex(int pegValue) {
@@ -276,6 +325,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mIncrementOne = (Button) findViewById(R.id.increment_one);
         mIncrementTwo = (Button) findViewById(R.id.increment_two);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementOne.setSoundEffectsEnabled(false);
+        mIncrementTwo.setSoundEffectsEnabled(false);
+        mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
         if (pegRecord != null) {
@@ -318,14 +370,20 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  2)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+2));
-                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
+                    Action action = new Action(MODE_ONE, ADD, 2, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-//                for (int i = 0; i<2; i++) {
                     playSoundClickFast(1, 2);
+//                for (int i= 0; i<2; i++) {
+//                    view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
 //                }
             }
         });
@@ -338,15 +396,21 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(mPegs[currentIndex], TYPE_2);
                 if(ScoreDatabase.mScoreOneDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  3)) {
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+3));
-                    Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
+                    Action action = new Action(MODE_ONE, ADD, 3, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-//                for (int i = 0; i<3; i++) {
                     playSoundClickFast(1, 3);
-//                }
+//                    for (int i= 0; i<3; i++) {
+//                        view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
             }
         });
 
@@ -355,6 +419,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
+        mViewPager.setChangePositionFactor(2000);
             mViewPager.setAdapter(new CyclicAdapter() {
                 @Override
                 public int getItemsCount() {

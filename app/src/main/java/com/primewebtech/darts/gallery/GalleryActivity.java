@@ -72,7 +72,7 @@ public class GalleryActivity extends AppCompatActivity
         Log.d(TAG, "onCreate");
         FlexibleAdapter.enableLogs(true);
         if (savedInstanceState == null) {
-            GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDataset();
+            GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDatasetByMonth();
         }
         initializeRecylerView(savedInstanceState);
         inActionMode = false;

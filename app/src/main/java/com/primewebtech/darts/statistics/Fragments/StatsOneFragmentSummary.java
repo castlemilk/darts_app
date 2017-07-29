@@ -48,10 +48,10 @@ public class StatsOneFragmentSummary extends Fragment {
             R.id.row_50_w,
             R.id.row_50_m,
     };
-    public int[] mStatsRow2 = {
-            R.id.row_2_d,
-            R.id.row_2_w,
-            R.id.row_2_m,
+    public int[] mStatsRow4 = {
+            R.id.row_4_d,
+            R.id.row_4_w,
+            R.id.row_4_m,
     };
 
     public ArrayList<int[]> mStatsRows;
@@ -61,7 +61,7 @@ public class StatsOneFragmentSummary extends Fragment {
             24,
             36,
             50,
-            2
+            4
     };
 
     public int[] mRowPegValues = {
@@ -70,7 +70,7 @@ public class StatsOneFragmentSummary extends Fragment {
             R.id.row_24,
             R.id.row_36,
             R.id.row_50,
-            R.id.row_2,
+            R.id.row_4,
     };
     private String type;
 
@@ -99,7 +99,7 @@ public class StatsOneFragmentSummary extends Fragment {
         mStatsRows.add(mStatsRow24);
         mStatsRows.add(mStatsRow36);
         mStatsRows.add(mStatsRow50);
-        mStatsRows.add(mStatsRow2);
+        mStatsRows.add(mStatsRow4);
         for (int i = 0; i<6; i++) {
             final int j = i;
             TextView rowPegValue = (TextView) rootView.findViewById(mRowPegValues[j]);

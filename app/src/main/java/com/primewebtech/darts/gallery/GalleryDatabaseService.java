@@ -43,7 +43,7 @@ public class GalleryDatabaseService {
         mContext = context;
     }
 
-    public void createHeadersSectionsGalleryDataset() {
+    public void createHeadersSectionsGalleryDatasetByDay() {
         pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
         mDateOrganiser = new DateOrganiser(pictureDirectory);
         HeaderItem header = null;
@@ -57,6 +57,30 @@ public class GalleryDatabaseService {
                 dow = mDateOrganiser.getDay(file);
                 Log.v(TAG, "dow:"+dow.toString());
                 header = newHeader(++lastHeaderIndex, dow);
+                Log.v(TAG, header.toString());
+                mItems.add(newPhotoItem(itemIndex + 1, file, header));
+                Log.v(TAG, newPhotoItem(itemIndex + 1, file, header).toString());
+            } else {
+                mItems.add(newPhotoItem(itemIndex + 1, file, header));
+                Log.v(TAG, newPhotoItem(itemIndex + 1, file, header).toString());
+            }
+            itemIndex++;
+        }
+    }
+    public void createHeadersSectionsGalleryDatasetByMonth() {
+        pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
+        mDateOrganiser = new DateOrganiser(pictureDirectory);
+        HeaderItem header = null;
+        Date dom = new Date();
+        int itemIndex = 0;
+        int lastHeaderIndex = 0;
+        Log.v(TAG, "createHeadersSectionsGalleryDataset");
+        for (File file : mDateOrganiser.sortedFiles()) {
+
+            if (!dom.equals(mDateOrganiser.getMonth(file))) {
+                dom = mDateOrganiser.getMonth(file);
+                Log.v(TAG, "dow:"+dom.toString());
+                header = newHeader(++lastHeaderIndex, dom);
                 Log.v(TAG, header.toString());
                 mItems.add(newPhotoItem(itemIndex + 1, file, header));
                 Log.v(TAG, newPhotoItem(itemIndex + 1, file, header).toString());
@@ -92,7 +116,7 @@ public class GalleryDatabaseService {
      */
     public HeaderItem newHeader(int index, Date date) {
         HeaderItem header = new HeaderItem("H"+ index);
-        header.setTitle(new SimpleDateFormat("EEE, MMM d", Locale.US).format(date));
+        header.setTitle(new SimpleDateFormat("MMM, YYYY", Locale.US).format(date));
         //header is hidden and un-selectable by default!
         return header;
     }
@@ -249,6 +273,9 @@ public class GalleryDatabaseService {
         public Date getDay(File file) {
             return roundDay(new Date(file.lastModified()));
         }
+        public Date getMonth(File file) {
+            return roundMonth(new Date(file.lastModified()));
+        }
 
         public SortedMap<Date, File> thisWeeksFiles() {
             Calendar calendar = Calendar.getInstance();
@@ -271,6 +298,15 @@ public class GalleryDatabaseService {
                 calendar.setTime(d);
                 calendar.add(Calendar.DAY_OF_YEAR, -7);
                 return calendar.getTime();
+            } catch (Exception ex) {
+                //This exception will never be thrown, because sdf parses what it   formats
+                return d;
+            }
+        }
+        public static Date roundMonth(Date d) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("MMyyyy", Locale.US);
+                return sdf.parse(sdf.format(d));
             } catch (Exception ex) {
                 //This exception will never be thrown, because sdf parses what it   formats
                 return d;

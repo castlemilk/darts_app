@@ -76,7 +76,7 @@ public class StatsHundredFragmentSummary extends Fragment {
                     Intent statsIntent;
                     statsIntent = new Intent(getActivity(), StatsHundredActivity.class);
                     Bundle b = new Bundle();
-                    b.putString("type", String.valueOf(pegValues[j]));
+                    b.putInt("PEG_VALUE",pegValues[j]);
                     statsIntent.putExtras(b);
                     startActivity(statsIntent);
                 }
@@ -92,9 +92,9 @@ public class StatsHundredFragmentSummary extends Fragment {
             TextView statsScoreDay = (TextView) rootView.findViewById(statRow[0]);
             TextView statsScoreWeek = (TextView) rootView.findViewById(statRow[1]);
             TextView statsScoreMonth = (TextView) rootView.findViewById(statRow[2]);
-            int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
-            int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
-            int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);
+            int dailyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountDay(pegValues[index]);
+            int weeklyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountWeek(pegValues[index]);
+            int monthlyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountMonth(pegValues[index]);
             if (dailyScore > 1000) {
 
                 statsScoreDay.setTextSize(12);

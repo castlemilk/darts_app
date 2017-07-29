@@ -1,10 +1,15 @@
 package com.primewebtech.darts.statistics;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.statistics.Fragments.StatsHundredFragmentSummary;
+import com.primewebtech.darts.statistics.Fragments.StatsOneFragmentSummary;
+
+import org.malcdevelop.cyclicview.CyclicFragmentAdapter;
+import org.malcdevelop.cyclicview.CyclicView;
 
 /**
  * Created by benebsworth on 17/6/17.
@@ -12,7 +17,7 @@ import com.primewebtech.darts.R;
 
 public class StatsSummaryActivity extends FragmentActivity{
     StatsSummaryPagerAdapter mStatsPagerAdapter;
-    ViewPager mViewPager;
+    CyclicView mViewPager;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,19 +31,38 @@ public class StatsSummaryActivity extends FragmentActivity{
         }
 
         mStatsPagerAdapter = new StatsSummaryPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = (CyclicView) findViewById(R.id.pager);
+        mViewPager.setChangePositionFactor(4000);
 
-        mViewPager.setAdapter(mStatsPagerAdapter);
+        mViewPager.setAdapter(new CyclicFragmentAdapter(this, getSupportFragmentManager()) {
+            @Override
+            protected Fragment createFragment(int i) {
+                switch (i) {
+                    case 0:
+                        return StatsOneFragmentSummary.newInstance();
+                    case 1:
+                        return StatsHundredFragmentSummary.newInstance();
+                    default:
+                        return StatsOneFragmentSummary.newInstance();
+                }
+
+            }
+
+            @Override
+            public int getItemsCount() {
+                return 2;
+            }
+        });
         if (scoreType != null) {
             switch (scoreType) {
                 case "one":
-                    mViewPager.setCurrentItem(0);
+                    mViewPager.setCurrentPosition(0);
                     break;
                 case "hundred":
-                    mViewPager.setCurrentItem(1);
+                    mViewPager.setCurrentPosition(1);
                     break;
                 default:
-                    mViewPager.setCurrentItem(0);
+                    mViewPager.setCurrentPosition(0);
                     break;
             }
         }

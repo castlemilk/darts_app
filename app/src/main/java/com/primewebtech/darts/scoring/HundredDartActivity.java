@@ -98,7 +98,54 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private int[] mPegs = {
            100,140,180
     };
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.hundred_dart_view);
+
+        app = (MainApplication) getApplication();
+        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+
+        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+        lastResetTime = prefs.getString("lastResetTime_hundred", curTime);
+        Log.d(TAG, "CUR_TIME:"+curTime);
+        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+        if ( !curTime.equals(lastResetTime)) {
+            Log.d(TAG, "NEW_DAY:resetting counts");
+            //TODO: reset all the required variables and carry previous data into historical logs
+            initialisePegCounts();
+            initialiseCountButtons();
+            prefs.edit().putString("lastResetTime_hundred", curTime).apply();
+        }
+        pin = (ImageView) findViewById(R.id.pin);
+        pin.setImageResource(R.drawable.pin_40s);
+        initialiseCountIndicators();
+        initialisePager();
+        initialiseCountButtons();
+        initialiseMenuButton();
+        initialiseBackButton();
+        initialiseSound();
+        initialiseStatsButton();
+        updateCountIndicators(100);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -493,6 +540,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
+        mViewPager.setChangePositionFactor(2000);
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
             public int getItemsCount() {

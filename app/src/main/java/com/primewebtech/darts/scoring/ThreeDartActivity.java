@@ -3,7 +3,11 @@ package com.primewebtech.darts.scoring;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -71,6 +75,15 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
+    // Stream type.
+    private static final int streamType = AudioManager.STREAM_MUSIC;
+    private SoundPool soundPool;
+    private AudioManager audioManager;
+    private boolean loaded;
+    private float volume;
+    // Maximumn sound stream.
+    private static final int MAX_STREAMS = 1;
+    private int soundIdClick;
 
     SharedPreferences prefs = null;
 
@@ -86,7 +99,50 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             R.drawable.pin_170sf,
 
     };
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+        }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.three_dart_view);
+        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        pin = (ImageView) findViewById(R.id.pin);
+        mPinValues = generatePinValues();
+
+        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+        lastResetTime = prefs.getString("lastResetTime_three", curTime);
+        Log.d(TAG, "CUR_TIME:"+curTime);
+        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+        if ( !curTime.equals(lastResetTime)) {
+            Log.d(TAG, "NEW_DAY:resetting counts");
+            new InitialisePegValueTask().execute();
+            prefs.edit().putString("lastResetTime_three", curTime).apply();
+        }
+        updatePinBoard(0);
+        initialisePager();
+        initialiseCountButtons();
+        initialiseBackButton();
+        initialiseMenuButton();
+        initialiseSound();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,9 +168,66 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         initialiseCountButtons();
         initialiseBackButton();
         initialiseMenuButton();
+        initialiseSound();
 
 
 
+    }
+    public void initialiseSound() {
+        // AudioManager audio settings for adjusting the volume
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        // Current volumn Index of particular stream type.
+        float currentVolumeIndex = (float) audioManager.getStreamVolume(streamType);
+
+        // Get the maximum volume index for a particular stream type.
+        float maxVolumeIndex  = (float) audioManager.getStreamMaxVolume(streamType);
+
+        // Volumn (0 --> 1)
+        this.volume = currentVolumeIndex / maxVolumeIndex;
+
+        // Suggests an audio stream whose volume should be changed by
+        // the hardware volume controls.
+        this.setVolumeControlStream(streamType);
+
+        // For Android SDK >= 21
+        if (Build.VERSION.SDK_INT >= 21 ) {
+
+            AudioAttributes audioAttrib = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            SoundPool.Builder builder= new SoundPool.Builder();
+            builder.setAudioAttributes(audioAttrib).setMaxStreams(MAX_STREAMS);
+
+            this.soundPool = builder.build();
+        }
+        // for Android SDK < 21
+        else {
+            // SoundPool(int maxStreams, int streamType, int srcQuality)
+            this.soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                       int status) {
+                loaded = true;
+            }
+        });
+        soundIdClick = soundPool.load(this, R.raw.click, 1);
+
+    }
+
+    public void playSoundClick(float speed, int loop) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
+
+        }
     }
 
     public void initialiseMenuButton() {
@@ -189,23 +302,6 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 e.printStackTrace();
             }
         }
-        mCountButtonThree.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: increment number via DB service
-                Log.d(TAG, "Increment button Clicked");
-                int currentIndex = mViewPager.getCurrentPosition();
-                PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
-                        mPinValues.get(currentIndex), TYPE_3);
-                if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
-                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-                    ScoreDatabase.mActionDoa.addAction(action);
-                } else {
-                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
-                }
-            }
-        });
         mIncrementThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -218,6 +314,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
+                    playSoundClick(1, 3);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -264,6 +361,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_three_dart);
+        mViewPager.setChangePositionFactor(2000);
         final int size = generatePinValues().size();
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
