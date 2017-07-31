@@ -28,6 +28,14 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
     public ActionDao(SQLiteDatabase database) {
         super(database);
     }
+
+     /** Creates another row in the ACTION_TABLE table, where there is a defined mapping/structure
+      * present in the Action object which allows the correct ContentValues to be set
+      * Note:  The table has a has a historical limit of 25 entires, policed by a trigger policy in
+      * the database.
+     * @param action The action object to add to the historical action table
+     * @return Returns a boolean representing the successful insertion or failure.
+     */
     public boolean addAction(Action action) {
         Log.d(TAG, "addAction:actionType:"+action.getActionType());
         Log.d(TAG, "addAction:actionValue:"+action.getActionValue());
@@ -37,13 +45,19 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
 
         return super.insert(getActionTableName(), setContentValues(action)) > 0;
     }
-
+    /** Fetches the current date and time. Used for logging and apply timestamp the table entries
+     * @return Returns the current date and time in the format yyyy-MM-dd hh:mm:ss
+     */
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
         Date now = new Date();
         return dateFormat.format(now);
     }
-
+    /** Takes the Action object and translates it into the corresponding columns within the action
+     * table.
+     * @param action The action object to add to the historical action table
+     * @return ContentValues object which is inserted into database.
+     */
     public ContentValues setContentValues(Action action) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ACTION_TYPE, action.getActionType());
@@ -55,6 +69,13 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         contentValues.put(DATE, getDateNow());
         return contentValues;
     }
+    /** Fetches from the "top" of the stack in terms of stored actions and removes row. This will
+     * correspond with user hitting the back button and an action being reversed.
+     * @param gameMode Type of scoring type, i.e one, two, three or 100. It used to ensure that we
+     * only make changes for the viewed scoring mode, avoiding changing the scores of other scoring
+     * modes
+     * @return The action object that was at the top of the stack (now removed)
+     */
     public Action getAndDeleteLastHistoryAction(int gameMode) {
         Log.d(TAG, "getAndDeleteLastestHistoryAction");
         String ORDER_BY = ID+" DESC";
@@ -78,34 +99,21 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         }
         return null;
     }
-    public Action getAndDeleteLastHistoryAction() {
-        Log.d(TAG, "getAndDeleteLastestHistoryAction");
-        String ORDER_BY = ID+" DESC";
-        String LIMIT = "1";
-        Action action;
-
-        cursor = super.query(getActionTableName(), ACTION_COLUMNS, null,
-                null, ORDER_BY, LIMIT);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                action = cursorToEntity(cursor);
-                Log.d(TAG, "getAndDeleteLastestHistoryAction:foundMatch:"+action.toString());
-                Log.d(TAG, "getAndDeleteLastestHistoryAction:deleting:id:"+action.id);
-                boolean done = deleteAction(action.id);
-                Log.d(TAG, "getAndDeleteLastestHistoryAction:delete:done:"+done);
-                cursor.close();
-                return action;
-            }
-        }
-        return null;
-    }
+    /** Deletes an action from the action table with a given ID
+     * @param id the id of the action to be deleted
+     * @return Boolean representing the success or failure of deletion.
+     */
     public boolean deleteAction(int id) {
         String selection = ID_WHERE;
         final String selectionArgs[] = { String.valueOf(id)};
         return super.delete(getActionTableName(), selection, selectionArgs) > 0;
 
     }
-
+    /** Converts the database cursor into an action item, effectively deserialising a action item
+     * row in SQL into a POJO.
+     * @param cursor Database cursor based on some selection query etc.
+     * @return Action item object corresponding to the selected row in SQL.
+     */
     protected Action cursorToEntity(Cursor cursor) {
         int actionTypeIndex;
         int actionValueIndex;

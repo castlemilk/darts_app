@@ -21,6 +21,13 @@ import java.util.Locale;
  */
 
 public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSchema {
+    /**
+     * ScoreHundredDao is the interface between the application and the score tables for the Hundred
+     * scoring mode. The logic between the different scoring modes is fairly homogenous and could
+     * definitely be consolidated into a singular interface that handles the content of the scoring
+     * mode.
+     * TODO: Consolidate scoring Doa into singular class/interface which handles scoring content.
+     */
 
     private static final String TAG = ScoreHundredDao.class.getSimpleName();
 
@@ -33,6 +40,14 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
     public ScoreHundredDao(SQLiteDatabase database) {
         super(database);
     }
+
+
+    /** Fetches a given score record based on a scoreRecord object and then makes the required updates
+     * effectively fetching a cursor position based off the scoreRecord and replacing with the passed
+     * pegRecord.
+     * @param scoreRecord PegRecord object that we would like to update.
+     * @return Boolean repesenting the success/failure of row update.
+     */
     public boolean updateTodayPegValue(PegRecord scoreRecord) throws IOException {
         if (scoreRecord != null) {
             String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND "+ TYPE_WHERE;
@@ -43,8 +58,6 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
         } else {
             return false;
         }
-
-
     }
     public boolean addTodayPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:"+scoreRecord.toString());
