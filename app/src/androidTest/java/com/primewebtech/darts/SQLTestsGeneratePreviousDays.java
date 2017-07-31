@@ -45,7 +45,7 @@ public class SQLTestsGeneratePreviousDays {
             for (int i = 0; i < 6; i++) {
                 int randomDay = 1 + (int) (Math.random() * 5);
                 int randomMonth = 4 + (int) (Math.random() * 4);
-                int randomScore = (int) (Math.random() * 200);
+                int randomScore = 7;
                 int randomPegIndex = (int) (Math.random() * 6); // 0-6
                 String date = String.format(Locale.ENGLISH, "2017-07-%02d", 29 - randomDay);
                 System.out.println(date);

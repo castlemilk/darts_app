@@ -103,7 +103,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         final String selectionArgs[] = { String.valueOf(pegValue),
                 period};
         PegRecord pegRecord;
-        cursor = super.query(getScoreTableBest(), BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        cursor = super.query(getScoreTableBest(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 pegRecord = cursorToEntity(cursor);
@@ -123,7 +123,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
             final String selectionArgs[] = { String.valueOf(pegValue),
                     getPreviousDay(previousPeriodIndex)};
 
-            cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     pegRecord = cursorToEntity(cursor);
@@ -336,7 +336,13 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
      * @return
      */
     public int getTotalPegCountMonth(int pegValue) {
-        String selectorArgs[] = new String[]{String.valueOf(pegValue), getLastMonthsDate()};
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+//        Date now = new Date();
+//        Log.d(TAG, "getTotalPegCountMonth:currentDate:"+df.format(now));
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfMonth = cal.getTime();
+        String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(startOfMonth)};
 
         cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + getScoreTableName() +
                 " WHERE " + PEG_VALUE_WHERE + " AND " + DATE_WHERE + ";", selectorArgs);
@@ -362,7 +368,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public String getLastWeeksDate() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        cal.add(Calendar.DAY_OF_YEAR, -7);
+        cal.add(Calendar.DAY_OF_YEAR, -6);
         Date lastWeek = cal.getTime();
         Log.d(TAG, "getLastWeeksDate:"+df.format(lastWeek));
         return df.format(lastWeek);
@@ -387,7 +393,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         Log.d(TAG, "getTodayPegValue:selectionArgs:pegValue:"+selectionArgs[0]);
         Log.d(TAG, "getTodayPegValue:selectionArgs:Date:"+selectionArgs[1]);
         Log.d(TAG, "getTodayPegValue:selectionArgs:type:"+selectionArgs[2]);
-        cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 pegRecord = cursorToEntity(cursor);

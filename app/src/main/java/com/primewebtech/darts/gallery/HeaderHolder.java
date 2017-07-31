@@ -65,18 +65,12 @@ public class HeaderHolder extends AbstractHeaderItem<HeaderHolder.HeaderViewHold
     @Override
     public void bindViewHolder(final FlexibleAdapter adapter, HeaderViewHolder holder, int position, List payloads) {
         holder.mTitle.setText(model.getTitle());
-        List sectionableList = adapter.getSectionItems(this);
-        String subTitle = (sectionableList.isEmpty() ? "Empty section" :
-                sectionableList.size() + " section items");
-        holder.mSubtitle.setText(subTitle);
     }
 
     static class HeaderViewHolder extends FlexibleViewHolder {
 
         @BindView(R.id.title)
         public TextView mTitle;
-        @BindView(R.id.subtitle)
-        public TextView mSubtitle;
 
         /**
          * Default constructor.

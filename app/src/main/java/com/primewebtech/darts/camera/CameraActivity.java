@@ -220,6 +220,8 @@ public class CameraActivity extends AppCompatActivity {
             mCamera = openBackFacingCamera();
             if (mCamera != null) {
                 mParameters = mCamera.getParameters();
+            } else {
+
             }
             Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
             Camera.getCameraInfo(cameraId, mCameraInfo);
@@ -386,6 +388,7 @@ public class CameraActivity extends AppCompatActivity {
 
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
                 cameraPermissionGranted = true;
+                onResume();
 
             } else {
 
@@ -493,6 +496,21 @@ public class CameraActivity extends AppCompatActivity {
                 mPreviousImageThumbnail.setVisibility(View.VISIBLE);
                 mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
                         THUMBSIZE, THUMBSIZE));
+            }
+            if (cameraPermissionGranted) {
+                if (mCamera != null) {
+                    mParameters = mCamera.getParameters();
+                } else {
+                    mCamera = openBackFacingCamera();
+                    Camera.CameraInfo mCameraInfo = new Camera.CameraInfo();
+                    Camera.getCameraInfo(cameraId, mCameraInfo);
+                    mPreview = new CameraPreview(this, mCamera);
+                    mCamera.setDisplayOrientation(90);
+                    mCamera.setParameters(mParameters);
+                    determineDisplayOrientation();
+                    preview.addView(mPreview);
+                }
+
             }
 
         } catch (Exception e) {

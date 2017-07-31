@@ -51,9 +51,9 @@ public interface ScoreSchema {
             PERIOD + " STRING, " +
             LAST_MODIFIED + " DATETIME);";
 
-    String[] SCORE_COLUMNS = new String[] {ID,
+    String[] SCORE_COLUMNS = new String[] { ID,
             PEG_VALUE, TYPE, PEG_COUNT, LAST_MODIFIED };
-    String[] BEST_SCORE_COLUMNS = new String[] {ID,
+    String[] BEST_SCORE_COLUMNS = new String[] { ID,
             PEG_VALUE, TYPE, PEG_COUNT, PERIOD, LAST_MODIFIED };
     String PEG_VALUE_WHERE              = PEG_VALUE + " = ?";
     String DATE_WHERE                   = LAST_MODIFIED + " >= ?";

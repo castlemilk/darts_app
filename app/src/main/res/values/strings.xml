@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Darts</string>
-    <string name="title_activity_scoring">ScoringActivity</string>
-    <string name="title_activity_review">ReviewActivity</string>
     <string name="_1_dart">1 dart</string>
     <string name="_100">100+</string>
     <string name="_2_dart">2 dart</string>
@@ -9,35 +7,14 @@
     <string name="image_file_name_format" translatable="false">"'IMG'_yyyyMMdd_HHmmss"</string>
     <string name="title_activity_gallery">Gallery</string>
     <string name="delete">Delete</string>
-    <string name="selected_count">%1$d selected</string>
 
     <!-- Action Mode -->
-    <string name="action_delete">Delete</string>
-    <string name="action_select_all">Select All</string>
     <string name="action_selected_one">%1$s selected</string>
     <string name="action_selected_many">%1$s selected</string>
-    <string name="action_deleted">Deleted</string>
-    <string name="action_archived">Archived</string>
-    <string name="action_merge">Merge</string>
-    <string name="action_split">Split</string>
 
 
     <string name="no_items">No items</string>
-    <string name="err_no_edit">Nothing to modify</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="select_item_type">"Select Item Type                     "</string>
-    <string name="select_section_reference">"Select Section Reference             "</string>
-    <string name="likes">%1$s likes</string>
-    <string name="merged_with">Merged with%1$s</string><!--No space between!-->
-    <string name="status_a">STATUS A</string>
-    <string name="status_b">STATUS B</string>
-    <string name="status_c">STATUS C</string>
-    <string name="status_d">STATUS D</string>
-    <string name="status_e">STATUS E</string>
-    <string name="scrolling_animations">Scrolling Animations</string>
-    <string name="item_animators">Item Animators</string>
-    <string name="intent_chooser">Complete action using</string>
+    <!--No space between!-->
     <string name="_1">1</string>
     <string name="_2">2</string>
     <string name="_3">3</string>
@@ -45,8 +22,6 @@
     <string name="_minus_ten">-10</string>
     <string name="_180">180</string>
     <string name="_140">140+</string>
-    <string name="_100plus">100+</string>
-    <string name="_2_stats">2</string>
     <string name="_24_stats">24</string>
     <string name="_32_stats">32</string>
     <string name="_36_stats">36</string>
