@@ -59,6 +59,12 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
             return false;
         }
     }
+
+    /** Adds a peg value. But first checks to see if a row exists for the day and if so then we
+     * carry out and update instead of an insert.
+     * @param scoreRecord PegRecord object that we would like to add
+     * @return Boolean repesenting the success/failure of row update.
+     */
     public boolean addTodayPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:"+scoreRecord.toString());
         if (getTodayPegValue(scoreRecord.pegValue, scoreRecord.type) != null) {
@@ -67,16 +73,28 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
             return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
         }
     }
+    /** Adds a peg value to Score mode hundred table.
+     * @param scoreRecord PegRecord object that we would like to add
+     * @return Boolean repesenting the success/failure of row update.
+     */
     public boolean addPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:" + scoreRecord.toString());
         return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
     }
+    /** Adds a peg value to Score mode hundred table.
+     * @return String representing the date in the format yyyy-MM-dd
+     */
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date now = new Date();
         return dateFormat.format(now);
     }
-
+    /** increases a given pegvalue by a specified increment
+     * @param pegValue Integer - the pegValue to increment (i.e peg 40, 50 etc)
+     * @param type Integer - score type i.e 2 dart or 3 dart
+     * @param increment Integer - the amount to increment a given pegValue by.
+     * @return Boolean repesenting the success/failure of row update.
+     */
     public boolean increaseTodayPegValue(int pegValue, int type, int increment) {
         Log.d(TAG, "increaseTodayPegValue:pegValue:"+pegValue);
         Log.d(TAG, "increaseTodayPegValue:increment:"+increment);
@@ -96,6 +114,12 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
             return false;
         }
     }
+    /** decreases a given pegvalue by a specified decrement
+     * @param pegValue Integer - the pegValue to increment (i.e peg 40, 50 etc)
+     * @param type Integer - score type i.e 2 dart or 3 dart
+     * @param decrement Integer - the amount to decrement a given pegValue by.
+     * @return Boolean repesenting the success/failure of row update.
+     */
     public boolean decreaseTodayPegValue(int pegValue, int type, int decrement) {
         Log.d(TAG, "decreaseTodayPegValue:pegValue:"+pegValue);
         Log.d(TAG, "decreaseTodayPegValue:decrement:"+decrement);
@@ -114,6 +138,10 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
             return false;
         }
     }
+    /** Implements a rollback based on the given action.
+     * @param action Action - The action that we are rolling back.
+     * @return Boolean repesenting the success/failure of rollback.
+     */
     public boolean rollbackScore(Action action) {
         if (action.actionType == ActionSchema.ADD) {
             Log.d(TAG, "rollbackScore:DECREASING:"+action.toString());
@@ -126,10 +154,10 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
     }
 
     /***
-     * Aggregate total peg counts over all time.
+     * Aggregate total peg counts over all time for a given peg value.
      * DON't need to differentiate here between TYPE_2 and TYPE_3 scores.
      * @param pegValue
-     * @return
+     * @return Integer representing the total peg count for a given pegValue.
      */
     public int getTotalPegCount(int pegValue) {
         final String selectionArgs[] =  {String.valueOf(pegValue)};
@@ -146,7 +174,10 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
         }
         return 0;
     }
-
+    /***
+     * gets todays date.
+     * @return String presenting todays date in format yyyy-MM-dd
+     */
     public String getTodaysDate() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -154,6 +185,13 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
         Date yesterday = cal.getTime();
         return df.format(yesterday);
     }
+
+    /***
+     * Aggregate total peg counts over all time for a given peg value AND a given peg type.
+     * @param pegValue
+     * @param type differentiate here between TYPE_2 and TYPE_3 scores.
+     * @return Integer representing the total peg count for a given pegValue.
+     */
     public PegRecord getTodayPegValue(int pegValue, int type) {
 
         final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
