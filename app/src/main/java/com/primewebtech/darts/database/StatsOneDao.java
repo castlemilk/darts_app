@@ -67,9 +67,9 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
          * viewing the stats view. Alternatively this functionality could be implemented via a
          * set trigger.
          */
-        Log.d(TAG, "addNewBestScore:period:"+period);
-        Log.d(TAG, "addNewBestScore:pegValue:"+pegValue);
-        Log.d(TAG, "addNewBestScore:pegCount:"+pegValue);
+        Log.d(TAG, "setBestScore:period:"+period);
+        Log.d(TAG, "setBestScore:pegValue:"+pegValue);
+        Log.d(TAG, "setBestScore:pegCount:"+pegCount);
         if (getPeriodsHighestScore(pegValue, period) != null) {
             return updateBestScore(period, pegValue, pegCount);
         } else {
@@ -81,7 +81,28 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
             contentValues.put(LAST_MODIFIED, getDateNow());
             return super.insert(getScoreTableBest(), contentValues) > 0;
         }
-
+    }
+    public boolean setBestScorePrevious(String period, int pegValue, int pegCount) {
+        /**
+         * On the detection of a new personal best score being made for a given peg value then we
+         * update the the value in the best scores table. This activity will be carried it out when
+         * viewing the stats view. Alternatively this functionality could be implemented via a
+         * set trigger.
+         */
+        Log.d(TAG, "setBestScorePrevious:period:"+period);
+        Log.d(TAG, "setBestScorePrevious:pegValue:"+pegValue);
+        Log.d(TAG, "setBestScorePrevious:pegCount:"+pegCount);
+        if (getPeriodsHighestScorePrevious(pegValue, period) != null) {
+            return updateBestScorePrevious(period, pegValue, pegCount);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
+        }
     }
     public void updatePB(int pegValue) {
         for ( String period : periods) {
@@ -92,21 +113,24 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
                 int currentBestScoreCount = currentBestScore.getPegCount();
                 int previousBestScoreCount = previousBestScore.getPegCount();
                 int latestScoreForPeriod = getLatestScore(pegValue, period);
+                Log.d(TAG, "updatePB:latestScoreForPeriod:["+period+"]:" + latestScoreForPeriod);
+                Log.d(TAG, "updatePB:previousBestScoreCount:["+period+"]:" + previousBestScoreCount);
+                Log.d(TAG, "updatePB:currentBestScoreCount:["+period+"]:" + currentBestScoreCount);
                 if (latestScoreForPeriod > currentBestScoreCount) {
                     // latested calculated total is a PB, update the current best score table
                     // accordingly.
-                    updateBestScore(period, pegValue, latestScoreForPeriod);
+                   setBestScore(period, pegValue, latestScoreForPeriod);
                 }
                 if (previousBestScoreCount > latestScoreForPeriod) {
                     // previous score is higher than current, revert the PB back to what was
                     // previously recorded.
-                    updateBestScore(period, pegValue, previousBestScoreCount);
+                    setBestScore(period, pegValue, previousBestScoreCount);
                 }
             } else if (previousBestScore == null && currentBestScore != null) {
-                updateBestScorePrevious(period, pegValue, currentBestScore.getPegCount());
+                setBestScorePrevious(period, pegValue, currentBestScore.getPegCount());
             } else {
-                updateBestScorePrevious(period, pegValue, 0);
-                updateBestScore(period, pegValue, 0);
+                setBestScorePrevious(period, pegValue, 0);
+                setBestScore(period, pegValue, 0);
             }
 
         }
@@ -114,29 +138,56 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public boolean updateBestScorePrevious(String period, int pegValue, int pegCount) {
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PEG_VALUE, pegValue);
-        contentValues.put(PERIOD, period);
-        contentValues.put(TYPE, TYPE_2);
-        contentValues.put(PEG_COUNT, pegCount);
-        contentValues.put(LAST_MODIFIED, getDateNow());
-        return super.update(getScoreTableBestPrevious(), contentValues, selection,
-                selectionArgs) > 0;
+        Log.d(TAG, "updateBestScorePrevious:pegCount:"+pegCount);
+
+        PegRecord currentBestScorePrevious = getPeriodsHighestScorePrevious(pegValue, period);
+        if (currentBestScorePrevious != null) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.update(getScoreTableBestPrevious(), contentValues, selection,
+                    selectionArgs) > 0;
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
+        }
+
     }
     public boolean updateBestScore(String period, int pegValue, int pegCount){
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        Log.d(TAG, "updateBestScore:pegValue:"+pegValue);
+        Log.d(TAG, "updateBestScore:pegCount:"+pegCount);
         PegRecord currentBestScore = getPeriodsHighestScore(pegValue, period);
-        updateBestScorePrevious(currentBestScore.period,
-                currentBestScore.getPegValue(), currentBestScore.getPegCount());
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(PEG_VALUE, pegValue);
-        contentValues.put(PERIOD, period);
-        contentValues.put(TYPE, TYPE_2);
-        contentValues.put(PEG_COUNT, pegCount);
-        contentValues.put(LAST_MODIFIED, getDateNow());
-        return super.update(getScoreTableBest(), contentValues, selection,
-                selectionArgs) > 0;
+        if (currentBestScore != null) {
+            updateBestScorePrevious(period,
+                    currentBestScore.getPegValue(), currentBestScore.getPegCount());
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.update(getScoreTableBest(), contentValues, selection,
+                    selectionArgs) > 0;
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBest(), contentValues) > 0;
+        }
+
     }
     public PegRecord getPeriodsHighestScorePrevious(int pegValue, String period) {
         final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
@@ -258,6 +309,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         String selectorArgs[] = new String[]{String.valueOf(pegValue), getDateNow()};
         cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_ONE +
                 " WHERE " + PEG_VALUE_WHERE + " AND " + DATE_WHERE + ";", selectorArgs);
+
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int total = cursor.getInt(0);

@@ -146,21 +146,17 @@ public class StatsHundredFragment extends Fragment {
                             rowNode.setBackground(
                                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                             rowNode.setTextColor(Color.BLACK);
-                            ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, previousScore);
                         }
 
                     } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
                     } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
                             currentBestScores[period_index] > previousScore) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsHundredDoa.updateBestScore(periods[period_index], pegValue, currentBestScores[period_index]);
-
                     }else {
                         rowNode.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background));
@@ -217,9 +213,12 @@ public class StatsHundredFragment extends Fragment {
         TextView bestScoreIndicatorDay = (TextView) rootView.findViewById(R.id.best_score_daily);
         if (totalScoreToday >= bestScoreDaily) {
             bestScoreIndicatorDay.setText(String.valueOf(totalScoreToday));
-            scoreTodayTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreTodayTotal.setTextColor(Color.BLACK);
+            if (totalScoreToday > 0) {
+                scoreTodayTotal.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreTodayTotal.setTextColor(Color.BLACK);
+            }
+
 
         } else {
             bestScoreIndicatorDay.setText(String.valueOf(bestScoreDaily));
@@ -233,9 +232,12 @@ public class StatsHundredFragment extends Fragment {
         TextView bestScoreIndicatorWeekly = (TextView) rootView.findViewById(R.id.best_score_weekly);
         if (totalScoreThisWeek >= bestScoreWeekly) {
             bestScoreIndicatorWeekly.setText(String.valueOf(totalScoreThisWeek));
-            scoreWeekTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreWeekTotal.setTextColor(Color.BLACK);
+            if (totalScoreThisWeek > 0) {
+                scoreWeekTotal.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreWeekTotal.setTextColor(Color.BLACK);
+            }
+
         } else {
             bestScoreIndicatorWeekly.setText(String.valueOf(bestScoreWeekly));
 
@@ -250,9 +252,12 @@ public class StatsHundredFragment extends Fragment {
 
         if (totalScoreThisMonth >= bestScoreMonthly) {
             bestScoreIndicatorMonthly.setText(String.valueOf(totalScoreThisMonth));
-            scoreMonthTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreMonthTotal.setTextColor(Color.BLACK);
+            if (totalScoreThisMonth > 0) {
+                        scoreMonthTotal.setBackground(
+                                getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreMonthTotal.setTextColor(Color.BLACK);
+            }
+
         } else {
             bestScoreIndicatorMonthly.setText(String.valueOf(bestScoreMonthly));
         }

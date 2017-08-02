@@ -179,6 +179,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         initialiseBackButton();
         initialiseSound();
         initialiseStatsButton();
+        initialisePBs();
         updateCountIndicators(100);
     }
 
@@ -346,6 +347,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Log.d(TAG, "mIncrement100:action:"+action.toString());
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(100)]);
+                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(100)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -371,6 +373,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Log.d(TAG, "mIncrement140:action:"+action.toString());
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(140)]);
+                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(140)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -393,6 +396,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Action action = new Action(MODE_HUNDRED, ADD, 1, mPegs[getPegIndex(180)], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(180)]);
+                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(180)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -542,6 +546,12 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             }
         }
     }
+    public void initialisePBs() {
+        for (int peg : mPegs) {
+            ScoreDatabase.mStatsHundredDoa.updatePB(peg);
+
+        }
+    }
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
@@ -556,7 +566,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
-                scoreNumber.setTextSize(55);
+                scoreNumber.setTextSize(45);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;

@@ -32,6 +32,8 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     protected String getScoreTableName() {
         return SCORE_TABLE_HUNDRED;
     }
+    protected String getScoreTableBestPrevious() { return SCORE_TABLE_BEST_PREVIOUS; }
+    private String[] periods = { "DAY", "WEEK", "MONTH"};
 
     public StatsHundredDao(SQLiteDatabase database) {
         super(database);
@@ -61,6 +63,85 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public boolean addPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:" + scoreRecord.toString());
         return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
+    }
+    public boolean setBestScorePrevious(String period, int pegValue, int pegCount) {
+        /**
+         * On the detection of a new personal best score being made for a given peg value then we
+         * update the the value in the best scores table. This activity will be carried it out when
+         * viewing the stats view. Alternatively this functionality could be implemented via a
+         * set trigger.
+         */
+        Log.d(TAG, "setBestScorePrevious:period:"+period);
+        Log.d(TAG, "setBestScorePrevious:pegValue:"+pegValue);
+        Log.d(TAG, "setBestScorePrevious:pegCount:"+pegCount);
+        if (getPeriodsHighestScorePrevious(pegValue, period) != null) {
+            return updateBestScorePrevious(period, pegValue, pegCount);
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
+        }
+    }
+    public void updatePB(int pegValue) {
+        for ( String period : periods) {
+            PegRecord currentBestScore = getPeriodsHighestScore(pegValue, period);
+            PegRecord previousBestScore = getPeriodsHighestScorePrevious(pegValue, period);
+            if (currentBestScore != null && previousBestScore != null) {
+
+                int currentBestScoreCount = currentBestScore.getPegCount();
+                int previousBestScoreCount = previousBestScore.getPegCount();
+                int latestScoreForPeriod = getLatestScore(pegValue, period);
+                Log.d(TAG, "updatePB:latestScoreForPeriod:["+period+"]:" + latestScoreForPeriod);
+                Log.d(TAG, "updatePB:previousBestScoreCount:["+period+"]:" + previousBestScoreCount);
+                Log.d(TAG, "updatePB:currentBestScoreCount:["+period+"]:" + currentBestScoreCount);
+                if (latestScoreForPeriod > currentBestScoreCount) {
+                    // latested calculated total is a PB, update the current best score table
+                    // accordingly.
+                    setBestScore(period, pegValue, latestScoreForPeriod);
+                }
+                if (previousBestScoreCount > latestScoreForPeriod) {
+                    // previous score is higher than current, revert the PB back to what was
+                    // previously recorded.
+                    setBestScore(period, pegValue, previousBestScoreCount);
+                }
+            } else if (previousBestScore == null && currentBestScore != null) {
+                setBestScorePrevious(period, pegValue, currentBestScore.getPegCount());
+            } else {
+                setBestScorePrevious(period, pegValue, 0);
+                setBestScore(period, pegValue, 0);
+            }
+
+        }
+    }
+    public boolean updateBestScorePrevious(String period, int pegValue, int pegCount) {
+        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
+        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        Log.d(TAG, "updateBestScorePrevious:pegCount:"+pegCount);
+
+        PegRecord currentBestScorePrevious = getPeriodsHighestScorePrevious(pegValue, period);
+        if (currentBestScorePrevious != null) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.update(getScoreTableBestPrevious(), contentValues, selection,
+                    selectionArgs) > 0;
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
+        }
+
     }
 
     public boolean setBestScore(String period, int pegValue, int pegCount) {
@@ -115,7 +196,34 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         }
         return null;
     }
+    public PegRecord getPeriodsHighestScorePrevious(int pegValue, String period) {
+        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                period};
+        PegRecord pegRecord;
+        cursor = super.query(getScoreTableBestPrevious(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                pegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "getBestScorePrevious:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
+                cursor.close();
+                return pegRecord;
+            }
+        }
+        return null;
+    }
 
+    public int getLatestScore(int pegValue, String period) {
+        if (period.equals("DAY")){
+            return getTotalPegCountDay(pegValue);
+        } else if (period.equals("WEEK")) {
+            return getTotalPegCountWeek(pegValue);
+        } else if(period.equals("MONTH")) {
+            return getTotalPegCountMonth(pegValue);
+        } else {
+            return getTotalPegCountDay(pegValue);
+        }
+    }
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
 
         PegRecord pegRecord;

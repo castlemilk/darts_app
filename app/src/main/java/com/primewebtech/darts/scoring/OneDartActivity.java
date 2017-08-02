@@ -139,6 +139,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         initialiseMenuButton();
         initialiseStatsButton();
         initialiseSound();
+        initialisePBs();
         updateCountIndicators(40); //always start on pegValue 40.
     }
     @Override
@@ -314,9 +315,17 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             PegRecord pegRecord = new PegRecord(getDate(), TYPE_2, peg, 0);
             try {
                 ScoreDatabase.mScoreOneDoa.addTodayPegValue(pegRecord);
+                ScoreDatabase.mStatsOneDoa.updatePB(peg);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    public void initialisePBs() {
+        for (int peg : mPegs) {
+            ScoreDatabase.mStatsOneDoa.updatePB(peg);
+
         }
     }
 
@@ -355,6 +364,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
+                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -373,6 +383,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 2, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
+                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -399,6 +410,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 3, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
+                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }

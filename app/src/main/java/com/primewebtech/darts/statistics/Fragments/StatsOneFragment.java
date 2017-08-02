@@ -120,8 +120,6 @@ public class StatsOneFragment extends Fragment {
                 PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsOneDoa.
                         getPeriodsHighestScore(pegValue, periods[period_index]);
                 if ( savedHighestScoreForIndex == null  || allTimeHighestScoreForPeriod == null) {
-                    // initialisation of the stored/saved bested values
-                    ScoreDatabase.mStatsOneDoa.setBestScore(periods[period_index], pegValue, previousScore);
                     if (previousScore > 0) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background_white));
@@ -138,27 +136,22 @@ public class StatsOneFragment extends Fragment {
                             previousScore >= currentBestScores[period_index] &&
                             previousScore >= allTimeHighestScoreForPeriod.getPegCount()) {
                         Log.d(TAG, "--- NEW BEST SCORE ----");
-
-                        // Found a new highest previous score, paint view and update DB
+                        // Found a new highest previous score, paint view
                         if (previousScore > 0) {
                             rowNode.setBackground(
                                     getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                             rowNode.setTextColor(Color.BLACK);
-                            ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, previousScore);
                         }
 
                     } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
                     } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
                             currentBestScores[period_index] > previousScore) {
                         rowNode.setBackground(
                                 getResources().getDrawable(R.drawable.peg_stats_score_background));
                         rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScore(periods[period_index], pegValue, currentBestScores[period_index]);
-
                     } else {
                         rowNode.setBackground(
                     getResources().getDrawable(R.drawable.peg_stats_score_background));
@@ -222,9 +215,12 @@ public class StatsOneFragment extends Fragment {
         TextView bestScoreIndicatorDay = (TextView) rootView.findViewById(R.id.best_score_daily);
         if (totalScoreToday >= bestScoreDaily) {
             bestScoreIndicatorDay.setText(String.valueOf(totalScoreToday));
-            scoreTodayTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreTodayTotal.setTextColor(Color.BLACK);
+            if (totalScoreToday > 0) {
+                scoreTodayTotal.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreTodayTotal.setTextColor(Color.BLACK);
+            }
+
         } else {
             bestScoreIndicatorDay.setText(String.valueOf(bestScoreDaily));
         }
@@ -238,9 +234,12 @@ public class StatsOneFragment extends Fragment {
         if (totalScoreThisWeek >= bestScoreWeekly) {
 
             bestScoreIndicatorWeekly.setText(String.valueOf(totalScoreThisWeek));
-            scoreWeekTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreWeekTotal.setTextColor(Color.BLACK);
+            if (totalScoreThisWeek > 0) {
+                scoreWeekTotal.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreWeekTotal.setTextColor(Color.BLACK);
+            }
+
         } else {
             bestScoreIndicatorWeekly.setText(String.valueOf(bestScoreWeekly));
 
@@ -255,9 +254,12 @@ public class StatsOneFragment extends Fragment {
 
         if (totalScoreThisMonth >= bestScoreMonthly) {
             bestScoreIndicatorMonthly.setText(String.valueOf(totalScoreThisMonth));
-            scoreMonthTotal.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-            scoreMonthTotal.setTextColor(Color.BLACK);
+            if (totalScoreThisMonth > 0 ) {
+                scoreMonthTotal.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                scoreMonthTotal.setTextColor(Color.BLACK);
+            }
+
 
         } else {
             bestScoreIndicatorMonthly.setText(String.valueOf(bestScoreMonthly));
