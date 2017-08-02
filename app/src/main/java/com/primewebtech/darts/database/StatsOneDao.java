@@ -23,6 +23,7 @@ import java.util.Locale;
 public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema {
 
     private static final String TAG = StatsOneDao.class.getSimpleName();
+    private final SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     private Cursor cursor;
 
@@ -30,6 +31,8 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         return SCORE_TABLE_ONE;
     }
     protected String getScoreTableBest() { return SCORE_TABLE_BEST; }
+    protected String getScoreTableBestPrevious() { return SCORE_TABLE_BEST_PREVIOUS; }
+    private String[] periods = { "DAY", "WEEK", "MONTH"};
 
     public StatsOneDao(SQLiteDatabase database) {
         super(database);
@@ -80,9 +83,52 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         }
 
     }
+    public void updatePB(int pegValue) {
+        for ( String period : periods) {
+            PegRecord currentBestScore = getPeriodsHighestScore(pegValue, period);
+            PegRecord previousBestScore = getPeriodsHighestScorePrevious(pegValue, period);
+            if (currentBestScore != null && previousBestScore != null) {
+
+                int currentBestScoreCount = currentBestScore.getPegCount();
+                int previousBestScoreCount = previousBestScore.getPegCount();
+                int latestScoreForPeriod = getLatestScore(pegValue, period);
+                if (latestScoreForPeriod > currentBestScoreCount) {
+                    // latested calculated total is a PB, update the current best score table
+                    // accordingly.
+                    updateBestScore(period, pegValue, latestScoreForPeriod);
+                }
+                if (previousBestScoreCount > latestScoreForPeriod) {
+                    // previous score is higher than current, revert the PB back to what was
+                    // previously recorded.
+                    updateBestScore(period, pegValue, previousBestScoreCount);
+                }
+            } else if (previousBestScore == null && currentBestScore != null) {
+                updateBestScorePrevious(period, pegValue, currentBestScore.getPegCount());
+            } else {
+                updateBestScorePrevious(period, pegValue, 0);
+                updateBestScore(period, pegValue, 0);
+            }
+
+        }
+    }
+    public boolean updateBestScorePrevious(String period, int pegValue, int pegCount) {
+        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
+        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PEG_VALUE, pegValue);
+        contentValues.put(PERIOD, period);
+        contentValues.put(TYPE, TYPE_2);
+        contentValues.put(PEG_COUNT, pegCount);
+        contentValues.put(LAST_MODIFIED, getDateNow());
+        return super.update(getScoreTableBestPrevious(), contentValues, selection,
+                selectionArgs) > 0;
+    }
     public boolean updateBestScore(String period, int pegValue, int pegCount){
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        PegRecord currentBestScore = getPeriodsHighestScore(pegValue, period);
+        updateBestScorePrevious(currentBestScore.period,
+                currentBestScore.getPegValue(), currentBestScore.getPegCount());
         ContentValues contentValues = new ContentValues();
         contentValues.put(PEG_VALUE, pegValue);
         contentValues.put(PERIOD, period);
@@ -92,7 +138,22 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         return super.update(getScoreTableBest(), contentValues, selection,
                 selectionArgs) > 0;
     }
-
+    public PegRecord getPeriodsHighestScorePrevious(int pegValue, String period) {
+        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                period};
+        PegRecord pegRecord;
+        cursor = super.query(getScoreTableBestPrevious(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                pegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "getBestScorePrevious:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
+                cursor.close();
+                return pegRecord;
+            }
+        }
+        return null;
+    }
     public PegRecord getPeriodsHighestScore(int pegValue, String period) {
         final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
         final String selectionArgs[] = { String.valueOf(pegValue),
@@ -102,7 +163,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 pegRecord = cursorToEntity(cursor);
-                Log.d(TAG, "foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
+                Log.d(TAG, "getBestScore:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
                 cursor.close();
                 return pegRecord;
             }
@@ -110,9 +171,8 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         return null;
     }
     public String getDateNow() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date now = new Date();
-        return dateFormat.format(now);
+        return df.format(now);
     }
 
     public boolean increaseTodayPegValue(int pegValue, int type, int increment) {
@@ -144,10 +204,17 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         if (pegRecord != null) {
             Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableName(), contentValues,selector,
-                   selectorArgs) > 0;
+            if ((pegRecord.getPegCount()-decrement) < 0) {
+                Log.d(TAG, "increaseTodayPegValue:value_already_zero");
+                return false;
+            } else {
+                contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
+                contentValues.put(LAST_MODIFIED, getDateNow());
+                return super.update(getScoreTableName(), contentValues,selector,
+                        selectorArgs) > 0;
+            }
+
+
         } else {
             return false;
         }
@@ -208,7 +275,10 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getTotalPegCountWeek(int pegValue) {
         String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE;
-        String selectorArgs[] = new String[]{String.valueOf(pegValue), getLastWeeksDate()};
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+        String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(cal.getTime())};
 
         cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_ONE +
                 " WHERE " + PEG_VALUE_WHERE + " AND " + DATE_WHERE + ";", selectorArgs);
@@ -229,9 +299,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getTotalPegCountMonth(int pegValue) {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-//        Date now = new Date();
-//        Log.d(TAG, "getTotalPegCountMonth:currentDate:"+df.format(now));
         cal.set(Calendar.DAY_OF_MONTH, 1);
         Date lastMonth = cal.getTime();
         String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(lastMonth)};
@@ -255,7 +322,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 
     public String getTodaysDate() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.DAY_OF_YEAR, 0);
         Date yesterday = cal.getTime();
         Log.d(TAG, "getTodaysDate:"+df.format(yesterday));
@@ -263,7 +329,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
     public String getLastWeeksDate() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.DAY_OF_YEAR, -6);
         Date lastWeek = cal.getTime();
         Log.d(TAG, "getLastWeeksDate:"+df.format(lastWeek));
@@ -271,7 +336,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
     public String getLastMonthsDate() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.MONTH, -1);
         Date lastMonth = cal.getTime();
         Log.d(TAG, "getLastMonthsDate:"+df.format(lastMonth));
@@ -280,7 +344,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 
     public String getPreviousDay(int previousDayIndex) {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.DAY_OF_YEAR, -1 * previousDayIndex);
         Date previousDate = cal.getTime();
         Log.d(TAG, "PreviousDateIndex:"+previousDayIndex);
@@ -290,7 +353,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.DATE, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
         cal.add(Calendar.DATE, 6); //1: +6, 2: +6
@@ -302,7 +364,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public HashMap<String, String> getPreviousMonth(int previousMonthIndex) {
         HashMap<String, String> previousMonthWindow = new HashMap<>();
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.add(Calendar.MONTH, -1 * previousMonthIndex);
         previousMonthWindow.put("start", df.format(cal.getTime()));
@@ -340,22 +401,34 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
 
 
-
-    public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
-
-        PegRecord pegRecord;
+    public int getLatestScore(int pegValue, String period) {
         if (period.equals("DAY")){
-            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
-            final String selectionArgs[] = { String.valueOf(pegValue),
-                    getPreviousDay(previousPeriodIndex)};
-
-            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+            return getTotalPegCountDay(pegValue);
+        } else if (period.equals("WEEK")) {
+            return getTotalPegCountWeek(pegValue);
+        } else if(period.equals("MONTH")) {
+            return getTotalPegCountMonth(pegValue);
+        } else {
+            return getTotalPegCountDay(pegValue);
+        }
+    }
+    public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
+        if (period.equals("DAY")){
+//            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
+//            final String selectionArgs[] = { String.valueOf(pegValue),
+//                    getPreviousDay(previousPeriodIndex)};
+            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                    " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
+            Log.d(TAG, "Query:day:"+queryString);
+            cursor = super.rawQuery(queryString, null);
+//            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    pegRecord = cursorToEntity(cursor);
-                    Log.d(TAG, "foundMatch[day]:"+pegRecord.toString());
+                    Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
+                    int pegCountTotal = cursor.getInt(0);
                     cursor.close();
-                    return pegRecord.getPegCount();
+                    return pegCountTotal;
                 }
 
 
@@ -373,9 +446,9 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
-                    int maxPegValue = cursor.getInt(0);
+                    int pegCountTotal = cursor.getInt(0);
                     cursor.close();
-                    return maxPegValue;
+                    return pegCountTotal;
                 }
 
 
@@ -394,9 +467,9 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     Log.d(TAG, "foundMax[month]:"+cursor.getInt(0));
-                    int maxPegValue = cursor.getInt(0);
+                    int pegCountTotal = cursor.getInt(0);
                     cursor.close();
-                    return maxPegValue;
+                    return pegCountTotal;
                 }
 
 

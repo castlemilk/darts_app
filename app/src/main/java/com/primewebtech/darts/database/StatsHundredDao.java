@@ -24,6 +24,7 @@ import java.util.Locale;
 public class StatsHundredDao extends DatabaseContentProvider implements ScoreSchema {
 
     private static final String TAG = StatsHundredDao.class.getSimpleName();
+    private final SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     private Cursor cursor;
     protected String getScoreTableBest() { return SCORE_TABLE_BEST; }
@@ -123,13 +124,18 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
             final String selectionArgs[] = { String.valueOf(pegValue),
                     getPreviousDay(previousPeriodIndex)};
 
-            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                    " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
+            Log.d(TAG, "Query:day:"+queryString);
+            cursor = super.rawQuery(queryString, null);
+//            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    pegRecord = cursorToEntity(cursor);
-                    Log.d(TAG, "foundMatch[day]:"+pegRecord.toString());
+                    Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
+                    int pegCountTotal = cursor.getInt(0);
                     cursor.close();
-                    return pegRecord.getPegCount();
+                    return pegCountTotal;
                 }
 
 
@@ -315,11 +321,15 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
      * @return
      */
     public int getTotalPegCountWeek(int pegValue) {
-        String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE;
-        String selectorArgs[] = new String[]{String.valueOf(pegValue), getLastWeeksDate()};
-
-        cursor = super.rawQuery("select sum(" + PEG_COUNT + ") from " + getScoreTableName() +
-                " WHERE " + PEG_VALUE_WHERE + " AND " + DATE_WHERE + ";", selectorArgs);
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+        String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(cal.getTime())};
+        String queryString = "select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_HUNDRED +
+                " WHERE " + PEG_VALUE_WHERE + " AND " + DATE_WHERE + ";";
+        Log.d(TAG, "getTotalPegCountWeek:date:"+ df.format(cal.getTime()));
+        Log.d(TAG, "getTotalPegCountWeek:queryString:"+queryString);
+        cursor = super.rawQuery(queryString, selectorArgs);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int total = cursor.getInt(0);

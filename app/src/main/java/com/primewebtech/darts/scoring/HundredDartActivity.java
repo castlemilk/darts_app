@@ -98,6 +98,11 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private int[] mPegs = {
            100,140,180
     };
+    private String[] mPegsStrings = {
+            "100+",
+            "140+",
+            "180",
+    };
     @Override
     protected void onPause() {
         super.onPause();
@@ -550,7 +555,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             @Override
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
-                scoreNumber.setText(String.valueOf(mPegs[i]));
+                scoreNumber.setText(String.valueOf(mPegsStrings[i]));
                 scoreNumber.setTextSize(55);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);

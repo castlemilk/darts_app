@@ -34,6 +34,10 @@
     <string name="_stat_lw_text">LW</string>
     <string name="_stat_lm_text">LM</string>
     <string name="_4_stats">4</string>
+    <string name="_0">0</string>
+    <string name="_0_stats">0</string>
+    <string name="stats_w">W</string>
+    <string name="stats_m">M</string>
 
 
 </resources>

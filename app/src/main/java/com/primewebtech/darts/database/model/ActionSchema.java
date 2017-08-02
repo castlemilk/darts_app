@@ -14,7 +14,7 @@ public interface ActionSchema {
     int MODE_TWO                  = 2;
     int MODE_THREE                = 3;
     int MODE_HUNDRED              = 100;
-    int HISTORY_LIMIT             = 25;
+    int HISTORY_LIMIT             = 5000;
     String GAME_MODE                 = "game_mode"; //i.e one, two, three or hundred+
     String PEG_VALUE                 = "peg_value"; //i.e 40/2/50
     String PEG_TYPE                     = "peg_type"; //i.e 2 dart or 3 dart

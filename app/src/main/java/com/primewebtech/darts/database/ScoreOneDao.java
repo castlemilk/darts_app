@@ -57,9 +57,44 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
             return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
         }
     }
+    public PegRecord getPegRecord(PegRecord pegRecord) {
+        final String selection = PEG_VALUE_WHERE + " AND " + LAST_MODIFIED + "= ? " + "AND " + TYPE_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegRecord.getPegValue()),
+                String.valueOf(pegRecord.getDateStored()), String.valueOf(pegRecord.getType())};
+        PegRecord exisitingPegRecord;
+        cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                exisitingPegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "foundMatch:"+exisitingPegRecord.toString());
+                cursor.close();
+                return exisitingPegRecord;
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+    public boolean updatePegValue(PegRecord scoreRecord) {
+        if (scoreRecord != null) {
+            Log.d(TAG, "updatePegValue:" + scoreRecord.toString());
+            String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND "+ TYPE_WHERE;
+            String selectorArgs[] = new String[]{String.valueOf(scoreRecord.getPegValue()),
+                    getDateNow(), String.valueOf(scoreRecord.type)};
+            return super.update(getScoreTableName(), setContentValues(scoreRecord), selector,
+                    selectorArgs) > 0;
+        } else {
+            return false;
+        }
+    }
     public boolean addPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:" + scoreRecord.toString());
-        return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
+        if (getPegRecord(scoreRecord) != null) {
+            return updatePegValue(scoreRecord);
+        } else {
+            return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
+        }
+
     }
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -96,10 +131,16 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
         if (pegRecord != null) {
             Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableName(), contentValues,selector,
-                   selectorArgs) > 0;
+            int newCount = pegRecord.getPegCount()-decrement;
+            if (newCount > 0 ) {
+                contentValues.put(PEG_COUNT,newCount);
+                contentValues.put(LAST_MODIFIED, getDateNow());
+                return super.update(getScoreTableName(), contentValues,selector,
+                        selectorArgs) > 0;
+            } else {
+                return false;
+            }
+
         } else {
             return false;
         }

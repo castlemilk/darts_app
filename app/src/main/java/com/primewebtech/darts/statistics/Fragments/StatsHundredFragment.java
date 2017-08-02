@@ -217,6 +217,9 @@ public class StatsHundredFragment extends Fragment {
         TextView bestScoreIndicatorDay = (TextView) rootView.findViewById(R.id.best_score_daily);
         if (totalScoreToday >= bestScoreDaily) {
             bestScoreIndicatorDay.setText(String.valueOf(totalScoreToday));
+            scoreTodayTotal.setBackground(
+                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+            scoreTodayTotal.setTextColor(Color.BLACK);
 
         } else {
             bestScoreIndicatorDay.setText(String.valueOf(bestScoreDaily));
@@ -228,9 +231,11 @@ public class StatsHundredFragment extends Fragment {
         // WEEKLY BEST EVER SCORE
 
         TextView bestScoreIndicatorWeekly = (TextView) rootView.findViewById(R.id.best_score_weekly);
-        if (totalScoreThisWeek > bestScoreWeekly) {
-
+        if (totalScoreThisWeek >= bestScoreWeekly) {
             bestScoreIndicatorWeekly.setText(String.valueOf(totalScoreThisWeek));
+            scoreWeekTotal.setBackground(
+                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+            scoreWeekTotal.setTextColor(Color.BLACK);
         } else {
             bestScoreIndicatorWeekly.setText(String.valueOf(bestScoreWeekly));
 
@@ -243,9 +248,11 @@ public class StatsHundredFragment extends Fragment {
         // MONTHLY BEST EVER SCORE
         TextView bestScoreIndicatorMonthly = (TextView) rootView.findViewById(R.id.best_score_monthly);
 
-        if (totalScoreThisMonth > bestScoreMonthly) {
+        if (totalScoreThisMonth >= bestScoreMonthly) {
             bestScoreIndicatorMonthly.setText(String.valueOf(totalScoreThisMonth));
-
+            scoreMonthTotal.setBackground(
+                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+            scoreMonthTotal.setTextColor(Color.BLACK);
         } else {
             bestScoreIndicatorMonthly.setText(String.valueOf(bestScoreMonthly));
         }
