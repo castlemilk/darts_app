@@ -147,9 +147,14 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
     public boolean rollbackScore(Action action) {
         if (action.actionType == ActionSchema.ADD) {
-            return decreaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            decreaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            ScoreDatabase.mStatsOneDoa.updatePB(action.pegValue);
+            return true;
+
         } else {
-            return increaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            increaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            ScoreDatabase.mStatsOneDoa.updatePB(action.pegValue);
+            return true;
         }
 
     }

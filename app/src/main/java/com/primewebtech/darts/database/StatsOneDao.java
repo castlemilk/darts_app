@@ -119,7 +119,8 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
                 if (latestScoreForPeriod > currentBestScoreCount) {
                     // latested calculated total is a PB, update the current best score table
                     // accordingly.
-                   setBestScore(period, pegValue, latestScoreForPeriod);
+                    setBestScore(period, pegValue, latestScoreForPeriod);
+                    setBestScorePrevious(period, pegValue, currentBestScoreCount);
                 }
                 if (previousBestScoreCount > latestScoreForPeriod) {
                     // previous score is higher than current, revert the PB back to what was
