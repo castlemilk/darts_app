@@ -11,6 +11,7 @@ public interface ScoreSchema {
     String SCORE_TABLE_THREE                = "darts_score_three";
     String SCORE_TABLE_HUNDRED              = "darts_score_hundred";
     String SCORE_TABLE_BEST                 = "darts_score_best";
+    String SCORE_TABLE_BEST_TODAY           = "darts_score_best_today";
     String SCORE_TABLE_BEST_PREVIOUS        = "darts_score_best_previous";
     String ID                               = "_id";
     String PERIOD                           = "period";
@@ -54,6 +55,13 @@ public interface ScoreSchema {
 //    LAST_MODIFIED + " DATETIME, " +
 //            "CONSTRAINT UC_score UNIQUE(peg_value, last_modified));";
     String CREATE_SCORE_TABLE_BEST = "CREATE TABLE IF NOT EXISTS " + SCORE_TABLE_BEST + " ( " + ID + " INTEGER PRIMARY KEY, " +
+            PEG_VALUE + " INTEGER, " +
+            TYPE + " INTEGER, " +
+            PEG_COUNT + " INTEGER UNSIGNED DEFAULT 0, " +
+            PERIOD + " TEXT, " +
+            LAST_MODIFIED + " DATETIME, " +
+            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
+    String CREATE_SCORE_TABLE_BEST_TODAY = "CREATE TABLE IF NOT EXISTS " + SCORE_TABLE_BEST_TODAY + " ( " + ID + " INTEGER PRIMARY KEY, " +
             PEG_VALUE + " INTEGER, " +
             TYPE + " INTEGER, " +
             PEG_COUNT + " INTEGER UNSIGNED DEFAULT 0, " +

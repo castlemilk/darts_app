@@ -12,7 +12,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp" />
+        tools:layout_editor_absoluteX="8dp"
+        android:background="@color/colorBlack"/>
 
     <include layout="@layout/empty_view"/>
 

@@ -19,13 +19,17 @@ public class StatsHundredActivity extends FragmentActivity{
      * This activity is responsible for managing the swipable fragements that display the statistics
      * for each of the peg bords, 4,2,... etc in the one score mode.
      */
-    StatsHundredPagerAdapter mStatsPagerAdapter;
     CyclicView mViewPager;
 
     private int[] pegValues = {
             100,
             140,
             180
+    };
+    private String[] pegValueStrings = {
+            "100+",
+            "140+",
+            "180",
     };
 
     public void onCreate(Bundle savedInstanceState) {
@@ -37,8 +41,6 @@ public class StatsHundredActivity extends FragmentActivity{
         if (b != null) {
             pegValue = b.getInt("PEG_VALUE");
         }
-
-        mStatsPagerAdapter = new StatsHundredPagerAdapter(getSupportFragmentManager());
         mViewPager = (CyclicView) findViewById(R.id.pager);
         mViewPager.setChangePositionFactor(4000);
         // TODO: display the score stats thats currently been selected by the user. I.e if the user

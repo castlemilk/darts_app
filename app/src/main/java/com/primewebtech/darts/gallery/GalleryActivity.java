@@ -1,6 +1,8 @@
 package com.primewebtech.darts.gallery;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
@@ -163,14 +165,20 @@ public class GalleryActivity extends AppCompatActivity
                 PhotoItem photoItem = (PhotoItem) mAdapter.getItem(position);
                 Log.d(TAG, "onItemClick:Clicked:postition:"+position);
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 Uri photoURI = FileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() + ".provider",
                         photoItem.getFile());
-                intent.setDataAndType(photoURI, "image/*");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(intent);
+//                intent.setDataAndType(photoURI, "image/*");
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                startActivity(intent);
+                int itemPosition = GalleryDatabaseService.getInstance(this).mItems.indexOf(photoItem);
+                Log.d(TAG, "onItemClick:Clicked:itemPostition:"+itemPosition);
+                Intent viewer = new Intent(this, PhotoViewer.class);
+                viewer.putExtra("POSITION", itemPosition);
+                viewer.putExtra("PHOTO_PATH", photoURI.getPath());
+                startActivity(viewer);
                 return false;
             } catch ( Exception e) {
                 return true;
@@ -181,6 +189,28 @@ public class GalleryActivity extends AppCompatActivity
 
         //TODO: navigate to selected image
 
+    }
+    public class SingleMediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
+
+        private MediaScannerConnection mMs;
+        private File mFile;
+
+        public SingleMediaScanner(Context context, File f) {
+            mFile = f;
+            mMs = new MediaScannerConnection(context, this);
+            mMs.connect();
+        }
+
+        public void onMediaScannerConnected() {
+            mMs.scanFile(mFile.getAbsolutePath(), null);
+        }
+
+        public void onScanCompleted(String path, Uri uri) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            startActivity(intent);
+            mMs.disconnect();
+        }
 
     }
 

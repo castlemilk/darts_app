@@ -148,7 +148,7 @@ public class Util {
 //        int pictureWidth = pictureImg.getWidth();
 //        int pictureHeight = pictureImg.getHeight();
         Double pinSize = pictureWidth * 0.3;
-        int textSize = (int) (pictureHeight * 0.04f);
+        int textSize = (int) (pictureHeight * 0.045f);
         int pinSizeInt = pinSize.intValue();
         Double logoWidth = pictureWidth * 0.5;
         Double logoHeight = pictureHeight * 0.12;
@@ -193,7 +193,7 @@ public class Util {
             Log.d("bytes:textSize", Integer.toString(textSize));
             int textWidth = bounds.width();
             int textPositionHeight = (int) (pinFloatTop +
-                    pinSizeInt / 2 - (textHeight/1.5));
+                    pinSizeInt / 2 - (textHeight/1.2));
             StaticLayout staticLayout = new StaticLayout(String.valueOf(score),
                     textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
             comboImage.translate(pinFloatLeft, textPositionHeight);

@@ -75,7 +75,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private ImageButton mBackButton;
     private ImageButton mStatsButton;
 
-    private OneDartActivity.ScorePagerAdapter mScoringAdapter;
     public MainApplication app;
     private String curTime;
     private String lastResetTime;
@@ -166,6 +165,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
+            savePB();
             initialisePegCounts();
             initialiseCountButtons();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
@@ -179,10 +179,14 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         initialiseBackButton();
         initialiseSound();
         initialiseStatsButton();
-        initialisePBs();
         updateCountIndicators(100);
     }
+    public void savePB() {
+        for (int peg : mPegs) {
+            ScoreDatabase.mStatsHundredDoa.savePB(peg);
+        }
 
+    }
     public void initialiseSound() {
         // AudioManager audio settings for adjusting the volume
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -347,7 +351,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Log.d(TAG, "mIncrement100:action:"+action.toString());
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(100)]);
-                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(100)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -373,7 +376,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Log.d(TAG, "mIncrement140:action:"+action.toString());
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(140)]);
-                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(140)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -396,7 +398,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                     Action action = new Action(MODE_HUNDRED, ADD, 1, mPegs[getPegIndex(180)], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[getPegIndex(180)]);
-                    ScoreDatabase.mStatsHundredDoa.updatePB(mPegs[getPegIndex(180)]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -544,12 +545,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-    public void initialisePBs() {
-        for (int peg : mPegs) {
-            ScoreDatabase.mStatsHundredDoa.updatePB(peg);
-
         }
     }
 

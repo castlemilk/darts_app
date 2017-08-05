@@ -63,7 +63,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="35dp"
-            android:background="@color/material_color_grey_500"
+            android:background="@color/bar_covering_gallery_image"
             android:alpha="0.97"
             android:layout_margin="0dp"
             android:layout_alignParentBottom="true"

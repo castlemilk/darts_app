@@ -74,9 +74,12 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL(CREATE_SCORE_TABLE_THREE);
             db.execSQL(CREATE_SCORE_TABLE_HUNDRED);
             db.execSQL(CREATE_SCORE_TABLE_BEST);
+            db.execSQL(CREATE_SCORE_TABLE_BEST_TODAY);
             db.execSQL(CREATE_SCORE_TABLE_BEST_PREVIOUS);
             db.execSQL(CREATE_ACTION_TABLE);
+            db.execSQL(CREATE_PB_ACTION_TABLE);
             db.execSQL(deleteActionTrigger());
+            db.execSQL(deletePBActionTrigger());
         }
 
 
@@ -100,10 +103,15 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL("DROP TABLE IF EXISTS "
                     + SCORE_TABLE_BEST_PREVIOUS);
             db.execSQL("DROP TABLE IF EXISTS "
+                    + SCORE_TABLE_BEST_TODAY);
+            db.execSQL("DROP TABLE IF EXISTS "
                     + TODAY_SCORE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS "
                     + ACTION_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS "
+                    + PB_ACTION_TABLE);
             db.execSQL("DROP trigger IF EXISTS delete_action");
+            db.execSQL("DROP trigger IF EXISTS delete_pb_action");
             onCreate(db);
 
         }
@@ -121,5 +129,20 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             Log.d(TAG, "deleteActionTrigger:"+deleteAction);
             return deleteAction;
         }
+        public String deletePBActionTrigger(){
+            Log.d(TAG, "deletePBActionTrigger");
+            String deleteAction = "CREATE TRIGGER if not exists delete_pb_action " +
+                    " AFTER INSERT " +
+                    " ON " + PB_ACTION_TABLE +
+                    " WHEN (SELECT COUNT(*) FROM " + PB_ACTION_TABLE +") >" + HISTORY_LIMIT +
+                    " BEGIN " +
+                    "  DELETE FROM " + PB_ACTION_TABLE +
+                    "  WHERE " + ActionSchema.ID + " = (select "+ ActionSchema.ID +" from "+ PB_ACTION_TABLE +
+                    "  order by "+ ActionSchema.ID +" asc limit 1); "+
+                    " END; ";
+            Log.d(TAG, "deleteActionTrigger:"+deleteAction);
+            return deleteAction;
+        }
+
     }
 }

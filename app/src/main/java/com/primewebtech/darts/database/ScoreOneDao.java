@@ -129,10 +129,10 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
         String selectorArgs[] = new String[]{String.valueOf(pegValue), getDateNow(), String.valueOf(type)};
 
         if (pegRecord != null) {
-            Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
+            Log.d(TAG, "decreaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
             int newCount = pegRecord.getPegCount()-decrement;
-            if (newCount > 0 ) {
+            if (newCount >= 0 ) {
                 contentValues.put(PEG_COUNT,newCount);
                 contentValues.put(LAST_MODIFIED, getDateNow());
                 return super.update(getScoreTableName(), contentValues,selector,
@@ -148,12 +148,10 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
     public boolean rollbackScore(Action action) {
         if (action.actionType == ActionSchema.ADD) {
             decreaseTodayPegValue(action.pegValue, action.type, action.actionValue);
-            ScoreDatabase.mStatsOneDoa.updatePB(action.pegValue);
             return true;
 
         } else {
             increaseTodayPegValue(action.pegValue, action.type, action.actionValue);
-            ScoreDatabase.mStatsOneDoa.updatePB(action.pegValue);
             return true;
         }
 

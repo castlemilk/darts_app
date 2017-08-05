@@ -33,6 +33,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         return SCORE_TABLE_HUNDRED;
     }
     protected String getScoreTableBestPrevious() { return SCORE_TABLE_BEST_PREVIOUS; }
+    protected String getScoreTableBestToday() { return SCORE_TABLE_BEST_TODAY; }
     private String[] periods = { "DAY", "WEEK", "MONTH"};
 
     public StatsHundredDao(SQLiteDatabase database) {
@@ -86,37 +87,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
             return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
         }
     }
-    public void updatePB(int pegValue) {
-        for ( String period : periods) {
-            PegRecord currentBestScore = getPeriodsHighestScore(pegValue, period);
-            PegRecord previousBestScore = getPeriodsHighestScorePrevious(pegValue, period);
-            if (currentBestScore != null && previousBestScore != null) {
 
-                int currentBestScoreCount = currentBestScore.getPegCount();
-                int previousBestScoreCount = previousBestScore.getPegCount();
-                int latestScoreForPeriod = getLatestScore(pegValue, period);
-                Log.d(TAG, "updatePB:latestScoreForPeriod:["+period+"]:" + latestScoreForPeriod);
-                Log.d(TAG, "updatePB:previousBestScoreCount:["+period+"]:" + previousBestScoreCount);
-                Log.d(TAG, "updatePB:currentBestScoreCount:["+period+"]:" + currentBestScoreCount);
-                if (latestScoreForPeriod > currentBestScoreCount) {
-                    // latested calculated total is a PB, update the current best score table
-                    // accordingly.
-                    setBestScore(period, pegValue, latestScoreForPeriod);
-                }
-                if (previousBestScoreCount > latestScoreForPeriod) {
-                    // previous score is higher than current, revert the PB back to what was
-                    // previously recorded.
-                    setBestScore(period, pegValue, previousBestScoreCount);
-                }
-            } else if (previousBestScore == null && currentBestScore != null) {
-                setBestScorePrevious(period, pegValue, currentBestScore.getPegCount());
-            } else {
-                setBestScorePrevious(period, pegValue, 0);
-                setBestScore(period, pegValue, 0);
-            }
-
-        }
-    }
     public boolean updateBestScorePrevious(String period, int pegValue, int pegCount) {
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
@@ -166,6 +137,13 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
             return super.insert(getScoreTableBest(), contentValues) > 0;
         }
     }
+    public void savePB(int pegValue) {
+        for (String period : periods) {
+            int bestScore = getHighestScore(pegValue, period);
+            setBestScore(period, pegValue, bestScore);
+        }
+
+    }
 
     public boolean updateBestScore(String period, int pegValue, int pegCount){
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
@@ -213,24 +191,81 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         return null;
     }
 
-    public int getLatestScore(int pegValue, String period) {
-        if (period.equals("DAY")){
-            return getTotalPegCountDay(pegValue);
-        } else if (period.equals("WEEK")) {
-            return getTotalPegCountWeek(pegValue);
-        } else if(period.equals("MONTH")) {
-            return getTotalPegCountMonth(pegValue);
+    public int getHighestScore(int pegvalue, String period) {
+        int highetScoreWithin6Months = getHighestScoreForPeriodToday(pegvalue, period);
+        PegRecord highestScoreLogged = getPeriodsHighestScore(pegvalue, period);
+        if (highestScoreLogged != null) {
+            if (highestScoreLogged.getPegCount() > highetScoreWithin6Months) {
+                return highestScoreLogged.getPegCount();
+            } else {
+                return highetScoreWithin6Months;
+            }
         } else {
-            return getTotalPegCountDay(pegValue);
+            setBestScore(period, pegvalue, highetScoreWithin6Months);
+            return highetScoreWithin6Months;
         }
-    }
-    public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
 
+    }
+
+    public int getHighestScoreForPeriodToday(int pegvalue, String period) {
+        int highestValue = 0;
+        for (int i = 0; i <6; i++) {
+            int score = getPreviousScore(pegvalue, period, i);
+            if (score >= highestValue) {
+                highestValue = score;
+            }
+        }
+        return highestValue;
+    }
+
+    public boolean updateBestScoreToday(String period, int pegValue, int pegCount){
+        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
+        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        Log.d(TAG, "updateBestScore:pegValue:"+pegValue);
+        Log.d(TAG, "updateBestScore:pegCount:"+pegCount);
+        PegRecord currentBestScore = getPeriodsHighestScoreToday(pegValue, period);
+        if (currentBestScore != null) {
+            updateBestScorePrevious(period,
+                    currentBestScore.getPegValue(), currentBestScore.getPegCount());
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.update(getScoreTableBest(), contentValues, selection,
+                    selectionArgs) > 0;
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(PEG_VALUE, pegValue);
+            contentValues.put(PERIOD, period);
+            contentValues.put(TYPE, TYPE_2);
+            contentValues.put(PEG_COUNT, pegCount);
+            contentValues.put(LAST_MODIFIED, getDateNow());
+            return super.insert(getScoreTableBest(), contentValues) > 0;
+        }
+
+    }
+
+    public PegRecord getPeriodsHighestScoreToday(int pegValue, String period) {
+        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
+        final String selectionArgs[] = { String.valueOf(pegValue),
+                period};
         PegRecord pegRecord;
+        cursor = super.query(getScoreTableBestToday(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                pegRecord = cursorToEntity(cursor);
+                Log.d(TAG, "getBestScorePrevious:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
+                cursor.close();
+                return pegRecord;
+            }
+        }
+        return null;
+    }
+
+    public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         if (period.equals("DAY")){
-            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
-            final String selectionArgs[] = { String.valueOf(pegValue),
-                    getPreviousDay(previousPeriodIndex)};
 
             final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
                     " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
@@ -313,10 +348,10 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        cal.add(Calendar.DATE, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_WEEK, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
-        cal.add(Calendar.DATE, 6); //1: +6, 2: +6
+        cal.add(Calendar.DAY_OF_WEEK, 6); //1: +6, 2: +6
         previousWeekWindow.put("end", df.format(cal.getTime()));
         Log.d(TAG, "PreviousWeekIndex:"+previousWeekIndex);
 

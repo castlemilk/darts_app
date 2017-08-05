@@ -6,15 +6,18 @@ package com.primewebtech.darts.database.model;
 
 public interface ActionSchema {
     String ACTION_TABLE              = "darts_action_history";
+    String PB_ACTION_TABLE           = "darts_pb_action_history";
     String ID                        = "_id";
     String ACTION_TYPE               = "action_type"; //i.e add/delete
-    int ADD                       = 1;
-    int DEL                       = -1;
-    int MODE_ONE                  = 1;
-    int MODE_TWO                  = 2;
-    int MODE_THREE                = 3;
-    int MODE_HUNDRED              = 100;
-    int HISTORY_LIMIT             = 5000;
+    int INCREASE_PB                  = 2;
+    int ADD                          = 1;
+    int DEL                          = -1;
+    int DECREASE_PB                  = -2;
+    int MODE_ONE                     = 1;
+    int MODE_TWO                     = 2;
+    int MODE_THREE                   = 3;
+    int MODE_HUNDRED                 = 100;
+    int HISTORY_LIMIT                = 5000;
     String GAME_MODE                 = "game_mode"; //i.e one, two, three or hundred+
     String PEG_VALUE                 = "peg_value"; //i.e 40/2/50
     String PEG_TYPE                     = "peg_type"; //i.e 2 dart or 3 dart
@@ -22,6 +25,15 @@ public interface ActionSchema {
     String ACTION_VALUE              = "action_value"; //i.e +3/+1/-1
     String DATE                      = "date"; // i.e 2017-05-28
     String CREATE_ACTION_TABLE = "CREATE TABLE IF NOT EXISTS " + ACTION_TABLE + " (" +
+            ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            GAME_MODE + " INTEGER, " +
+            PEG_VALUE + " INTEGER, " +
+            PEG_TYPE + " INTEGER, " +
+            PEG_COUNT + " INTEGER, " +
+            ACTION_TYPE + " INTEGER, " +
+            ACTION_VALUE + " INTEGER, " +
+            DATE + " DATETIME);";
+    String CREATE_PB_ACTION_TABLE = "CREATE TABLE IF NOT EXISTS " + PB_ACTION_TABLE + " (" +
             ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             GAME_MODE + " INTEGER, " +
             PEG_VALUE + " INTEGER, " +

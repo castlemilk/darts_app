@@ -1,6 +1,5 @@
 package com.primewebtech.darts.scoring;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -9,15 +8,11 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,7 +63,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     private ImageButton mStatsButton;
-    private ScorePagerAdapter mScoringAdapter;
     public MainApplication app;
     private String curTime;
     private String lastResetTime;
@@ -127,6 +121,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             //TODO: reset all the required variables and carry previous data into historical logs
             initialisePegCounts();
             initialiseCountButtons();
+            savePB();
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
 
@@ -139,7 +134,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         initialiseMenuButton();
         initialiseStatsButton();
         initialiseSound();
-        initialisePBs();
         updateCountIndicators(40); //always start on pegValue 40.
     }
     @Override
@@ -158,6 +152,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
+            savePB();
             initialisePegCounts();
             initialiseCountButtons();
             prefs.edit().putString("lastResetTime", curTime).apply();
@@ -175,14 +170,11 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         updateCountIndicators(40); //always start on pegValue 40.
     }
 
-    public void playSoundClick(float speed, int loop) {
-        Log.d(TAG, "playSoundScroll");
-        if(loaded)  {
-            Log.d(TAG, "playSoundScroll:playing");
-            float leftVolumn = volume;
-            float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
+    public void savePB() {
+        for (int peg : mPegs) {
+            ScoreDatabase.mStatsOneDoa.savePB(peg);
         }
+
     }
     public void playSoundClickFast(float speed, int loop) {
         Log.d(TAG, "playSoundScroll");
@@ -315,17 +307,10 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             PegRecord pegRecord = new PegRecord(getDate(), TYPE_2, peg, 0);
             try {
                 ScoreDatabase.mScoreOneDoa.addTodayPegValue(pegRecord);
-                ScoreDatabase.mStatsOneDoa.updatePB(peg);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-    public void initialisePBs() {
-        for (int peg : mPegs) {
-            ScoreDatabase.mStatsOneDoa.updatePB(peg);
-
         }
     }
 
@@ -364,7 +349,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 1, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
-                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -383,7 +367,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 2, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+2);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
-                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -410,7 +393,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Action action = new Action(MODE_ONE, ADD, 3, mPegs[currentIndex], TYPE_2, pegRecord.getPegCount()+3);
                     ScoreDatabase.mActionDoa.addAction(action);
                     updateCountIndicators(mPegs[currentIndex]);
-                    ScoreDatabase.mStatsOneDoa.updatePB(mPegs[currentIndex]);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -431,7 +413,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
-        mViewPager.setChangePositionFactor(2000);
+        mViewPager.setChangePositionFactor(4000);
             mViewPager.setAdapter(new CyclicAdapter() {
                 @Override
                 public int getItemsCount() {
@@ -596,58 +578,4 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
 
     }
-    public class ScorePagerAdapter extends PagerAdapter {
-
-        Context mContext;
-        LayoutInflater mLayoutInflater;
-        private int[] mResources;
-        public TextView scoreNumber;
-        private int actualSize = 6;
-
-
-        public ScorePagerAdapter(Context context, int[] resources) {
-            mContext = context;
-            mResources = resources;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return Integer.MAX_VALUE;
-        }
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE % Integer.MAX_VALUE;
-        }
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.pager_item_one_dart, container, false);
-
-//            ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
-//            imageView.setImageResource(mResources[position]);
-            scoreNumber = (TextView) itemView.findViewById(R.id.score_number_one_dart);
-//            cameraActivity = (CameraActivity) mContext;
-            scoreNumber.setText(String.valueOf(mResources[position]));
-
-
-            container.addView(itemView);
-            itemView.setTag("pager_view");
-            return itemView;
-        }
-
-        public void updateScoreValue(int score) {
-
-        }
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((FrameLayout) object);
-        }
-
-
-    }
-
 }

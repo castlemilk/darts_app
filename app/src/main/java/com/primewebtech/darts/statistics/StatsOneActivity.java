@@ -19,7 +19,6 @@ public class StatsOneActivity extends FragmentActivity{
      * This activity is responsible for managing the swipable fragements that display the statistics
      * for each of the peg bords, 4,2,... etc in the one score mode.
      */
-    StatsOnePagerAdapter mStatsPagerAdapter;
     CyclicView mViewPager;
     String type;
     int[] pegValues = {
@@ -41,7 +40,6 @@ public class StatsOneActivity extends FragmentActivity{
             type = b.getString("type");
         }
 
-        mStatsPagerAdapter = new StatsOnePagerAdapter(getSupportFragmentManager());
         mViewPager = (CyclicView) findViewById(R.id.pager);
         mViewPager.setChangePositionFactor(4000);
         // TODO: display the score stats thats currently been selected by the user. I.e if the user

@@ -33,7 +33,7 @@ public class GalleryDatabaseService {
 
     private static final String TAG = GalleryDatabaseService.class.getSimpleName();
     private static GalleryDatabaseService mInstance;
-    private List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
+    public List<AbstractFlexibleItem> mItems = new ArrayList<AbstractFlexibleItem>();
     private File pictureDirectory;
     private DateOrganiser mDateOrganiser;
     private Context mContext;

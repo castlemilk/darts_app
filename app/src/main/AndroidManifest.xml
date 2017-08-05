@@ -99,6 +99,10 @@
             android:name=".gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:theme="@style/AppTheme.Black.ActionBar" />
+        <activity android:name=".gallery.PhotoViewer"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Black.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
