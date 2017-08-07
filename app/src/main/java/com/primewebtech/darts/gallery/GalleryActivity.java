@@ -169,10 +169,12 @@ public class GalleryActivity extends AppCompatActivity
                 Uri photoURI = FileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() + ".provider",
                         photoItem.getFile());
+                // ROUTE TO SINGULAR GALLERY ITEM
 //                intent.setDataAndType(photoURI, "image/*");
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 //                startActivity(intent);
+                // ROUTE TO VIEWPAGER and enable swiping through photos.
                 int itemPosition = GalleryDatabaseService.getInstance(this).mItems.indexOf(photoItem);
                 Log.d(TAG, "onItemClick:Clicked:itemPostition:"+itemPosition);
                 Intent viewer = new Intent(this, PhotoViewer.class);

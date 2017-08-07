@@ -36,7 +36,6 @@ public class Storage {
     public static final long UNKNOWN_SIZE = -3L;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
-    public static final long LOW_STORAGE_THRESHOLD= 50000000;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
@@ -161,20 +160,6 @@ public class Storage {
             Log.i(TAG, "Fail to access external storage", e);
         }
         return UNKNOWN_SIZE;
-    }
-
-    public static String generateFilepath(String title) {
-        return APP_DIRECTORY + '/' + title + ".jpg";
-    }
-    /**
-     * OSX requires plugged-in USB storage to have path /DCIM/NNNAAAAA to be
-     * imported. This is a temporary fix for bug#1655552.
-     */
-    public static void ensureOSXCompatible() {
-        File nnnAAAAA = new File(DCIM, "100ANDRO");
-        if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
-            Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
-        }
     }
 
     private static File getOutputMediaFile(int type){

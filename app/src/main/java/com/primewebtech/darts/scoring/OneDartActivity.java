@@ -79,7 +79,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private static final int MAX_STREAMS = 1;
     private int soundIdScroll;
     private int soundIdClick;
-    private int soundIdClickFast;
+    private int soundIdClickMulti;
 
     SharedPreferences prefs = null;
     private int[] mPegs = {
@@ -176,13 +176,22 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         }
 
     }
-    public void playSoundClickFast(float speed, int loop) {
+    public void playSoundClick(float speed, int loop) {
         Log.d(TAG, "playSoundScroll");
         if(loaded)  {
             Log.d(TAG, "playSoundScroll:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int streamId = this.soundPool.play(this.soundIdClickFast,leftVolumn, rightVolumn, 1, loop, speed);
+            int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
+        }
+    }
+    public void playSoundClickMulti(float speed, int loop) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClickMulti,leftVolumn, rightVolumn, 1, loop, speed);
         }
     }
     public void initialiseStatsButton() {
@@ -255,7 +264,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         });
         soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
-        soundIdClickFast = soundPool.load(this, R.raw.click, 1);
+        soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
     }
     public int getPegIndex(int pegValue) {
@@ -352,7 +361,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                playSoundClickFast(1, 0);
+                playSoundClick(1, 0);
             }
         });
         mIncrementTwo.setOnClickListener(new View.OnClickListener() {
@@ -370,7 +379,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                    playSoundClickFast(1, 2);
+                    playSoundClickMulti(1, 1);
 //                for (int i= 0; i<2; i++) {
 //                    view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 //                    try {
@@ -396,7 +405,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                    playSoundClickFast(1, 3);
+                    playSoundClickMulti(1, 2);
 //                    for (int i= 0; i<3; i++) {
 //                        view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
 //                        try {

@@ -84,6 +84,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     // Maximumn sound stream.
     private static final int MAX_STREAMS = 1;
     private int soundIdClick;
+    private int soundIdClickMulti;
 
     SharedPreferences prefs = null;
 
@@ -216,6 +217,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             }
         });
         soundIdClick = soundPool.load(this, R.raw.click, 1);
+        soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
     }
 
@@ -226,6 +228,16 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             float leftVolumn = volume;
             float rightVolumn = volume;
             int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
+
+        }
+    }
+    public void playSoundClickMulti(float speed, int loop) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClickMulti,leftVolumn, rightVolumn, 1, loop, speed);
 
         }
     }
@@ -289,6 +301,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
@@ -314,7 +327,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClick(1, 3);
+                    playSoundClickMulti(1, 2);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }

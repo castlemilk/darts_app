@@ -85,6 +85,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     // Maximumn sound stream.
     private static final int MAX_STREAMS = 1;
     private int soundIdClick;
+    private int soundIdClickMulti;
 
 
 
@@ -271,7 +272,18 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             }
         });
         soundIdClick = soundPool.load(this, R.raw.click, 1);
+        soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
+    }
+
+    public void playSoundClickMulti(float speed, int loop) {
+        Log.d(TAG, "playSoundScroll");
+        if(loaded)  {
+            Log.d(TAG, "playSoundScroll:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClickMulti,leftVolumn, rightVolumn, 1, loop, speed);
+        }
     }
     public void playSoundClick(float speed, int loop) {
         Log.d(TAG, "playSoundScroll");
@@ -333,7 +345,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                     mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClick(1, 2);
+                    playSoundClickMulti(1, 1);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
@@ -351,7 +363,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClick(1, 3);
+                    playSoundClickMulti(1, 2);
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }

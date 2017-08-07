@@ -110,13 +110,15 @@ public class StatsOneFragment extends Fragment {
         int period_index = 0;
         for ( int[] statRow : mStatsRows) {
             // iterate over day, week then month
-            int previous_period_index = 0; //this is the first previous period
+            int previous_period_index = 1; //this is the first previous period
             ArrayList<Integer> scores = new ArrayList<>();
             for ( int resourceID : statRow) {
                 // iterate over the 6 items for each period
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
+//                int previousInex = previous_period_index + 1;
+                Log.d(TAG, "previous_period_index:"+previous_period_index);
                 int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue,
-                        periods[period_index], previous_period_index+1);
+                        periods[period_index], previous_period_index);
                 PegRecord allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
                         .getPeriodsHighestScoreToday(pegValue, periods[period_index]);
                 scores.add(previousScore);

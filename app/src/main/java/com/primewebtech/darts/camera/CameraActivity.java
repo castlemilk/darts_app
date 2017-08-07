@@ -2,7 +2,6 @@ package com.primewebtech.darts.camera;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -27,7 +26,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
@@ -56,7 +54,6 @@ import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final String TAG = CameraActivity.class.getSimpleName();
 
     private Camera mCamera;
@@ -85,13 +82,8 @@ public class CameraActivity extends AppCompatActivity {
     private Location mLocation;
     private NamedImages mNamedImages;
     private ContentResolver mContentResolver;
-    private Camera.CameraInfo mCameraInfo;
     public long mCaptureStartTime;
     private boolean cameraPermissionGranted = false;
-    private ArrayList permissionsToRequest;
-    private ArrayList permissionsRejected = new ArrayList();
-    private ArrayList permissions = new ArrayList();
-    private final static int ALL_PERMISSIONS_RESULT = 107;
     private FrameLayout preview;
     private String scoreType;
     private ImageView mLogoText;
@@ -400,43 +392,6 @@ public class CameraActivity extends AppCompatActivity {
 
         }
     }
-
-    public boolean getCameraPermission() {
-
-
-        if (!getPackageManager()
-                .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
-                    .show();
-            return false;
-        } else {
-            cameraId = Util.findBackFacingCamera();
-            if (cameraId < 0) {
-                Toast.makeText(this, "No front facing camera found.",
-                        Toast.LENGTH_LONG).show();
-                return false;
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    // request permission
-                    int hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
-                    if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[] {Manifest.permission.CAMERA},
-                                REQUEST_CODE_ASK_PERMISSIONS);
-                        // no permission so request and return
-                        return false;
-                    }
-                    Log.d(TAG, "getCameraPermission:openingCamera:done");
-                } else {
-                    Log.d(TAG, "getCameraPermission:OLD_VERSION:openingCamera:done");
-                    return true;
-
-                }
-
-            }
-            return false;
-        }
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
@@ -539,8 +494,6 @@ public class CameraActivity extends AppCompatActivity {
         Log.d(TAG, "onCLick:startingPreview");
         mCamera.startPreview();
         mCamera.takePicture(null, null, jpegCallback);
-//        mCamera.takePicture(null, null,
-//                        new PhotoHandler(getApplicationContext()));
 
     }
 
@@ -568,11 +521,7 @@ public class CameraActivity extends AppCompatActivity {
         Camera.Size s = mParameters.getPictureSize();
         int width, height;
         int orientation = mDisplayOrientation;
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inScaled = false;
-//        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logotext, options);
         Bitmap pin = null;
-//        (String)mScoreType.getSelectedItem()
         String scoreType = spinnerTypes[mScoreType.getCurrentItemPosition()];
         Log.d(TAG, "title: "+title);
         Log.d(TAG, "ScoreType:"+scoreType);
@@ -692,8 +641,6 @@ public class CameraActivity extends AppCompatActivity {
 
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
         public void onPictureTaken(byte[] data, Camera camera) {
-//            new SaveImageTask().execute(data);
-//            resetCam();
             Log.d(TAG, "onPictureTaken - jpeg");
             mCaptureStartTime = System.currentTimeMillis();
             mSaveImageButton.setVisibility(View.VISIBLE);
@@ -709,23 +656,11 @@ public class CameraActivity extends AppCompatActivity {
 
             mTakePhotoButton.setVisibility(View.GONE);
             mLogoText.setVisibility(View.VISIBLE);
-//            mScoreTypeBackground.setVisibility(View.VISIBLE);
-//            mScoreNumber.setVisibility(View.VISIBLE);
             mPreviousImageThumbnail.setVisibility(View.GONE);
             mPreviousImageThumbnail.setEnabled(false);
 
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
-//            File photo=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "photo.jpg");
-//            try {
-//                FileOutputStream fos=new FileOutputStream(photo.getPath());
-//                fos.write(mJPEGdata[0]);
-//                fos.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             mCamera.stopPreview();
 
 
@@ -757,58 +692,7 @@ public class CameraActivity extends AppCompatActivity {
         Bitmap rotatedThumbImage = Bitmap.createBitmap(thumbImage, 0, 0, THUMBSIZE, THUMBSIZE, matrix, true);
         return rotatedThumbImage;
     }
-    private Bitmap addSelectedIcon(Bitmap picture, Bitmap icon) {
-        Bitmap combinedImg = null;
-        int pictureWidth = picture.getWidth();
-        int pictureHeight = picture.getHeight();
-        float iconFloatLeft = pictureWidth - 50;
-        float iconFloatTop = pictureHeight - 50;
-        Double iconSize = pictureWidth*0.2;
-        int iconSizeInt = iconSize.intValue();
 
-        combinedImg = Bitmap.createBitmap(pictureWidth, pictureHeight, Bitmap.Config.ARGB_8888);
-
-        Canvas comboImage = new Canvas(combinedImg);
-
-        comboImage.drawBitmap(picture, 0f, 0f, null);
-        comboImage.drawBitmap(Util.BITMAP_RESIZER(icon, iconSizeInt, iconSizeInt), iconFloatLeft, iconFloatTop, null);
-
-        return combinedImg;
-    }
-
-
-    private void resetCam() {
-        mCamera.startPreview();
-    }
-
-    public boolean hasPermission(String permission) {
-        if (canMakeSmores()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
-            }
-        }
-        return true;
-    }
-    private boolean canMakeSmores() {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
-    }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
-
-//    private void releaseCamera(){
-//        if (mCamera != null){
-//            mCamera.release();        // release the camera for other applications
-//            mCamera = null;
-//        }
-//    }
 
     /**
      * Manage Spinners
@@ -889,13 +773,6 @@ public class CameraActivity extends AppCompatActivity {
             Log.d(TAG, "updatePegDisplay:invalidValue:"+score);
         }
 
-    }
-    private List<Integer> makeSequence(int begin, int end) {
-        List<Integer> ret = new ArrayList<>(end - begin + 1);
-        for (int i=begin; i<=end; i++) {
-            ret.add(i);
-        }
-        return ret;
     }
     private List<Object> makeScores() {
         List<Object> ret = new ArrayList<>();
@@ -1193,19 +1070,5 @@ public class CameraActivity extends AppCompatActivity {
         }
         return null;
     }
-
-    public static Camera getCameraInstance(){
-
-        Camera c = null;
-        try {
-            c = Camera.open();
-        } catch (Exception e){
-        }
-        return c;
-    }
-
-
-
-
 
 }

@@ -44,14 +44,10 @@ public class Util {
 
     private static final String TAG = "Util";
     private static ImageFileNamer sImageFileNamer;
-    public static final String REVIEW_ACTION = "com.android.camera.action.REVIEW";
     public static final String ACTION_NEW_PICTURE = "android.hardware.action.NEW_PICTURE";
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
-
-
-    private final static int ALL_PERMISSIONS_RESULT = 107;
 
     public static void initialize(Context context) {
         sImageFileNamer = new ImageFileNamer(
@@ -68,22 +64,6 @@ public class Util {
         context.sendBroadcast(new Intent(ACTION_NEW_PICTURE, uri));
         // Keep compatibility
         context.sendBroadcast(new Intent("com.android.camera.NEW_PICTURE", uri));
-    }
-
-    public static int findFrontFacingCamera() {
-        int cameraId = -1;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                Log.d(TAG, "Camera found");
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
     }
 
 
@@ -117,16 +97,23 @@ public class Util {
             return true;
         }
     }
-
-    protected static int byteSizeOf(Bitmap data) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1) {
-            return data.getRowBytes() * data.getHeight();
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return data.getByteCount();
-        } else {
-            return data.getAllocationByteCount();
-        }
-    }
+    /**
+     * Core function which is resposinble for the combining/merging of all assets required for the
+     * darts app. We have some very finely tuned float values within the function which represent
+     * particular offsets required to move the assets to a desired position within the canvas.
+     * Some of these variables include:
+     * pictureWidth - Width of photo original taken by camera
+     * pictureHeight - Height of original photo taken by camera
+     * pinSize - size of the pinboard (is a square)
+     * logoWidth - width of the darts logo placed next to pinboard
+     * logoHeight - height of the darts logo placed next to pinboard
+     *
+     * @param picture
+     * @param logo
+     * @param pin
+     * @param score
+     * @return
+     */
 
     public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, String score) {
         final long t0 = System.currentTimeMillis();
@@ -150,8 +137,8 @@ public class Util {
         Double pinSize = pictureWidth * 0.3;
         int textSize = (int) (pictureHeight * 0.045f);
         int pinSizeInt = pinSize.intValue();
-        Double logoWidth = pictureWidth * 0.5;
-        Double logoHeight = pictureHeight * 0.12;
+        Double logoWidth = pictureWidth * 0.55;
+        Double logoHeight = pictureHeight * 0.15;
 //        Double logoHeight = 300d;
 
 //        int logoSizeInt = pinSize.intValue();
@@ -160,11 +147,11 @@ public class Util {
         int logoSizeIntHeight = logoHeight.intValue();
         float marginBottom = pinSizeInt + pictureWidth * 0.05f;
         float logoFloatRight = pictureWidth * 0.05f;
-//        float logoFloatTop = pictureHeight - logoSizeIntHeight - pictureHeight * 0.05f;
-        float logoFloatTop = pictureHeight - logoSizeIntHeight - pictureHeight * 0.05f;
+        float margin = pictureWidth * 0.05f;
+        float logoFloatTop = pictureHeight - logoSizeIntHeight - margin;
 
-        float pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - pictureWidth * 0.05f;
-        float pinFloatTop = pictureHeight - pinSizeInt * 0.9f - pictureHeight * 0.05f;
+        float pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
+        float pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
 
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));
@@ -280,26 +267,6 @@ public class Util {
         }
 
     }
-
-//    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-//        final long t0 = System.currentTimeMillis();
-//        int width = bm.getWidth();
-//        int height = bm.getHeight();
-//        float scaleWidth = ((float) newWidth) / width;
-//        float scaleHeight = ((float) newHeight) / height;
-//        // CREATE A MATRIX FOR THE MANIPULATION
-//        Matrix matrix = new Matrix();
-//        // RESIZE THE BIT MAP
-//        matrix.postScale(scaleWidth, scaleHeight);
-//
-//        // "RECREATE" THE NEW BITMAP
-//        Bitmap resizedBitmap = Bitmap.createBitmap(
-//                bm, 0, 0, width, height, matrix, false);
-////        bm.recycle();
-//        Log.d(TAG, String.format("getResizedBitmap took %dms", System.currentTimeMillis() - t0));
-//        return resizedBitmap;
-//    }
-
     /**
      * @param bitmap
      * @return converting bitmap and return a string

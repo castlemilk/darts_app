@@ -59,22 +59,26 @@ public interface ScoreSchema {
             TYPE + " INTEGER, " +
             PEG_COUNT + " INTEGER UNSIGNED DEFAULT 0, " +
             PERIOD + " TEXT, " +
-            LAST_MODIFIED + " DATETIME, " +
-            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
+            LAST_MODIFIED + " DATETIME);";
+    //    LAST_MODIFIED + " DATETIME, " +
+//            LAST_MODIFIED + " DATETIME, " +
+//            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
     String CREATE_SCORE_TABLE_BEST_TODAY = "CREATE TABLE IF NOT EXISTS " + SCORE_TABLE_BEST_TODAY + " ( " + ID + " INTEGER PRIMARY KEY, " +
             PEG_VALUE + " INTEGER, " +
             TYPE + " INTEGER, " +
             PEG_COUNT + " INTEGER UNSIGNED DEFAULT 0, " +
             PERIOD + " TEXT, " +
-            LAST_MODIFIED + " DATETIME, " +
-            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
+            LAST_MODIFIED + " DATETIME);";
+//            LAST_MODIFIED + " DATETIME, " +
+//            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
     String CREATE_SCORE_TABLE_BEST_PREVIOUS = "CREATE TABLE IF NOT EXISTS " + SCORE_TABLE_BEST_PREVIOUS + " ( " + ID + " INTEGER PRIMARY KEY, " +
             PEG_VALUE + " INTEGER, " +
             TYPE + " INTEGER, " +
             PEG_COUNT + " INTEGER UNSIGNED DEFAULT 0, " +
             PERIOD + " TEXT, " +
-            LAST_MODIFIED + " DATETIME, " +
-            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
+            LAST_MODIFIED + " DATETIME);";
+//            LAST_MODIFIED + " DATETIME, " +
+//            "CONSTRAINT UC_score_best UNIQUE(peg_value, last_modified, period));";
 
     String[] SCORE_COLUMNS = new String[] { ID,
             PEG_VALUE, TYPE, PEG_COUNT, LAST_MODIFIED };

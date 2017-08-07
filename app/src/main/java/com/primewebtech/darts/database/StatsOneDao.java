@@ -156,9 +156,19 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 //            }
 //        }
 //    }
+
+    /**
+     * Calculates the highest scored based of what is shown in the stats summary window, which
+     * captures a window of 6 months.
+     * index 0 -> today/latest
+     * index 6 -> 6 months ago
+     * @param pegvalue
+     * @param period
+     * @return
+     */
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <6; i++) {
+        for (int i = 0; i <=6; i++) {
             int score = getPreviousScore(pegvalue, period, i);
             if (score >= highestValue) {
                 highestValue = score;
@@ -471,7 +481,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
 
     public String getPreviousDay(int previousDayIndex) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.UK);
         cal.add(Calendar.DAY_OF_YEAR, -1 * previousDayIndex);
         Date previousDate = cal.getTime();
         Log.d(TAG, "PreviousDateIndex:"+previousDayIndex);
@@ -480,19 +490,20 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.UK);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         cal.add(Calendar.DAY_OF_WEEK, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
         cal.add(Calendar.DAY_OF_WEEK, 6); //1: +6, 2: +6
         previousWeekWindow.put("end", df.format(cal.getTime()));
         Log.d(TAG, "PreviousWeekIndex:"+previousWeekIndex);
-
+        Log.d(TAG, "PreviousWeekIndex:"+"{start}:"+previousWeekWindow.get("start"));
+        Log.d(TAG, "PreviousWeekIndex:"+"{end}:"+previousWeekWindow.get("end"));
         return previousWeekWindow;
     }
     public HashMap<String, String> getPreviousMonth(int previousMonthIndex) {
         HashMap<String, String> previousMonthWindow = new HashMap<>();
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.UK);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.add(Calendar.MONTH, -1 * previousMonthIndex);
         previousMonthWindow.put("start", df.format(cal.getTime()));
@@ -530,6 +541,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     }
 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
+        Log.d(TAG, "getPreviousScore:index:"+previousPeriodIndex);
         if (period.equals("DAY")){
 //            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
 //            final String selectionArgs[] = { String.valueOf(pegValue),
@@ -542,7 +554,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 //            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
+                    Log.d(TAG, "foundMax[day]:"+cursor.getInt(0));
                     int pegCountTotal = cursor.getInt(0);
                     cursor.close();
                     return pegCountTotal;

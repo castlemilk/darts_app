@@ -114,12 +114,6 @@ public class MediaSaver extends Thread {
                 orientation, data, width, height);
         return uri;
     }
-//    private Uri storeImage(final Bitmap data, String title, long date,
-//                           Location loc, int width, int height, int orientation) {
-//        Uri uri = Storage.addImage(mContentResolver, title, date, loc,
-//                orientation, data, width, height);
-//        return uri;
-//    }
 
     // Each SaveRequest remembers the data needed to save an image.
     private static class SaveRequest {
