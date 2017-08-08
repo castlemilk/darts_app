@@ -57,8 +57,15 @@ public class CustomPagerAdapter extends PagerAdapter{
         imageView.setImageResource(mResources[position]);
         scoreNumber = (TextView) itemView.findViewById(R.id.pager_score_number);
         CameraActivity cameraActivity = (CameraActivity) mContext;
-        scoreNumber.setText(String.format(Locale.US, "%s", cameraActivity.mScoreNumberValue));
-        scoreNumber.setVisibility(View.VISIBLE);
+        if (cameraActivity.mScoreNumberValue != "RH") {
+            scoreNumber.setText(String.format(Locale.US, "%s", cameraActivity.mScoreNumberValue));
+            scoreNumber.setVisibility(View.VISIBLE);
+//            scoreNumber.setTextSize(20);
+        } else {
+            scoreNumber.setText(String.format(Locale.US, "%s", ""));
+            scoreNumber.setVisibility(View.GONE);
+        }
+
 //        scoreNumber.setText(String.format(Locale.US, "%d", ));
         Log.d(TAG, "Setting text score:"+cameraActivity.mScoreNumberValue);
 

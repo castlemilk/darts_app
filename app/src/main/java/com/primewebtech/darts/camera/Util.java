@@ -149,9 +149,16 @@ public class Util {
         float logoFloatRight = pictureWidth * 0.05f;
         float margin = pictureWidth * 0.05f;
         float logoFloatTop = pictureHeight - logoSizeIntHeight - margin;
+        float pinFloatLeft;
+        float pinFloatTop;
+        if (score.contains("RH")) {
+            pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
+            pinFloatTop = pictureHeight - pinSizeInt * 1.1f - margin;
+        } else {
+            pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
+            pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
+        }
 
-        float pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
-        float pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
 
 
         Log.d("bytes:pictureWidth", Integer.toString(pictureWidth));

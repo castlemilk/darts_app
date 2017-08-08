@@ -205,7 +205,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 b.putString("type", String.valueOf(mPegs[mViewPager.getCurrentPosition()]));
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
-                finish();
             }
         });
     }
@@ -294,12 +293,14 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                         ScoreDatabase.mScoreOneDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());
                         updateCountIndicators(mPegs[currentIndex]);
+
                     } else {
                         mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         ScoreDatabase.mScoreOneDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());
                         updateCountIndicators(mPegs[getPegIndex(action.getPegValue())]);
                     }
+                    playSoundClick(1, 0);
 
                 }
 

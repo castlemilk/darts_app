@@ -256,7 +256,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentPosition()]);
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
-                finish();
             }
         });
     }
@@ -305,6 +304,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                         mCountButton.setText(action.getRollBackValue());
                         updateCountIndicators(mPegs[getPegIndex(action.getPegValue())]);
                     }
+                    playSoundClick(1);
 
                 }
 
