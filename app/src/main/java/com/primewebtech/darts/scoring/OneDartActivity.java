@@ -282,6 +282,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     public void initialiseBackButton() {
         //TODO: implement undo functionality using action SQL table of historical actions
         mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mBackButton.setSoundEffectsEnabled(true);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

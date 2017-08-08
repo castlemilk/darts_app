@@ -156,7 +156,17 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
 //            }
 //        }
 //    }
-
+    public int getCurrentScore(int pegValue, String period) {
+        if (period.contains("DAY")) {
+            return getTotalPegCountDay(pegValue);
+        } else if (period.contains("WEEK")) {
+            return getTotalPegCountWeek(pegValue);
+        } else if (period.contains("MONTH")) {
+            return getTotalPegCountMonth(pegValue);
+        } else {
+            return getTotalPegCountDay(pegValue);
+        }
+    }
     /**
      * Calculates the highest scored based of what is shown in the stats summary window, which
      * captures a window of 6 months.

@@ -54,6 +54,11 @@ public class StatsHundredFragment extends Fragment {
             R.id.best_score_weekly,
             R.id.best_score_monthly,
     };
+    public int[] mStatsCurrentPeriod = {
+            R.id.score_today_total,
+            R.id.score_week_total,
+            R.id.score_month_total,
+    };
 
     public ArrayList<int[]> mStatsRows;
     String[] periods = {
@@ -208,33 +213,31 @@ public class StatsHundredFragment extends Fragment {
             }
             period_index++;
         }
-
-        int bestScoreDaily = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "DAY")
-                .getPegCount();
-        int bestScoreWeekly = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "WEEK")
-                .getPegCount();
-        int bestScoreMonthly = ScoreDatabase.mStatsHundredDoa.getPeriodsHighestScore(pegValue, "MONTH")
-                .getPegCount();
-        Log.d (TAG, "--- SETTING BEST SCORES ---");
-        Log.d(TAG, "bestScoreDaily:" + bestScoreDaily);
-        Log.d(TAG, "bestScoreWeekly:" + bestScoreWeekly);
-        Log.d(TAG, "bestScoreMonthly:" + bestScoreMonthly);
-
-
-        // BEST SCORES EVER
         int k = 0;
         for ( String period : periods) {
             int bestScore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValue, period);
+            int currentScore = ScoreDatabase.mStatsHundredDoa.getCurrentScore(pegValue, period);
+            TextView currentPeriodNode = (TextView) rootView.findViewById(mStatsCurrentPeriod[k]);
             TextView bestNode = (TextView) rootView.findViewById(mStatsPB[k]);
             bestNode.setText(String.valueOf(bestScore));
+            currentPeriodNode.setText(String.valueOf(currentScore));
+            if ( currentScore >= bestScore && currentScore > 0) {
+                currentPeriodNode.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                currentPeriodNode.setTextColor(Color.BLACK);
+            } else {
+                currentPeriodNode.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                currentPeriodNode.setTextColor(Color.WHITE);
+            }
             if (bestScore > 0) {
                 bestNode.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 bestNode.setTextColor(Color.BLACK);
             } else {
                 bestNode.setBackground(
-                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                bestNode.setTextColor(Color.BLACK);
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                bestNode.setTextColor(Color.WHITE);
             }
             k++;
         }

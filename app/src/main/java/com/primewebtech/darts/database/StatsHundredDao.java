@@ -163,7 +163,17 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         return super.update(getScoreTableBest(), contentValues, selection,
                 selectionArgs) > 0;
     }
-
+    public int getCurrentScore(int pegValue, String period) {
+        if (period.contains("DAY")) {
+            return getTotalPegCountDay(pegValue);
+        } else if (period.contains("WEEK")) {
+            return getTotalPegCountWeek(pegValue);
+        } else if (period.contains("MONTH")) {
+            return getTotalPegCountMonth(pegValue);
+        } else {
+            return getTotalPegCountDay(pegValue);
+        }
+    }
     public PegRecord getPeriodsHighestScore(int pegValue, String period) {
         final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
         final String selectionArgs[] = { String.valueOf(pegValue),

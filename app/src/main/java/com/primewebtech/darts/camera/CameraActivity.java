@@ -776,10 +776,10 @@ public class CameraActivity extends AppCompatActivity {
     }
     private List<Object> makeScores() {
         List<Object> ret = new ArrayList<>();
-        ret.add("RH");
-        for (int i=0; i<=180; i++) {
+        for (int i=180; i>=0; i--) {
             ret.add(i);
         }
+        ret.add("RH");
         return ret;
     }
     private List<Integer> makePegs() {
@@ -818,6 +818,8 @@ public class CameraActivity extends AppCompatActivity {
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
                     mViewPager.setAdapter(mCustomPagerAdapterScores);
                     mCustomPagerAdapterScores.notifyDataSetChanged();
+                    updateScoreDisplay(180);
+                    mScoreNumber.setVisibility(View.VISIBLE);
 
                 } else if (type.equals("Peg")) {
                     scoreType = "PEG";
@@ -858,7 +860,8 @@ public class CameraActivity extends AppCompatActivity {
                 Log.d(TAG, "initScoreSpinner:type:Score");
                 data = makeScores();
                 mScoreNumber.setText(String.format(Locale.US, "%s", data.get(0)));
-                mScoreNumber.setVisibility(View.VISIBLE);
+//                mScoreNumber.setVisibility(View.VISIBLE);
+                mScoreNumber.setVisibility(View.GONE);
                 scoreType = "SCORE";
                 break;
             case "Peg":

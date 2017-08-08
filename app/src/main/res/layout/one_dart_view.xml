@@ -257,6 +257,7 @@
         android:layout_gravity="center"
         android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
+        android:soundEffectsEnabled="true"
         android:src="@drawable/undo_button"
         android:layout_marginStart="55dp"
         app:layout_constraintLeft_toLeftOf="parent"

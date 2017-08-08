@@ -53,6 +53,11 @@ public class StatsOneFragment extends Fragment {
             R.id.best_score_weekly,
             R.id.best_score_monthly,
     };
+    public int[] mStatsCurrentPeriod = {
+            R.id.score_today_total,
+            R.id.score_week_total,
+            R.id.score_month_total,
+    };
     public ArrayList<int[]> mStatsRows;
     String[] periods = {
             "DAY",
@@ -85,18 +90,9 @@ public class StatsOneFragment extends Fragment {
 
         mStatsRows = new ArrayList<>();
 
-
-        TextView scoreTodayTotal = (TextView) rootView.findViewById(R.id.score_today_total);
         int totalScoreToday = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValue);
-        scoreTodayTotal.setText(String.valueOf(totalScoreToday));
-
-        TextView scoreWeekTotal = (TextView) rootView.findViewById(R.id.score_week_total);
         int totalScoreThisWeek = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValue);
-        scoreWeekTotal.setText(String.valueOf(totalScoreThisWeek));
-
-        TextView scoreMonthTotal = (TextView) rootView.findViewById(R.id.score_month_total);
         int totalScoreThisMonth =  ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValue);
-        scoreMonthTotal.setText(String.valueOf(totalScoreThisMonth));
         int[] currentBestScores = {
                 totalScoreToday,
                 totalScoreThisWeek,
@@ -226,16 +222,28 @@ public class StatsOneFragment extends Fragment {
         int k = 0;
         for ( String period : periods) {
             int bestScore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValue, period);
+            int currentScore = ScoreDatabase.mStatsOneDoa.getCurrentScore(pegValue, period);
+            TextView currentPeriodNode = (TextView) rootView.findViewById(mStatsCurrentPeriod[k]);
             TextView bestNode = (TextView) rootView.findViewById(mStatsPB[k]);
             bestNode.setText(String.valueOf(bestScore));
+            currentPeriodNode.setText(String.valueOf(currentScore));
+            if ( currentScore >= bestScore && currentScore > 0) {
+                currentPeriodNode.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
+                currentPeriodNode.setTextColor(Color.BLACK);
+            } else {
+                currentPeriodNode.setBackground(
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                currentPeriodNode.setTextColor(Color.WHITE);
+            }
             if (bestScore > 0) {
                 bestNode.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 bestNode.setTextColor(Color.BLACK);
             } else {
                 bestNode.setBackground(
-                        getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                bestNode.setTextColor(Color.BLACK);
+                        getResources().getDrawable(R.drawable.peg_stats_score_background));
+                bestNode.setTextColor(Color.WHITE);
             }
             k++;
         }
