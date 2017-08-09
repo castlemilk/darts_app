@@ -352,7 +352,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         return dateFormat.format(now);
     }
     public String getPreviousDay(int previousDayIndex) {
-        Calendar cal = Calendar.getInstance(Locale.UK);
+        Calendar cal = Calendar.getInstance(Locale.US);
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.add(Calendar.DAY_OF_YEAR, -1 * previousDayIndex);
         Date previousDate = cal.getTime();
@@ -362,7 +362,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     }
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
-        Calendar cal = Calendar.getInstance(Locale.UK);
+        Calendar cal = Calendar.getInstance(Locale.US);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         cal.add(Calendar.DAY_OF_WEEK, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
@@ -374,7 +374,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     }
     public HashMap<String, String> getPreviousMonth(int previousMonthIndex) {
         HashMap<String, String> previousMonthWindow = new HashMap<>();
-        Calendar cal = Calendar.getInstance(Locale.UK);
+        Calendar cal = Calendar.getInstance(Locale.US);
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.add(Calendar.MONTH, -1 * previousMonthIndex);
