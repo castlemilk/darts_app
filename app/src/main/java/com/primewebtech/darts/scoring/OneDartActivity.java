@@ -124,11 +124,11 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             savePB();
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
-
+        int lastPosition = prefs.getInt("POSITION", 0);
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
         initialiseSound();
-        initialisePager();
+        initialisePager(lastPosition);
         initialiseBackButton();
         initialiseCountButtons();
         initialiseMenuButton();
@@ -158,16 +158,17 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
 
+        int lastPosition = prefs.getInt("POSITION", 0);
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
         initialiseCountIndicators();
-        initialisePager();
+        initialisePager(lastPosition);
         initialiseBackButton();
         initialiseCountButtons();
         initialiseMenuButton();
         initialiseStatsButton();
         initialiseSound();
-        updateCountIndicators(40); //always start on pegValue 40.
+        updateCountIndicators(mPegs[lastPosition]); //always start on pegValue 40.
     }
 
     public void savePB() {
@@ -203,6 +204,8 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 Intent statsIntent = new Intent(OneDartActivity.this, StatsOneActivity.class);
                 Bundle b = new Bundle();
                 b.putString("type", String.valueOf(mPegs[mViewPager.getCurrentPosition()]));
+                prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+                prefs.edit().putInt("POSITION", mViewPager.getCurrentPosition()).apply();
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
             }
@@ -406,8 +409,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     }
 
 
-    public void initialisePager() {
+    public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
+
         mViewPager.setChangePositionFactor(4000);
             mViewPager.setAdapter(new CyclicAdapter() {
                 @Override
@@ -449,6 +453,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 }
             }
         });
+        mViewPager.setCurrentPosition(position);
     }
 
     public int[] indicatorResources = {
