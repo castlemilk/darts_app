@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.primewebtech.darts.database.ScoreDatabase;
 import com.primewebtech.darts.database.model.PegRecord;
+import com.primewebtech.darts.database.model.ScoreSchema;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-
-import static com.primewebtech.darts.database.model.ScoreSchema.TYPE_2;
 
 /**
  * Created by benebsworth on 15/7/17.
@@ -59,7 +58,7 @@ public class SQLTests {
                 System.out.println(dateFormat.format(previousDay));
                 System.out.println("PegValue: " + String.valueOf(pegValues[j]));
                 System.out.println("PegCount: " + String.valueOf(randomScore));
-                PegRecord pegRecord = new PegRecord(dateFormat.format(previousDay), TYPE_2, pegValues[j], randomScore);
+                PegRecord pegRecord = new PegRecord(dateFormat.format(previousDay), ScoreSchema.TYPE_2, pegValues[j], randomScore);
                 ScoreDatabase.mScoreOneDoa.addPegValue(pegRecord);
             }
         }
@@ -85,7 +84,7 @@ public class SQLTests {
                     System.out.println(dateFormat.format(previousDay));
                     System.out.println("PegValue: "+String.valueOf(pegValuesHundred[j]));
                     System.out.println("PegCount: "+String.valueOf(randomScore));
-                    PegRecord pegRecord = new PegRecord(dateFormat.format(previousDay), TYPE_2, pegValuesHundred[j], randomScore);
+                    PegRecord pegRecord = new PegRecord(dateFormat.format(previousDay), ScoreSchema.TYPE_3, pegValuesHundred[j], randomScore);
                     ScoreDatabase.mScoreHundredDoa.addPegValue(pegRecord);
                 }
             }

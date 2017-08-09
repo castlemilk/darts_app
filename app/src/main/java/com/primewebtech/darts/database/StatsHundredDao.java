@@ -218,7 +218,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                 return highetScoreWithin6Months;
             }
         } else {
-            setBestScore(period, pegvalue, highetScoreWithin6Months);
+//            setBestScore(period, pegvalue, highetScoreWithin6Months);
             return highetScoreWithin6Months;
         }
 
@@ -282,7 +282,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         if (period.equals("DAY")){
-
             final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
                     " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
                     " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";

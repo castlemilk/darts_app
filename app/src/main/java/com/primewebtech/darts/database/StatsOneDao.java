@@ -552,9 +552,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         Log.d(TAG, "getPreviousScore:index:"+previousPeriodIndex);
         if (period.equals("DAY")){
-//            final String selection = PEG_VALUE_WHERE+ " AND "+ LAST_MODIFIED + " = ?";
-//            final String selectionArgs[] = { String.valueOf(pegValue),
-//                    getPreviousDay(previousPeriodIndex)};
             final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
                     " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
                     " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";

@@ -537,7 +537,18 @@ public class CameraActivity extends AppCompatActivity {
                 spinnerTypes[mScoreType.getSelectedItemPosition()]);
         String title = mNamedImages.getTitle();
         long date = mNamedImages.getDate();
-        Camera.Size s = mParameters.getPictureSize();
+        Camera.Size s;
+        if (mParameters != null) {
+            s = mParameters.getPictureSize();
+        } else {
+            mParameters = mCamera.getParameters();
+            if (mParameters == null) {
+                return;
+            }
+            s = mParameters.getPictureSize();
+
+        }
+
         int width, height;
         int orientation = mDisplayOrientation;
         Bitmap pin = null;
@@ -576,6 +587,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
         mMode = PREVIEW;
+        stopAllSounds();
 
 
 
