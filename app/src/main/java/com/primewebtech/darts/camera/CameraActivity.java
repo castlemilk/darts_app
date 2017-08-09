@@ -25,15 +25,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aigestudio.wheelpicker.WheelPicker;
@@ -46,6 +45,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,7 +53,13 @@ import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    final private int PREVIEW = 111;
+    final private int SAVING = 112;
+    final private int SAVED = 113;
+
     private static final String TAG = CameraActivity.class.getSimpleName();
+
+    private int mMode;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -66,13 +72,11 @@ public class CameraActivity extends AppCompatActivity {
     private ImageButton mSaveImageButton;
     private ImageButton mBackButton;
     private ImageButton mTakePhotoButton;
-    private CustomPagerAdapter mCustomPagerAdapterPegs;
-    private CustomPagerAdapter mCustomPagerAdapterScores;
     private Camera.Parameters mParameters;
     static final String LATEST_PICTRUE = "LATEST_PICTURE";
     private int mDisplayOrientation;
     private int mLayoutOrientation;
-    private ViewPager mViewPager;
+//    private ViewPager mViewPager;
     private Bitmap mThumbNail;
     private WheelPicker mScoreType;
     private WheelPicker mScoreValue;
@@ -86,8 +90,8 @@ public class CameraActivity extends AppCompatActivity {
     private FrameLayout preview;
     private String scoreType;
     private ImageView mLogoText;
-//    private ImageView mScoreTypeBackground;
-//    private TextView mScoreNumber;
+    private ImageView mScoreTypeBackground;
+    private TextView mScoreNumber;
     public Object mScoreNumberValue;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
@@ -169,30 +173,28 @@ public class CameraActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mScoreType = (WheelPicker) findViewById(R.id.score_type);
         mScoreValue = (WheelPicker) findViewById(R.id.score_value);
-//        mScoreNumber = (TextView) findViewById(R.id.score_number);
-//        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+        mScoreNumber = (TextView) findViewById(R.id.score_number);
+        mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
         mPreviousImageThumbnail = (CircleImageView) findViewById(R.id.button_previous);
+        mPreviousImageThumbnail.setSoundEffectsEnabled(false);
         mLogoText = (ImageView) findViewById(R.id.logo_text);
         preview = (FrameLayout) findViewById(R.id.camera_preview);
         mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
         mBackButton = (ImageButton) findViewById(R.id.button_back);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+//        mViewPager = (ViewPager) findViewById(R.id.pager);
 
-        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
-        mCustomPagerAdapterScores = new CustomPagerAdapter(this, mScoreResources);
-
-        mViewPager.setVisibility(View.GONE);
+//        mViewPager.setVisibility(View.GONE);
         mScoreValue.setVisibility(View.GONE);
         mScoreType.setVisibility(View.GONE);
-//        mScoreTypeBackground.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
         initTypeSpinners();
         initScoreSpinner("Peg");
         initialiseSound();
-        mViewPager.setCurrentItem(0);
+//        mViewPager.setCurrentItem(0);
         requestCameraPermission();
 
 
@@ -361,6 +363,9 @@ public class CameraActivity extends AppCompatActivity {
             return 0;
         }
     }
+    public void stopAllSounds() {
+        this.soundPool.autoPause();
+    }
     public void stopSoundScrolling(int scrollingId) {
         if (loaded) {
             Log.d(TAG, "stopping:sound:"+scrollingId);
@@ -412,27 +417,28 @@ public class CameraActivity extends AppCompatActivity {
             }
             mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
             mPreviousImageThumbnail = (CircleImageView) findViewById(R.id.button_previous);
+            mPreviousImageThumbnail.setSoundEffectsEnabled(false);
             mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
             mBackButton = (ImageButton) findViewById(R.id.button_back);
-            mViewPager = (ViewPager) findViewById(R.id.pager);
+//            mViewPager = (ViewPager) findViewById(R.id.pager);
             mLogoText = (ImageView) findViewById(R.id.logo_text);
-//            mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
+            mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
             mScoreType = (WheelPicker) findViewById(R.id.score_type);
             mScoreValue = (WheelPicker) findViewById(R.id.score_value);
-//            mScoreNumber = (TextView) findViewById(R.id.score_number);
+            mScoreNumber = (TextView) findViewById(R.id.score_number);
             mScoreValue.setVisibility(View.GONE);
             mScoreType.setVisibility(View.GONE);
-//            mScoreTypeBackground.setVisibility(View.GONE);
+            mScoreTypeBackground.setVisibility(View.GONE);
             mLogoText.setVisibility(View.GONE);
             initTypeSpinners();
             initScoreSpinner("Peg");
             initialiseSound();
-            mViewPager.setCurrentItem(0);
-            mViewPager.setVisibility(View.GONE);
+//            mViewPager.setCurrentItem(0);
+//            mViewPager.setVisibility(View.GONE);
             mSaveImageButton.setVisibility(View.GONE);
             mBackButton.setVisibility(View.GONE);
             mTakePhotoButton.setVisibility(View.VISIBLE);
-//            mScoreNumber.setVisibility(View.GONE);
+            mScoreNumber.setVisibility(View.GONE);
             Util.initialize(this);
             mContentResolver = this.getContentResolver();
             mNamedImages = new NamedImages();
@@ -450,6 +456,11 @@ public class CameraActivity extends AppCompatActivity {
                 mPreviousImageThumbnail.setVisibility(View.VISIBLE);
                 mPreviousImageThumbnail.setImageBitmap(ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mRecentlySavedImageURI.getPath()),
                         THUMBSIZE, THUMBSIZE));
+                File file = new File(mRecentlySavedImageFilePath);
+                if (file.exists()) {
+                    mPreviousImageThumbnail.setSoundEffectsEnabled(true);
+                }
+
             }
             if (cameraPermissionGranted) {
                 if (mCamera != null) {
@@ -502,16 +513,25 @@ public class CameraActivity extends AppCompatActivity {
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
-        mViewPager.setVisibility(View.GONE);
+//        mViewPager.setVisibility(View.GONE);
         mScoreType.setVisibility(View.GONE);
         mScoreType.setEnabled(false);
         mScoreValue.setVisibility(View.GONE);
         mScoreValue.setEnabled(false);
-//        mScoreNumber.setVisibility(View.GONE);
+        mScoreNumber.setVisibility(View.GONE);
         mLogoText.setVisibility(View.GONE);
-//        mScoreTypeBackground.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
         mPreviousImageThumbnail.setVisibility(View.VISIBLE);
+        mPreviousImageThumbnail.setSoundEffectsEnabled(false);
+        if (mRecentlySavedImageFilePath != null) {
+            File file = new File(mRecentlySavedImageFilePath);
+            if (file.exists()) {
+                mPreviousImageThumbnail.setSoundEffectsEnabled(true);
+            }
+        }
+
+
 
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime, mScoreNumberValue.toString(),
                 spinnerTypes[mScoreType.getSelectedItemPosition()]);
@@ -527,10 +547,10 @@ public class CameraActivity extends AppCompatActivity {
         Log.d(TAG, "ScoreValue:"+mScoreNumberValue);
         if ((scoreType.equals("Score"))) {
             Log.d(TAG, "mScoreTYpe:SCORE");
-            pin = drawableToBitmap(getResources().getDrawable(mScoreResources[mViewPager.getCurrentItem()]));
+            pin = drawableToBitmap(getResources().getDrawable(updateScoreDisplay(mScoreNumberValue)));
         } else {
             Log.d(TAG, "mScoreTYpe:PEG");
-            pin = drawableToBitmap(getResources().getDrawable(mPegResources[mViewPager.getCurrentItem()]));
+            pin = drawableToBitmap(getResources().getDrawable(updatePegDisplay(mScoreNumberValue)));
         }
 
         Bitmap logo = drawableToBitmap(getResources().getDrawable(R.drawable.logotext));
@@ -555,6 +575,7 @@ public class CameraActivity extends AppCompatActivity {
                         width, height, 0,  mOnMediaSavedListener);
             }
         }
+        mMode = PREVIEW;
 
 
 
@@ -568,16 +589,27 @@ public class CameraActivity extends AppCompatActivity {
         mSaveImageButton.setVisibility(View.GONE);
         mBackButton.setVisibility(View.GONE);
         mTakePhotoButton.setVisibility(View.VISIBLE);
-        mViewPager.setVisibility(View.GONE);
+//        mViewPager.setVisibility(View.GONE);
         mScoreType.setVisibility(View.GONE);
         mScoreType.setEnabled(false);
         mScoreValue.setVisibility(View.GONE);
         mScoreValue.setEnabled(false);
-//        mScoreNumber.setVisibility(View.GONE);
+        mScoreNumber.setVisibility(View.GONE);
         mLogoText.setVisibility(View.GONE);
-//        mScoreTypeBackground.setVisibility(View.GONE);
+        mScoreTypeBackground.setVisibility(View.GONE);
         mPreviousImageThumbnail.setEnabled(true);
         mPreviousImageThumbnail.setVisibility(View.VISIBLE);
+        stopAllSounds();
+        if (mRecentlySavedImageFilePath != null) {
+            File file = new File(mRecentlySavedImageFilePath);
+            if (file.exists()) {
+                mPreviousImageThumbnail.setSoundEffectsEnabled(true);
+            }
+        }
+        mMode = PREVIEW;
+
+
+
 
 
     }
@@ -644,12 +676,13 @@ public class CameraActivity extends AppCompatActivity {
             mCaptureStartTime = System.currentTimeMillis();
             mSaveImageButton.setVisibility(View.VISIBLE);
             mBackButton.setVisibility(View.VISIBLE);
-            setPegDisplay(0);
             mScoreType.setEnabled(true);
             mScoreValue.setEnabled(true);
             mScoreType.setVisibility(View.VISIBLE);
             mScoreType.setSelectedItemPosition(0);
             mScoreValue.setVisibility(View.VISIBLE);
+            mScoreTypeBackground.setVisibility(View.VISIBLE);
+            mScoreNumber.setVisibility(View.VISIBLE);
             initTypeSpinners();
             initScoreSpinner("Peg");
 
@@ -661,6 +694,7 @@ public class CameraActivity extends AppCompatActivity {
             mThumbNail = getThumbNail(data);
             mJPEGdata = data;
             mCamera.stopPreview();
+            mMode = SAVING;
 
 
 
@@ -697,75 +731,73 @@ public class CameraActivity extends AppCompatActivity {
      * Manage Spinners
      */
 
-    private void setPegDisplay(int item) {
 
-        mCustomPagerAdapterPegs = new CustomPagerAdapter(this, mPegResources);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mCustomPagerAdapterPegs);
-        mViewPager.setVisibility(View.VISIBLE);
-        mViewPager.setCurrentItem(item);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //TODO: set number on scroll as well as the spinner selection action
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                //TODO: set number on scroll as well as the spinner selection action
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-    }
-
-    private void updateScoreDisplay(Object item) {
+    private int updateScoreDisplay(Object item) {
         Log.d(TAG, "updateScoreDisplay:score:"+item);
         if (item == "RH") {
-            mViewPager.setCurrentItem(0);
+            mScoreTypeBackground.setImageResource(mScoreResources[0]);
+            return mScoreResources[0];
+
         } else if ( 0 <= (int)item && (int)item <= 179 ) {
-            mViewPager.setCurrentItem(1);
+            mScoreTypeBackground.setImageResource(mScoreResources[1]);
+            return mScoreResources[1];
+
         } else if( ((int) item) == 180 ) {
-            mViewPager.setCurrentItem(2);
+            mScoreTypeBackground.setImageResource(mScoreResources[2]);
+            return mScoreResources[2];
         } else {
+            return mScoreResources[0];
         }
 
     }
 
-    private void updatePegDisplay(int score) {
+    private int updatePegDisplay(Object score) {
         Log.d(TAG, "updatePegDisplay:score:"+score);
-        if ( 2 <= score && score < 60) {
-            mViewPager.setCurrentItem(0);
-        } else if (60 <= score && score < 70) {
-            mViewPager.setCurrentItem(1);
-        } else if (70 <= score && score < 80) {
-            mViewPager.setCurrentItem(2);
-        } else if (80 <= score && score < 90) {
-            mViewPager.setCurrentItem(3);
-        } else if (90 <= score && score < 100) {
-            mViewPager.setCurrentItem(4);
-        } else if (100 <= score && score < 110) {
-            mViewPager.setCurrentItem(5);
-        } else if (110 <= score && score < 120) {
-            mViewPager.setCurrentItem(6);
-        } else if (120 <= score && score < 130) {
-            mViewPager.setCurrentItem(7);
-        } else if (130 <= score && score < 140) {
-            mViewPager.setCurrentItem(8);
-        } else if (140 <= score && score < 150) {
-            mViewPager.setCurrentItem(9);
-        } else if (150 <= score && score < 160) {
-            mViewPager.setCurrentItem(10);
-        } else if (160 <= score && score < 170) {
-            mViewPager.setCurrentItem(11);
-        } else if (170 <= score && score < 180) {
-            mViewPager.setCurrentItem(12);
+        int convertedScore = (int) score;
+
+        if ( 2 <= convertedScore && convertedScore < 60) {
+            mScoreTypeBackground.setImageResource(mPegResources[0]);
+            return mPegResources[0];
+        } else if (60 <= convertedScore && convertedScore < 70) {
+            mScoreTypeBackground.setImageResource(mPegResources[1]);
+            return mPegResources[1];
+        } else if (70 <= convertedScore && convertedScore < 80) {
+            mScoreTypeBackground.setImageResource(mPegResources[2]);
+            return mPegResources[2];
+        } else if (80 <= convertedScore && convertedScore < 90) {
+            mScoreTypeBackground.setImageResource(mPegResources[3]);
+            return mPegResources[3];
+        } else if (90 <= convertedScore && convertedScore < 100) {
+            mScoreTypeBackground.setImageResource(mPegResources[4]);
+            return mPegResources[4];
+        } else if (100 <= convertedScore && convertedScore < 110) {
+            mScoreTypeBackground.setImageResource(mPegResources[5]);
+            return mPegResources[5];
+        } else if (110 <= convertedScore && convertedScore < 120) {
+            mScoreTypeBackground.setImageResource(mPegResources[6]);
+            return mPegResources[6];
+        } else if (120 <= convertedScore && convertedScore < 130) {
+            mScoreTypeBackground.setImageResource(mPegResources[7]);
+            return mPegResources[7];
+        } else if (130 <= convertedScore && convertedScore < 140) {
+            mScoreTypeBackground.setImageResource(mPegResources[8]);
+            return mPegResources[8];
+        } else if (140 <= convertedScore && convertedScore < 150) {
+            mScoreTypeBackground.setImageResource(mPegResources[9]);
+            return mPegResources[9];
+        } else if (150 <= convertedScore && convertedScore < 160) {
+            mScoreTypeBackground.setImageResource(mPegResources[10]);
+            return mPegResources[10];
+        } else if (160 <= convertedScore && convertedScore < 170) {
+            mScoreTypeBackground.setImageResource(mPegResources[11]);
+            return mPegResources[11];
+        } else if (170 <= convertedScore && convertedScore < 180) {
+            mScoreTypeBackground.setImageResource(mPegResources[12]);
+            return mPegResources[12];
         } else {
             Log.d(TAG, "updatePegDisplay:invalidValue:"+score);
+            mScoreTypeBackground.setImageResource(mPegResources[0]);
+            return mPegResources[0];
         }
 
     }
@@ -806,68 +838,19 @@ public class CameraActivity extends AppCompatActivity {
                 initScoreSpinner(type);
                 if (type.equals("Score")) {
                     scoreType = "SCORE";
-                    if (mViewPager != null) {
-                        mViewPager.setEnabled(false);
-                        mViewPager.setVisibility(View.VISIBLE);
-                    } else {
-                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
-                    }
-//                    mScoreNumberValue = "RH";
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-//                    mScoreNumber.setVisibility(View.GONE);
-                    mViewPager.setAdapter(mCustomPagerAdapterScores);
-                    if (mViewPager != null) {
-                        mViewPager.setEnabled(false);
-                        mViewPager.setVisibility(View.VISIBLE);
-                        updateScoreDisplay(180);
-                        mViewPager.setTag(180);
-
-                    } else {
-                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
-                    }
-
+                    updateScoreDisplay(180);
                     mScoreNumberValue = makeScores().get(0);
-                    mCustomPagerAdapterPegs.notifyDataSetChanged();
-//                    mScoreNumber.setVisibility(View.GONE);
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-                    mViewPager.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            return true;
-                        }
-                    });
+                    mScoreNumber.setText(String.format(Locale.US, "%s", "180"));
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
 
                 } else if (type.equals("Peg")) {
                     scoreType = "PEG";
-                    if (mViewPager != null) {
-                        mViewPager.setEnabled(false);
-                        mViewPager.setVisibility(View.VISIBLE);
-                    } else {
-                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
-                    }
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-//                    mScoreNumber.setVisibility(View.GONE);
-                    mViewPager.setAdapter(mCustomPagerAdapterPegs);
-                    if (mViewPager != null) {
-                        mViewPager.setEnabled(false);
-                        mViewPager.setVisibility(View.VISIBLE);
-                        updatePegDisplay(170);
-                        mViewPager.setTag(170);
-
-                    } else {
-                        Log.d(TAG, "initTypeSpinner:mViewPager:NULL!!!!!");
-                    }
+                    updatePegDisplay(170);
                     mScoreNumberValue = makePegs().get(0);
-                    mCustomPagerAdapterPegs.notifyDataSetChanged();
-//                    mScoreNumber.setVisibility(View.GONE);
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-                    mViewPager.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            return true;
-                        }
-                    });
-
+                    mScoreNumber.setText(String.format(Locale.US, "%s", "170"));
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -879,66 +862,32 @@ public class CameraActivity extends AppCompatActivity {
         Log.d(TAG, "initScoreSpinner:type:"+type);
         switch (type) {
             case "Score":
-                Log.d(TAG, "initScoreSpinner:type:Score");
                 data = makeScores();
-                if (mViewPager != null) {
-                    mScoreNumberValue = makeScores().get(0);
-//                mScoreNumber.setText(String.format(Locale.US, "%s", data.get(0)));
-//                mScoreNumber.setVisibility(View.VISIBLE);
-                    mScoreValue.setCyclic(false);
-                    mViewPager.setVisibility(View.VISIBLE);
-                    updateScoreDisplay(180);
-                    mViewPager.setTag(180);
-//                mScoreNumber.setVisibility(View.GONE);
-                    scoreType = "SCORE";
-                    mViewPager.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            return true;
-                        }
-                    });
-                }
-
-//                mScoreTypeBackground.setVisibility(View.GONE);
+                Log.d(TAG, "initScoreSpinner:type:Score");
+                mScoreNumberValue = makeScores().get(0);
+                mScoreValue.setCyclic(false);
+                updateScoreDisplay(180);
+                mScoreNumber.setText(String.format(Locale.US, "%s", "180"));
                 scoreType = "SCORE";
                 break;
             case "Peg":
-                Log.d(TAG, "initScoreSpinner:type:Peg");
                 data = makePegs();
-                if (mViewPager != null) {
-                    mScoreNumberValue = makePegs().get(0);
-                    mScoreValue.setCyclic(false);
-                    mViewPager.setVisibility(View.VISIBLE);
-                    updatePegDisplay(170);
-                    mViewPager.setTag(170);
-                    mViewPager.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View view, MotionEvent motionEvent) {
-                            return true;
-                        }
-                    });
-
-                }
                 mScoreNumberValue = makePegs().get(0);
-//                mScoreTypeBackground.setVisibility(View.GONE);
+                mScoreValue.setCyclic(false);
+                updatePegDisplay(170);
+                mScoreNumber.setText(String.format(Locale.US, "%s", "170"));
                 scoreType = "PEG";
                 break;
             default:
                 Log.d(TAG, "initScoreSpinner:type:default(score)");
-                data = makeScores();
                 scoreType = "SCORE";
+                mScoreTypeBackground.setVisibility(View.GONE);
+                mScoreNumber.setVisibility(View.GONE);
                 break;
         }
         mScoreValue.setData(data);
         mScoreValue.setVisibleItemCount(3);
-        Log.d(TAG, "initScoreSpinner:data:0:"+data.get(0));
         mScoreValue.setSelectedItemPosition(0);
-
-
-//        mScoreNumber.setVisibility(View.GONE);
-//        mScoreTypeBackground.setVisibility(View.GONE);
-//        mScoreTypeBackground.setImageResource(mScoreResources[0]);
-
         mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
             int id = 0;
             boolean playingScrollingSound = false;
@@ -949,6 +898,9 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onWheelSelected(int position) {
+                if (mMode != SAVING) {
+                    return;
+                }
                 stopSoundScrolling(id);
                 playSoundSelected(1);
                 playingScrollingSound = false;
@@ -959,6 +911,9 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onWheelScrollStateChanged(int state) {
+                if (mMode != SAVING) {
+                    return;
+                }
                 scrolls++;
                 Log.d(TAG, "onWheelScrollStateChanged:scrolls:"+scrolls);
                 if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && scrolls > 20) {
@@ -975,40 +930,32 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onItemSelected(WheelPicker picker, Object data, int position) {
+                if (mMode != SAVING) {
+                    return;
+                }
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:");
                 Object value = picker.getData().get(position);
+                mScoreNumberValue = value;
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:score:"+value);
                 Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:scoreType:"+scoreType);
                 if (scoreType.equals("PEG")) {
                     Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
-                    updatePegDisplay((int)value);
-                    mViewPager.setTag(value);
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
+                    mScoreNumber.setText(String.format(Locale.US, "%s", value));
+                    updatePegDisplay(value);
                     mScoreValue.setCyclic(false);
-                    //mscoreNumberValue fetched from CustomPagerAdapter to display number on peg
-                    mScoreNumberValue = value;
-                    mCustomPagerAdapterPegs.notifyDataSetChanged();
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-//                    mScoreNumber.setVisibility(View.GONE);
-
-
-
-
                 } else if (scoreType.equals("SCORE")) {
                     Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
                     updateScoreDisplay(value);
-                    mViewPager.setTag(value);
-
-//                    mScoreTypeBackground.setVisibility(View.GONE);
-//                    mScoreNumber.setVisibility(View.GONE);
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
+                    if (value == "RH") {
+                        mScoreNumber.setText(String.format(Locale.US, "%s", ""));
+                    } else {
+                        mScoreNumber.setText(String.format(Locale.US, "%s", value));
+                    }
                     mScoreValue.setCyclic(false);
-                    mScoreNumberValue = value;
-                    mCustomPagerAdapterScores.notifyDataSetChanged();
-//                    if (value != "RH") {
-//                        mScoreNumberValue = value;
-//                    } else {
-////                        mScoreNumber.setVisibility(View.GONE);
-//                        mScoreNumberValue = "RH";
-//                    }
 
                 }
             }

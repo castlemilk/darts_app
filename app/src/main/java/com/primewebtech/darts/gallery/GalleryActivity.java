@@ -2,6 +2,7 @@ package com.primewebtech.darts.gallery;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -267,6 +268,10 @@ public class GalleryActivity extends AppCompatActivity
 
 
         } else {
+            emptyView.setBackgroundColor(Color.BLACK);
+            if (mAdapter != null) {
+                mAdapter.hideAllHeaders();
+            }
             emptyView.setAlpha(1);
             emptyText.setAlpha(1);
             if (mRecyclerView != null) {

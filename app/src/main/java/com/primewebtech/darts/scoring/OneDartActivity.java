@@ -177,18 +177,18 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     }
     public void playSoundClick(float speed, int loop) {
-        Log.d(TAG, "playSoundScroll");
+        Log.d(TAG, "playSoundClick");
         if(loaded)  {
-            Log.d(TAG, "playSoundScroll:playing");
+            Log.d(TAG, "playSoundClick:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
             int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, loop, speed);
         }
     }
     public void playSoundClickMulti(float speed, int loop) {
-        Log.d(TAG, "playSoundScroll");
+        Log.d(TAG, "playSoundClickMulti");
         if(loaded)  {
-            Log.d(TAG, "playSoundScroll:playing");
+            Log.d(TAG, "playSoundClickMulti:playing");
             float leftVolumn = volume;
             float rightVolumn = volume;
             int streamId = this.soundPool.play(this.soundIdClickMulti,leftVolumn, rightVolumn, 1, loop, speed);
