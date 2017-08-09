@@ -91,6 +91,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private static final int MAX_STREAMS = 1;
     private int soundIdScroll;
     private int soundIdClick;
+    private int soundIdClickMulti;
 
 
     SharedPreferences prefs = null;
@@ -232,6 +233,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         });
         soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
+        soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
     }
     public void playSoundClick(float speed) {
@@ -242,6 +244,15 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             float rightVolumn = volume;
             int streamId = this.soundPool.play(this.soundIdClick,leftVolumn, rightVolumn, 1, 0, speed);
 
+        }
+    }
+    public void playSoundClickMulti(float speed, int loop) {
+        Log.d(TAG, "playSoundClickMulti");
+        if(loaded)  {
+            Log.d(TAG, "playSoundClickMulti:playing");
+            float leftVolumn = volume;
+            float rightVolumn = volume;
+            int streamId = this.soundPool.play(this.soundIdClickMulti,leftVolumn, rightVolumn, 1, loop, speed);
         }
     }
 
@@ -356,7 +367,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                playSoundClick(1);
+                playSoundClickMulti(1, 2);
             }
         });
         mIncrement140.setOnClickListener(new View.OnClickListener() {
@@ -381,7 +392,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                playSoundClick(1);
+                playSoundClickMulti(1, 2);
             }
         });
         mIncrement180.setOnClickListener(new View.OnClickListener() {
@@ -403,7 +414,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                playSoundClick(1);
+                playSoundClickMulti(1, 2);
             }
         });
     }

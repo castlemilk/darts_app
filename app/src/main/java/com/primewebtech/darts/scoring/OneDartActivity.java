@@ -363,7 +363,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                playSoundClick(1, 0);
+                playSoundClickMulti(1, 0);
             }
         });
         mIncrementTwo.setOnClickListener(new View.OnClickListener() {
