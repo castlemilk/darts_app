@@ -191,6 +191,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     public void initialiseBackButton() {
         //TODO: implement undo functionality using action SQL table of historical actions
         mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mBackButton.setSoundEffectsEnabled(false);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,6 +202,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 //                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
                         if(ScoreDatabase.mScoreTwoDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
+                            playSoundClick(1, 0);
                         } else {
                             Log.d(TAG, "FAILED to delete");
                         }
@@ -213,6 +215,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                         mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         if(ScoreDatabase.mScoreTwoDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
+                            playSoundClick(1, 0);
                         } else {
                             Log.d(TAG, "FAILED to delete");
                         }

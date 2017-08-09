@@ -130,10 +130,15 @@ public class ScoreHundredDao extends DatabaseContentProvider implements ScoreSch
         if (pegRecord != null) {
             Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableName(), contentValues,selector,
-                   selectorArgs) > 0;
+            int newCount = pegRecord.getPegCount()-decrement;
+            if (newCount >= 0 ) {
+                contentValues.put(PEG_COUNT, pegRecord.getPegCount()-decrement);
+                contentValues.put(LAST_MODIFIED, getDateNow());
+                return super.update(getScoreTableName(), contentValues,selector,
+                        selectorArgs) > 0;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

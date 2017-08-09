@@ -255,6 +255,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void initialiseBackButton() {
         //TODO: implement undo functionality using action SQL table of historical actions
         mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mBackButton.setSoundEffectsEnabled(false);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -265,6 +266,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
                             mCountButtonThree.setText(action.getRollBackValue());
+                            playSoundClick(1, 0);
                         } else {
                             Log.d(TAG, "FAILED to delete");
                         }
@@ -275,6 +277,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
                             mCountButtonThree.setText(action.getRollBackValue());
+                            playSoundClick(1, 0);
                         } else {
                             Log.d(TAG, "FAILED to delete");
                         }
