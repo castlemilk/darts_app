@@ -382,14 +382,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
                     playSoundClickMulti(1, 1);
-//                for (int i= 0; i<2; i++) {
-//                    view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
             }
         });
         mIncrementThree.setOnClickListener(new View.OnClickListener() {
@@ -408,14 +400,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
                     playSoundClickMulti(1, 2);
-//                    for (int i= 0; i<3; i++) {
-//                        view.playSoundEffect(android.view.SoundEffectConstants.CLICK);
-//                        try {
-//                            Thread.sleep(100);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
             }
         });
 

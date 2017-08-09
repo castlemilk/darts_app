@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.database.ScoreDatabase;
-import com.primewebtech.darts.database.model.PegRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,31 +91,11 @@ public class StatsHundredFragment extends Fragment {
 
 
         mStatsRows = new ArrayList<>();
-
-
-        TextView scoreTodayTotal = (TextView) rootView.findViewById(R.id.score_today_total);
-        int totalScoreToday = ScoreDatabase.mStatsHundredDoa.getTotalPegCountDay(pegValue);
-        scoreTodayTotal.setText(String.valueOf(totalScoreToday));
-
-        TextView scoreWeekTotal = (TextView) rootView.findViewById(R.id.score_week_total);
-        int totalScoreThisWeek = ScoreDatabase.mStatsHundredDoa.getTotalPegCountWeek(pegValue);
-        scoreWeekTotal.setText(String.valueOf(totalScoreThisWeek));
-
-        TextView scoreMonthTotal = (TextView) rootView.findViewById(R.id.score_month_total);
-        int totalScoreThisMonth =  ScoreDatabase.mStatsHundredDoa.getTotalPegCountMonth(pegValue);
-        scoreMonthTotal.setText(String.valueOf(totalScoreThisMonth));
-        int[] currentBestScores = {
-                totalScoreToday,
-                totalScoreThisWeek,
-                totalScoreThisMonth,
-        };
-
         mStatsRows.add(mStatsRowLD);
         mStatsRows.add(mStatsRowLW);
         mStatsRows.add(mStatsRowLM);
         HashMap<String, ArrayList<Integer>> scoreMap = new HashMap<>();
         int period_index = 0;
-        int bestForPeriod = 100;
         for ( int[] statRow : mStatsRows) {
             // iterate over day, week then month
             int previous_period_index = 0; //this is the first previous period
@@ -126,61 +105,10 @@ public class StatsHundredFragment extends Fragment {
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
                 int previousScore = ScoreDatabase.mStatsHundredDoa.getPreviousScore(pegValue,
                         periods[period_index], previous_period_index+1);
-                PegRecord allTimeHighestScoreForPeriod = ScoreDatabase.mStatsHundredDoa
-                        .getPeriodsHighestScore(pegValue, periods[period_index]);
                 scores.add(previousScore);
                 if (previousScore > 1000) {
                     rowNode.setTextSize(12);
                 }
-                PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsHundredDoa.
-                        getPeriodsHighestScore(pegValue, periods[period_index]);
-                if ( savedHighestScoreForIndex == null || allTimeHighestScoreForPeriod == null) {
-                    // initialisation of the stored/saved bested values
-
-                    if (previousScore > 0) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                        rowNode.setTextColor(Color.BLACK);
-                    }
-                    ScoreDatabase.mStatsHundredDoa.updateBestScoreToday(periods[period_index], pegValue, previousScore);
-
-                } else {
-                    // saved value exists
-                    if (previousScore >= savedHighestScoreForIndex.getPegCount() &&
-                            previousScore >= currentBestScores[period_index] &&
-                            previousScore >= allTimeHighestScoreForPeriod.getPegCount()) {
-                        Log.d(TAG, "--- NEW BEST SCORE ----");
-                        Log.d(TAG, "previousScore: "+previousScore);
-                        Log.d(TAG, "savedHighestScore: "+savedHighestScoreForIndex.toString());
-                        Log.d(TAG, "currentBestScore: "+String.valueOf(currentBestScores[period_index]));
-                        Log.d(TAG, "allTimeBestScore: "+String.valueOf(allTimeHighestScoreForPeriod));
-                        // Found a new highest previous score, paint view and update DB
-                        if (previousScore > 0) {
-                            rowNode.setBackground(
-                                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                            rowNode.setTextColor(Color.BLACK);
-                            ScoreDatabase.mStatsHundredDoa.updateBestScoreToday(periods[period_index], pegValue, previousScore);
-                        }
-
-                    } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsHundredDoa.updateBestScoreToday(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
-                    } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
-                            currentBestScores[period_index] > previousScore) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsHundredDoa.updateBestScoreToday(periods[period_index], pegValue, currentBestScores[period_index]);
-
-                    }else {
-                        rowNode.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                    }
-                }
-
                 rowNode.setText(String.format(Locale.getDefault(),"%d", previousScore));
 
                 previous_period_index++;

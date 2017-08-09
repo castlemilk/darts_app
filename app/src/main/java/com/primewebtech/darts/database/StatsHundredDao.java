@@ -154,6 +154,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public boolean updateBestScore(String period, int pegValue, int pegCount){
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
+        PegRecord currentBestScore = getPeriodsHighestScoreToday(pegValue, period);
         ContentValues contentValues = new ContentValues();
         contentValues.put(PEG_VALUE, pegValue);
         contentValues.put(PERIOD, period);
@@ -241,8 +242,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         Log.d(TAG, "updateBestScore:pegCount:"+pegCount);
         PegRecord currentBestScore = getPeriodsHighestScoreToday(pegValue, period);
         if (currentBestScore != null) {
-            updateBestScorePrevious(period,
-                    currentBestScore.getPegValue(), currentBestScore.getPegCount());
+
             ContentValues contentValues = new ContentValues();
             contentValues.put(PEG_VALUE, pegValue);
             contentValues.put(PERIOD, period);

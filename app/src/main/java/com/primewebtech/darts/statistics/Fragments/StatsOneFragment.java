@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.database.ScoreDatabase;
-import com.primewebtech.darts.database.model.PegRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,16 +88,6 @@ public class StatsOneFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_stats_one, container, false);
 
         mStatsRows = new ArrayList<>();
-
-        int totalScoreToday = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValue);
-        int totalScoreThisWeek = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValue);
-        int totalScoreThisMonth =  ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValue);
-        int[] currentBestScores = {
-                totalScoreToday,
-                totalScoreThisWeek,
-                totalScoreThisMonth,
-        };
-
         mStatsRows.add(mStatsRowLD);
         mStatsRows.add(mStatsRowLW);
         mStatsRows.add(mStatsRowLM);
@@ -115,58 +104,10 @@ public class StatsOneFragment extends Fragment {
                 Log.d(TAG, "previous_period_index:"+previous_period_index);
                 int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue,
                         periods[period_index], previous_period_index);
-                PegRecord allTimeHighestScoreForPeriod = ScoreDatabase.mStatsOneDoa
-                        .getPeriodsHighestScoreToday(pegValue, periods[period_index]);
                 scores.add(previousScore);
                 if (previousScore > 1000) {
                     rowNode.setTextSize(12);
                 }
-                PegRecord savedHighestScoreForIndex = ScoreDatabase.mStatsOneDoa.
-                        getPeriodsHighestScore(pegValue, periods[period_index]);
-                if ( savedHighestScoreForIndex == null  || allTimeHighestScoreForPeriod == null) {
-                    if (previousScore > 0) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                        rowNode.setTextColor(Color.BLACK);
-                    }
-                    ScoreDatabase.mStatsOneDoa.updateBestScoreToday(periods[period_index], pegValue, previousScore);
-
-                } else {
-                    Log.d(TAG, "previousScore: "+previousScore);
-                    Log.d(TAG, "savedHighestScore: "+savedHighestScoreForIndex.toString());
-                    Log.d(TAG, "currentBestScore: "+String.valueOf(currentBestScores[period_index]));
-                    Log.d(TAG, "allTimeBestScore: "+String.valueOf(allTimeHighestScoreForPeriod));
-                    // saved value exists
-                    if (previousScore >= savedHighestScoreForIndex.getPegCount() &&
-                            previousScore >= currentBestScores[period_index] &&
-                            previousScore >= allTimeHighestScoreForPeriod.getPegCount()) {
-                        Log.d(TAG, "--- NEW BEST SCORE ----");
-                        // Found a new highest previous score, paint view
-                        if (previousScore > 0) {
-                            rowNode.setBackground(
-                                    getResources().getDrawable(R.drawable.peg_stats_score_background_white));
-                            rowNode.setTextColor(Color.BLACK);
-                            ScoreDatabase.mStatsOneDoa.updateBestScoreToday(periods[period_index], pegValue, previousScore);
-                        }
-
-                    } else if (previousScore < allTimeHighestScoreForPeriod.getPegCount()) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScoreToday(periods[period_index], pegValue, allTimeHighestScoreForPeriod.getPegCount());
-                    } else if (currentBestScores[period_index] > allTimeHighestScoreForPeriod.getPegCount() &&
-                            currentBestScores[period_index] > previousScore) {
-                        rowNode.setBackground(
-                                getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                        ScoreDatabase.mStatsOneDoa.updateBestScoreToday(periods[period_index], pegValue, currentBestScores[period_index]);
-                    } else {
-                        rowNode.setBackground(
-                    getResources().getDrawable(R.drawable.peg_stats_score_background));
-                        rowNode.setTextColor(Color.WHITE);
-                    }
-                }
-
                 rowNode.setText(String.format(Locale.getDefault(),"%d", previousScore));
 
                 previous_period_index++;
@@ -174,13 +115,6 @@ public class StatsOneFragment extends Fragment {
             scoreMap.put(periods[period_index], scores);
             period_index++;
         }
-
-        int bestScoreDaily = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScoreToday(pegValue, "DAY")
-                .getPegCount();
-        int bestScoreWeekly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScoreToday(pegValue, "WEEK")
-                .getPegCount();
-        int bestScoreMonthly = ScoreDatabase.mStatsOneDoa.getPeriodsHighestScoreToday(pegValue, "MONTH")
-                .getPegCount();
         // POST PAINT ACTIVITY: we now determine what needs to be highlighted as PB's. This is to
         // save us re-evaluating any SQL or building more SQL functions etc. could be a TODO.
         Log.d(TAG, "scoreMap: "+scoreMap.toString());
@@ -211,12 +145,6 @@ public class StatsOneFragment extends Fragment {
             }
             period_index++;
         }
-
-
-        Log.d (TAG, "--- SETTING BEST SCORES ---");
-        Log.d(TAG, "bestScoreDaily:" + bestScoreDaily);
-        Log.d(TAG, "bestScoreWeekly:" + bestScoreWeekly);
-        Log.d(TAG, "bestScoreMonthly:" + bestScoreMonthly);
 
         // DAILY BEST EVER SCORE
         int k = 0;

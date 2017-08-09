@@ -284,6 +284,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     public void initialiseBackButton() {
         //TODO: implement undo functionality using action SQL table of historical actions
         mBackButton = (ImageButton) findViewById(R.id.button_back);
+        mBackButton.setSoundEffectsEnabled(false);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

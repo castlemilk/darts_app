@@ -196,7 +196,6 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
                 return highetScoreWithin6Months;
             }
         } else {
-            setBestScore(period, pegvalue, highetScoreWithin6Months);
             return highetScoreWithin6Months;
         }
 
