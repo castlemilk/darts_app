@@ -143,14 +143,15 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         }
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
+        int lastPosition = prefs.getInt("POSITION_HUNDRED", 0);
         initialiseCountIndicators();
-        initialisePager();
+        initialisePager(lastPosition);
         initialiseCountButtons();
         initialiseMenuButton();
         initialiseBackButton();
         initialiseSound();
         initialiseStatsButton();
-        updateCountIndicators(100);
+        updateCountIndicators(mPegs[lastPosition]);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,14 +175,23 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         }
         pin = (ImageView) findViewById(R.id.pin);
         pin.setImageResource(R.drawable.pin_40s);
+        int lastPosition = prefs.getInt("POSITION_HUNDRED", 0);
         initialiseCountIndicators();
-        initialisePager();
+        initialisePager(lastPosition);
         initialiseCountButtons();
         initialiseMenuButton();
         initialiseBackButton();
         initialiseSound();
         initialiseStatsButton();
         updateCountIndicators(100);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        prefs.edit().putInt("POSITION_HUNDRED", 0).apply();
+        Intent homepage = new Intent(this, HomePageActivity.class);
+        startActivity(homepage);
     }
     public void savePB() {
         for (int peg : mPegs) {
@@ -277,6 +287,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                prefs.edit().putInt("POSITION_HUNDRED", 0).apply();
                 Intent homePageIntent = new Intent(HundredDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
                 finish();
@@ -563,7 +574,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         }
     }
 
-    public void initialisePager() {
+    public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
         mViewPager.setChangePositionFactor(2000);
         mViewPager.setAdapter(new CyclicAdapter() {
@@ -605,6 +616,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 }
             }
         });
+        mViewPager.setCurrentPosition(position);
     }
     public class ScorePagerAdapter extends PagerAdapter {
 

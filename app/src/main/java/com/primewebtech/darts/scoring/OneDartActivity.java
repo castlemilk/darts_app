@@ -216,11 +216,19 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                prefs.edit().putInt("POSITION", 0).apply();
                 Intent homePageIntent = new Intent(OneDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
                 finish();
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        prefs.edit().putInt("POSITION", 0).apply();
+        Intent homepage = new Intent(this, HomePageActivity.class);
+        startActivity(homepage);
     }
 
     public void initialiseSound() {
