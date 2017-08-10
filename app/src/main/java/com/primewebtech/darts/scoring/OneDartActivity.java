@@ -218,6 +218,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             public void onClick(View view) {
                 Intent homePageIntent = new Intent(OneDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
+                finish();
             }
         });
     }

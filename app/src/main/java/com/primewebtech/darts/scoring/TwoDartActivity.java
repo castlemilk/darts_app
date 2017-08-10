@@ -524,6 +524,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             public void onClick(View view) {
                 Intent homePageIntent = new Intent(TwoDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
+                finish();
             }
         });
     }

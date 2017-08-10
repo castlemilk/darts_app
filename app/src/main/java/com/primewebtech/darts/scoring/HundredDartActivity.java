@@ -279,6 +279,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onClick(View view) {
                 Intent homePageIntent = new Intent(HundredDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
+                finish();
             }
         });
     }

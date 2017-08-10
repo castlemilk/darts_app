@@ -249,6 +249,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public void onClick(View view) {
                 Intent homePageIntent = new Intent(ThreeDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
+                finish();
             }
         });
     }
