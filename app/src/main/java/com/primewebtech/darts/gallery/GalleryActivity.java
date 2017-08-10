@@ -1,9 +1,7 @@
 package com.primewebtech.darts.gallery;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
@@ -23,6 +21,7 @@ import android.widget.TextView;
 
 import com.primewebtech.darts.R;
 import com.primewebtech.darts.camera.CameraActivity;
+import com.primewebtech.darts.homepage.HomePageActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,6 +58,7 @@ public class GalleryActivity extends AppCompatActivity
     public ActionMode mActionMode;
     public boolean selectedAll = false;
     private ShareActionProvider mShareActionProvider;
+    private String state;
 
 
 
@@ -73,18 +73,34 @@ public class GalleryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         Log.d(TAG, "onCreate");
-        FlexibleAdapter.enableLogs(true);
-        if (savedInstanceState == null) {
-            GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDatasetByMonth();
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            state = b.getString("STATE", "FULL");
+        } else {
+            state = "FULL";
         }
-        initializeRecylerView(savedInstanceState);
-        inActionMode = false;
+
+
+        if (!state.contains("EMPTY")) {
+            FlexibleAdapter.enableLogs(true);
+            if (savedInstanceState == null) {
+                GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDatasetByMonth();
+            }
+            initializeRecylerView(savedInstanceState);
+            inActionMode = false;
+        } else {
+            onUpdateEmptyView(0);
+        }
+
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState!");
-        mAdapter.onSaveInstanceState(outState);
+        if (mAdapter != null) {
+            mAdapter.onSaveInstanceState(outState);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -120,6 +136,7 @@ public class GalleryActivity extends AppCompatActivity
             case R.id.menu_item_take_photo:
                 Intent cameraIntent = new Intent(GalleryActivity.this, CameraActivity.class);
                 startActivity(cameraIntent);
+                finish();
                 return true;
             default:
                 return false;
@@ -193,29 +210,6 @@ public class GalleryActivity extends AppCompatActivity
         //TODO: navigate to selected image
 
     }
-    public class SingleMediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
-
-        private MediaScannerConnection mMs;
-        private File mFile;
-
-        public SingleMediaScanner(Context context, File f) {
-            mFile = f;
-            mMs = new MediaScannerConnection(context, this);
-            mMs.connect();
-        }
-
-        public void onMediaScannerConnected() {
-            mMs.scanFile(mFile.getAbsolutePath(), null);
-        }
-
-        public void onScanCompleted(String path, Uri uri) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            startActivity(intent);
-            mMs.disconnect();
-        }
-
-    }
 
     @Override
     public void onItemLongClick(int position) {
@@ -228,6 +222,9 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     private void toggleSelection(int position) {
+        if (mAdapter == null) {
+            return;
+        }
         mAdapter.toggleSelection(position);
         int count = mAdapter.getSelectedItemCount();
 
@@ -241,6 +238,9 @@ public class GalleryActivity extends AppCompatActivity
 
     private void setContextTitle(int count) {
         Log.d(TAG, "SHARING:"+mAdapter.getSelectedPositions().toString());
+        if ( mActionMode == null) {
+            return;
+        }
         mActionMode.setTitle(count == 1 ?
                 getString(R.string.action_selected_one, Integer.toString(count)) :
                 getString(R.string.action_selected_many, Integer.toString(count)));
@@ -290,6 +290,9 @@ public class GalleryActivity extends AppCompatActivity
 	 * ==================================== */
      protected GridLayoutManager createNewGridLayoutManager() {
          GridLayoutManager gridLayoutManager = new SmoothScrollGridLayoutManager(this, mColumnCount);
+         if (mAdapter == null) {
+             return gridLayoutManager;
+         }
 
          gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
              @Override
@@ -316,6 +319,9 @@ public class GalleryActivity extends AppCompatActivity
     @Override
     public void onDeleteConfirmed() {
         //TODO: implement deletion
+        if (mAdapter == null) {
+            return;
+        }
         for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {
             for (Integer pos : mAdapter.getSelectedPositions()) {
                 Log.d(TAG, "onDeleteConfirmed:"+pos);
@@ -349,6 +355,9 @@ public class GalleryActivity extends AppCompatActivity
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         FlipView flipView;
+        if (mRecyclerView == null) {
+            return false;
+        }
         for (int i =0; i< mRecyclerView.getChildCount(); i++) {
             flipView = (FlipView) mRecyclerView.getChildAt(i).findViewById(R.id.image);
             if (flipView != null) {
@@ -373,6 +382,9 @@ public class GalleryActivity extends AppCompatActivity
                 return true;
             case R.id.menu_delete:
                 Log.d(TAG, "onActionItemClicked:DELETE");
+                if (mAdapter == null) {
+                    return false;
+                }
                 for ( Integer position: mAdapter.getSelectedPositions()) {
                     if ( mAdapter.getItem(position) != null &&
                             mAdapter.getItem(position).isSelectable()) {
@@ -397,7 +409,9 @@ public class GalleryActivity extends AppCompatActivity
     }
 
     public void toggleSelectAll() {
-
+        if ( mAdapter == null ) {
+            return;
+        }
         if (selectedAll) {
             mAdapter.clearSelection();
             setContextTitle(mAdapter.getSelectedItemCount());
@@ -438,10 +452,14 @@ public class GalleryActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
+        if (mAdapter != null) {
+            mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
+        }
         mActionMode = null;
         GalleryDatabaseService.onDestroy();
         super.onBackPressed();
+        Intent homepage = new Intent(this, HomePageActivity.class);
+        startActivity(homepage);
     }
     @Override
     public void onDestroy() {
@@ -455,8 +473,13 @@ public class GalleryActivity extends AppCompatActivity
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         inActionMode = false;
-        mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
         mActionMode = null;
+        inActionMode = true;
+        if (mAdapter == null || mRecyclerView == null) {
+            return;
+        }
+        mAdapter.setMode(FlexibleAdapter.MODE_IDLE);
+
         mAdapter.clearSelection();
         Log.d(TAG, "onDestroyActionMode:itemsCount:"+mAdapter.getItemCount());
         Log.d(TAG, "onDestroyActionMode:items:"+mAdapter.getDeletedItems());
@@ -468,7 +491,7 @@ public class GalleryActivity extends AppCompatActivity
             this.onUpdateEmptyView(0);
         }
         FlipView flipView;
-        inActionMode = true;
+
         if (Utils.hasMarshmallow()) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorBlack, this.getTheme()));
         } else if (Utils.hasLollipop()) {

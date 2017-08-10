@@ -266,6 +266,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 Bundle b = new Bundle();
                 b.putString("scoreType", "hundred");
                 b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentPosition()]);
+                prefs.edit().putInt("POSITION_HUNDRED", mViewPager.getCurrentPosition()).apply();
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
             }

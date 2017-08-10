@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -135,10 +136,10 @@ public class Util {
 //        int pictureWidth = pictureImg.getWidth();
 //        int pictureHeight = pictureImg.getHeight();
         Double pinSize = pictureWidth * 0.3;
-        int textSize = (int) (pictureHeight * 0.045f);
+        int textSize = (int) (pictureHeight * 0.06f);
         int pinSizeInt = pinSize.intValue();
-        Double logoWidth = pictureWidth * 0.55;
-        Double logoHeight = pictureHeight * 0.15;
+        Double logoWidth = pictureWidth * 0.37;
+        Double logoHeight = pictureHeight * 0.13;
 //        Double logoHeight = 300d;
 
 //        int logoSizeInt = pinSize.intValue();
@@ -148,14 +149,14 @@ public class Util {
         float marginBottom = pinSizeInt + pictureWidth * 0.05f;
         float logoFloatRight = pictureWidth * 0.05f;
         float margin = pictureWidth * 0.05f;
-        float logoFloatTop = pictureHeight - logoSizeIntHeight - margin;
+        float logoFloatTop = pictureHeight - logoSizeIntHeight - margin * 0.4f;
         float pinFloatLeft;
         float pinFloatTop;
         if (score.contains("RH")) {
-            pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
+            pinFloatLeft = pictureWidth - pinSizeInt * 0.85f - margin;
             pinFloatTop = pictureHeight - pinSizeInt * 1.1f - margin;
         } else {
-            pinFloatLeft = pictureWidth - pinSizeInt * 1.1f - margin;
+            pinFloatLeft = pictureWidth - pinSizeInt * 0.85f - margin;
             pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
         }
 
@@ -182,12 +183,13 @@ public class Util {
             textPaint.setColor(Color.BLACK);
             Rect bounds = new Rect();
             textPaint.getTextBounds(String.valueOf(score), 0, String.valueOf(score).length(), bounds);
+            textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
             int textHeight  = bounds.height();
             Log.d("bytes:textHeight", Integer.toString(textHeight));
             Log.d("bytes:textSize", Integer.toString(textSize));
             int textWidth = bounds.width();
             int textPositionHeight = (int) (pinFloatTop +
-                    pinSizeInt / 2 - (textHeight/1.2));
+                    pinSizeInt / 2 - (textHeight/1.25));
             StaticLayout staticLayout = new StaticLayout(String.valueOf(score),
                     textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
             comboImage.translate(pinFloatLeft, textPositionHeight);
