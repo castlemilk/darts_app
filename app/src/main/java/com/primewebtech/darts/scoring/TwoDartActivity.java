@@ -392,8 +392,6 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         int currentIndex = mViewPager.getCurrentPosition();
         if ( currentIndex+10 > mPinValues.size() ) {
             mViewPager.setCurrentPosition(mPinValues.size());
-        } else if (currentIndex < 8){
-            mViewPager.setCurrentPosition(currentIndex+9);
         } else {
             mViewPager.setCurrentPosition(currentIndex+10);
         }
@@ -402,10 +400,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
         if ( currentIndex-10 < 0) {
-            mViewPager.setCurrentPosition(0);
-        } else if (currentIndex > mPinValues.size() - 4) {
-            mViewPager.setCurrentPosition(currentIndex-4);
-        } else {
+            mViewPager.setCurrentPosition(getPegIndex(110));
+        } else if (currentIndex == getPegIndex(110)) {
+            mViewPager.setCurrentPosition(getPegIndex(100));
+        } else{
             mViewPager.setCurrentPosition(currentIndex-10);
         }
     }

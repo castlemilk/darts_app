@@ -91,6 +91,31 @@ public class GalleryDatabaseService {
             itemIndex++;
         }
     }
+    public void updateHeadersSectionsGalleryDatasetByMonth() {
+        pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
+        mDateOrganiser = new DateOrganiser(pictureDirectory);
+        HeaderItem header = null;
+        Date dom = new Date();
+        int itemIndex = 0;
+        int lastHeaderIndex = 0;
+        Log.v(TAG, "createHeadersSectionsGalleryDataset");
+        mItems.clear();
+        for (File file : mDateOrganiser.sortedFiles()) {
+
+            if (!dom.equals(mDateOrganiser.getMonth(file))) {
+                dom = mDateOrganiser.getMonth(file);
+                Log.v(TAG, "dow:"+dom.toString());
+                header = newHeader(++lastHeaderIndex, dom);
+                Log.v(TAG, header.toString());
+                mItems.add(newPhotoItem(itemIndex + 1, file, header));
+                Log.v(TAG, newPhotoItem(itemIndex + 1, file, header).toString());
+            } else {
+                mItems.add(newPhotoItem(itemIndex + 1, file, header));
+                Log.v(TAG, newPhotoItem(itemIndex + 1, file, header).toString());
+            }
+            itemIndex++;
+        }
+    }
 
     public static GalleryDatabaseService getInstance(Context context) {
         if (mInstance == null) {

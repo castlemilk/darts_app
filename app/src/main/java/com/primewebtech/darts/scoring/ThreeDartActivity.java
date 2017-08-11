@@ -356,8 +356,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void movePagerForwardTen() {
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
-        if ( mPinValues.get(currentIndex) < 110) {
-            mViewPager.setCurrentPosition(8);
+        if ( mPinValues.get(currentIndex) < 109) {
+            mViewPager.setCurrentPosition(getPegIndex(109));
         } else if (currentIndex+10 > mPinValues.size() ){
             mViewPager.setCurrentPosition(mPinValues.size());
         } else {
@@ -368,10 +368,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
         if ( currentIndex-10 < 0) {
-            mViewPager.setCurrentPosition(0);
-        } else if (currentIndex > mPinValues.size() - 4) {
-            mViewPager.setCurrentPosition(currentIndex-4);
-        } else {
+            mViewPager.setCurrentPosition(getPegIndex(170));
+        }  else {
             mViewPager.setCurrentPosition(currentIndex-10);
         }
     }

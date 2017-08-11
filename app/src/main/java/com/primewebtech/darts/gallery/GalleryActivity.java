@@ -67,7 +67,28 @@ public class GalleryActivity extends AppCompatActivity
     /* ===================
 	 * ACTIVITY MANAGEMENT
 	 * =================== */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.activity_gallery);
+        Log.d(TAG, "onCreate");
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            state = b.getString("STATE", "FULL");
+        } else {
+            state = "FULL";
+        }
 
+
+        if (!state.contains("EMPTY")) {
+            FlexibleAdapter.enableLogs(true);
+            GalleryDatabaseService.getInstance(this).updateHeadersSectionsGalleryDatasetByMonth();
+            initializeRecylerView();
+            inActionMode = false;
+        } else {
+            onUpdateEmptyView(0);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +107,7 @@ public class GalleryActivity extends AppCompatActivity
             if (savedInstanceState == null) {
                 GalleryDatabaseService.getInstance(this).createHeadersSectionsGalleryDatasetByMonth();
             }
-            initializeRecylerView(savedInstanceState);
+            initializeRecylerView();
             inActionMode = false;
         } else {
             onUpdateEmptyView(0);
@@ -143,7 +164,7 @@ public class GalleryActivity extends AppCompatActivity
         }
     }
 
-    private void initializeRecylerView(Bundle savedInstanceState) {
+    private void initializeRecylerView() {
 
         mAdapter = new GalleryAdapter(GalleryDatabaseService.getInstance(this).getDatabaseList(), this);
         mAdapter.setAnimationOnScrolling(false);

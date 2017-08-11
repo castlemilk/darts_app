@@ -90,38 +90,50 @@ public class PhotoViewer extends FragmentActivity {
             public void onClick(View view) {
                 int position = mViewPager.getCurrentPosition();
                 Log.d(TAG, "DELETING:ITEM:INDEX:"+position);
-                if (photos.size() >= 1) {
-                    mViewPager.removeViewAt(position);
-                    File photo = photos.get(position);
-                    Log.d(TAG, "DELETING:PHOTO:"+photo.getPath());
-                    photo.delete();
+                Log.d(TAG, "DELETING:ITEM:PHOTO:LENGTH:"+photos.size());
+                File photo;
+                if (position >= photos.size()) {
+                    photo = photos.get(position-1);
+                    photos.remove(position-1);
+                } else {
+                    photo = photos.get(position);
                     photos.remove(position);
-                    mCyclicAdapter = new CyclicAdapter() {
-                        @Override
-                        public int getItemsCount() {
-                            return photos.size();
-                        }
+                }
+//                    mViewPager.removeViewAt(position);
+                Log.d(TAG, "DELETING:PHOTO:"+photo.getPath());
+                photo.delete();
+                mCyclicAdapter = new CyclicAdapter() {
+                    @Override
+                    public int getItemsCount() {
+                        return photos.size();
+                    }
 
-                        @Override
-                        public View createView(int i) {
-                            ImageView photo = new ImageView(PhotoViewer.this);
+                    @Override
+                    public View createView(int i) {
+                        ImageView photo = new ImageView(PhotoViewer.this);
+                        if (photos.size() == 1) {
+                            Glide.with(getBaseContext()).load("file:///"+photos.get(0).getPath()).crossFade(500).into(photo);
+                        } else {
                             Glide.with(getBaseContext()).load("file:///"+photos.get(i).getPath()).crossFade(500).into(photo);
-                            return photo;
                         }
 
-                        @Override
-                        public void removeView(int i, View view) {
+                        return photo;
+                    }
 
+                    @Override
+                    public void removeView(int i, View view) {
 
-                        }
-                    };
-                    mViewPager.setAdapter(mCyclicAdapter);
-                    if (position < photos.size()) {
-                        mViewPager.setCurrentPosition(position+1);
-                    } else if (photos.size() == 0){
-                        goBackToEmptyGallery();
 
                     }
+                };
+                if (position < photos.size()) {
+                    mViewPager.setAdapter(mCyclicAdapter);
+                    mViewPager.setCurrentPosition(position+1);
+                }  else if ( photos.size() == 1) {
+                    mViewPager.setCurrentPosition(0);
+                } else if (photos.size() == 0) {
+                    goBackToEmptyGallery();
+
                 }
 
 

@@ -420,8 +420,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
-
-        mViewPager.setChangePositionFactor(4000);
+        mViewPager.setChangePositionFactor(100000000);
             mViewPager.setAdapter(new CyclicAdapter() {
                 @Override
                 public int getItemsCount() {
