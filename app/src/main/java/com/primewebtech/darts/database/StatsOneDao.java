@@ -129,8 +129,12 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         }
     }
     public void savePB(int pegValue) {
+
         for (String period : periods) {
+            Log.d(TAG, "savePB:saving:period:"+periods);
+            Log.d(TAG, "savePB:saving:pegValue:"+pegValue);
             int bestScore = getHighestScore(pegValue, period);
+            Log.d(TAG, "savePB:saving:bestScore:"+bestScore);
             setBestScore(period, pegValue, bestScore);
         }
 
@@ -178,7 +182,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=4; i++) {
+        for (int i = 0; i <=5; i++) {
             int score = getPreviousScore(pegvalue, period, i);
             if (score >= highestValue) {
                 highestValue = score;
@@ -191,16 +195,17 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         Log.d(TAG, "getHighestScore:period:"+pegvalue);
         int highetScoreWithin6Months = getHighestScoreForPeriodToday(pegvalue, period);
         PegRecord highestScoreLogged = getPeriodsHighestScore(pegvalue, period);
-        Log.d(TAG, "getHighestScore:["+period+"]:today"+highetScoreWithin6Months);
+        Log.d(TAG, "getHighestScore:["+period+"]:today:"+highetScoreWithin6Months);
 
         if (highestScoreLogged != null) {
-            Log.d(TAG, "getHighestScore:["+period+"]:logged"+highestScoreLogged.getPegCount());
+            Log.d(TAG, "getHighestScore:["+period+"]:logged:"+highestScoreLogged.getPegCount());
             if (highestScoreLogged.getPegCount() > highetScoreWithin6Months) {
                 return highestScoreLogged.getPegCount();
             } else {
                 return highetScoreWithin6Months;
             }
         } else {
+            setBestScore(period, pegvalue, 0);
             return highetScoreWithin6Months;
         }
 

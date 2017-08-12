@@ -226,8 +226,8 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
 
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=4; i++) {
-            int score = getPreviousScore(pegvalue, period, i+1);
+        for (int i = 0; i <=5; i++) {
+            int score = getPreviousScore(pegvalue, period, i);
             if (score >= highestValue) {
                 highestValue = score;
             }

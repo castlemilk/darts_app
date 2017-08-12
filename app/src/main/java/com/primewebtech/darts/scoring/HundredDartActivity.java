@@ -135,17 +135,17 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
 
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime_hundred", curTime);
+        lastResetTime = prefs.getString("lastResetTime_hundred", "0000000");
         Log.d(TAG, "CUR_TIME:"+curTime);
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            initialisePegCounts();
-            initialiseCountButtons();
+//            initialisePegCounts();
+//            initialiseCountButtons();
             savePB();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
@@ -171,18 +171,18 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
 
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime_hundred", curTime);
+        lastResetTime = prefs.getString("lastResetTime_hundred", "0000000");
         Log.d(TAG, "CUR_TIME:"+curTime);
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
             savePB();
-            initialisePegCounts();
-            initialiseCountButtons();
+//            initialisePegCounts();
+//            initialiseCountButtons();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
         pin = (ImageView) findViewById(R.id.pin);

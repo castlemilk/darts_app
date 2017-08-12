@@ -116,18 +116,19 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime", curTime);
+        lastResetTime = prefs.getString("lastResetTime", "00000000");
         Log.d(TAG, "CUR_TIME:"+curTime);
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            initialisePegCounts();
-            initialiseCountButtons();
             savePB();
+//            initialisePegCounts();
+//            initialiseCountButtons();
+
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
         int lastPosition = prefs.getInt("POSITION", 0);
@@ -160,18 +161,18 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime", curTime);
+        lastResetTime = prefs.getString("lastResetTime", "00000000");
         Log.d(TAG, "CUR_TIME:"+curTime);
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
             savePB();
-            initialisePegCounts();
-            initialiseCountButtons();
+//            initialisePegCounts();
+//            initialiseCountButtons();
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
 
@@ -189,6 +190,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     }
 
     public void savePB() {
+        Log.d(TAG, "savePB:saving");
         for (int peg : mPegs) {
             ScoreDatabase.mStatsOneDoa.savePB(peg);
         }

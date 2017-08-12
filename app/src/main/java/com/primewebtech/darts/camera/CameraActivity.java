@@ -815,7 +815,12 @@ public class CameraActivity extends AppCompatActivity {
     }
     private List<Object> makeScores() {
         List<Object> ret = new ArrayList<>();
-        for (int i=180; i>=0; i--) {
+        ret.add(180);
+        ret.add(177);
+        ret.add(174);
+        ret.add(171);
+        ret.add(170);
+        for (int i=168; i>=0; i--) {
             ret.add(i);
         }
         ret.add("RH");

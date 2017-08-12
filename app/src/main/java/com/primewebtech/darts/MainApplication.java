@@ -39,6 +39,7 @@ public class MainApplication extends android.app.Application {
         if (sharedPreferences.getBoolean("firstrun", true)) {
             Log.i(TAG, "FIRST_RUN:initialising system");
             initialisePegCounts();
+            savePB();
             sharedPreferences.edit().putBoolean("firstrun", false).apply();
         }
 
@@ -48,6 +49,13 @@ public class MainApplication extends android.app.Application {
         SharedPreferences.Editor prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE).edit();
         prefs.clear();
         prefs.commit();
+    }
+    public void savePB() {
+        Log.d(TAG, "savePB:saving");
+        for (int peg : mPegs) {
+            ScoreDatabase.mStatsOneDoa.savePB(peg);
+        }
+
     }
     public void initialisePegCounts() {
         for (int peg : mPegs) {
