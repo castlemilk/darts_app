@@ -23,19 +23,23 @@
 
     <Button
         android:id="@+id/three_count_button"
-        android:layout_width="88dp"
-        android:layout_height="48dp"
-        android:text=""
-        android:background="@android:color/transparent"
-        app:layout_constraintRight_toRightOf="@+id/pin"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/pin"
-        app:layout_constraintBottom_toBottomOf="@+id/pin"
-        android:layout_marginBottom="34dp"
-        app:layout_constraintHorizontal_bias="0.506"
-        android:layout_marginRight="10dp"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="10dp" />
+        android:background="@android:color/transparent"
+        android:text=""
+        android:textSize="@dimen/score_indicator"
+        app:layout_constraintLeft_toLeftOf="@+id/pager_three_dart"
+        app:layout_constraintRight_toRightOf="@+id/pager_three_dart"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintTop_toTopOf="@+id/pager_three_dart"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/pager_three_dart"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintVertical_bias="1.0" />
     <!--<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--android:id="@+id/pager_three_dart"-->
         <!--android:layout_width="100dp"-->
@@ -136,7 +140,7 @@
         android:layout_gravity="center"
         android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/undo_button"
+        android:src="@drawable/back_icon"
         android:layout_marginStart="55dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

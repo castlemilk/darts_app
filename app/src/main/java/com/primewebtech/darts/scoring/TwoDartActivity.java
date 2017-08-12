@@ -3,6 +3,7 @@ package com.primewebtech.darts.scoring;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -76,6 +77,9 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     private ImageButton mBackButton;
     public MainApplication app;
     SharedPreferences prefs = null;
+    private Typeface tf_reg;
+    private Typeface tf_heavy;
+    private Typeface tf_bold;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -118,6 +122,9 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.two_dart_view);
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
@@ -153,7 +160,9 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         setContentView(R.layout.two_dart_view);
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
@@ -316,6 +325,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementTwo = (Button) findViewById(R.id.increment_two);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mCountButtonTwo.setTypeface(tf_bold);
+        mCountButtonThree.setTypeface(tf_bold);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
@@ -435,7 +446,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_two_dart);
-        mViewPager.setChangePositionFactor(2000);
+        mViewPager.setChangePositionFactor(4000);
 
         final int size = generatePinValues().size();
         mViewPager.setAdapter(new CyclicAdapter() {
@@ -448,7 +459,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
             public View createView(int i) {
                 TextView scoreNumber = new TextView(TwoDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPinValues.get(i)));
-                scoreNumber.setTextSize(55);
+                scoreNumber.setTextSize(75);
+                scoreNumber.setTypeface(tf_heavy);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;
@@ -471,7 +483,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                     mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord2.getPegCount()));
                 } else {
                     Log.d(TAG, "onPageSelected:RECORD_NOT_FOUND:INITIALISING");
-                    PegRecord newPegRecord2 = new PegRecord(getDate(), TYPE_2,mPinValues.get(i) , 0);
+                    PegRecord newPegRecord2 = new PegRecord(getDate(), TYPE_2, mPinValues.get(i) , 0);
                     try {
                         ScoreDatabase.mScoreTwoDoa.addTodayPegValue(newPegRecord2);
                         mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", 0));
@@ -499,6 +511,24 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 
 
     private void updatePinBoard(int pinValue) {
+        PegRecord pegRecord2 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(pinValue, TYPE_2);
+        PegRecord pegRecord3 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(pinValue, TYPE_3);
+        if (pegRecord2 != null) {
+            if (pegRecord2.getPegCount() > 100) {
+                mCountButtonTwo.setTextSize(15);
+            } else if (pegRecord2.getPegCount() > 1000) {
+                mCountButtonTwo.setTextSize(10);
+            }
+        }
+        if (pegRecord3 != null) {
+            if (pegRecord3.getPegCount() > 100) {
+                mCountButtonThree.setTextSize(15);
+            } else if (pegRecord3.getPegCount() > 1000) {
+                mCountButtonThree.setTextSize(10);
+            }
+        }
+
+
         if (60 < pinValue && pinValue < 70) {
             pin.setImageResource(mPinBoards[0]);
         } else if ( 70 <= pinValue && pinValue < 80) {

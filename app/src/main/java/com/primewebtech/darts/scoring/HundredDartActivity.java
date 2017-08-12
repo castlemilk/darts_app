@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -81,6 +82,9 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private Button mIncrement100;
     private Button mIncrement140;
     private Button mIncrement180;
+    private Typeface tf_reg;
+    private Typeface tf_heavy;
+    private Typeface tf_bold;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -125,6 +129,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.hundred_dart_view);
+//        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Ubuntu-Bold.ttf");
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
+        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
 
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -157,6 +165,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hundred_dart_view);
+
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
+        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
 
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -192,6 +204,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         prefs.edit().putInt("POSITION_HUNDRED", 0).apply();
         Intent homepage = new Intent(this, HomePageActivity.class);
         startActivity(homepage);
+//        finish();
     }
     public void savePB() {
         for (int peg : mPegs) {
@@ -344,6 +357,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100 = (Button) findViewById(R.id.increment_100plus);
         mIncrement140 = (Button) findViewById(R.id.increment_140plus);
         mIncrement180 = (Button) findViewById(R.id.increment_180plus);
+        mCountButton.setTypeface(tf_bold);
+        mIncrement100.setTypeface(tf_heavy);
+        mIncrement140.setTypeface(tf_heavy);
+        mIncrement180.setTypeface(tf_heavy);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_3);
         if (pegRecord != null) {
@@ -465,6 +482,12 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         Log.d(TAG, "updateCountIndicators:pegValue:"+pegValue);
         int total = ScoreDatabase.mScoreHundredDoa.getTotalPegCount(pegValue);
         Log.d(TAG, "updateCountIndicators:total:"+total);
+        PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(pegValue, TYPE_3);
+        if (pegRecord.getPegCount() >= 100) {
+            mCountButton.setTextSize(15);
+        } else if (pegRecord.getPegCount() > 1000) {
+            mCountButton.setTextSize(10);
+        }
         int index = 0;
         if (total > 0 && total < 1100) {
             for (int circleIndicator : indicatorResources) {
@@ -576,7 +599,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
-        mViewPager.setChangePositionFactor(2000);
+        mViewPager.setChangePositionFactor(4000);
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
             public int getItemsCount() {
@@ -587,7 +610,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
-                scoreNumber.setTextSize(45);
+                scoreNumber.setTextSize(70);
+                scoreNumber.setTypeface(tf_reg);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;

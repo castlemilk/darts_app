@@ -90,7 +90,7 @@
         android:layout_gravity="center"
         android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/back_image_button_back"
+        android:src="@drawable/back_icon"
         app:layout_constraintRight_toLeftOf="@+id/button_take_photo"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"

@@ -178,7 +178,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=6; i++) {
+        for (int i = 0; i <=4; i++) {
             int score = getPreviousScore(pegvalue, period, i);
             if (score >= highestValue) {
                 highestValue = score;
@@ -187,10 +187,15 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
         return highestValue;
     }
     public int getHighestScore(int pegvalue, String period) {
+        Log.d(TAG, "getHighestScore:pegValue:"+pegvalue);
+        Log.d(TAG, "getHighestScore:period:"+pegvalue);
         int highetScoreWithin6Months = getHighestScoreForPeriodToday(pegvalue, period);
         PegRecord highestScoreLogged = getPeriodsHighestScore(pegvalue, period);
+        Log.d(TAG, "getHighestScore:["+period+"]:today"+highetScoreWithin6Months);
+
         if (highestScoreLogged != null) {
-            if (highestScoreLogged.getPegCount()> highetScoreWithin6Months) {
+            Log.d(TAG, "getHighestScore:["+period+"]:logged"+highestScoreLogged.getPegCount());
+            if (highestScoreLogged.getPegCount() > highetScoreWithin6Months) {
                 return highestScoreLogged.getPegCount();
             } else {
                 return highetScoreWithin6Months;
@@ -436,8 +441,8 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      */
     public int getTotalPegCountWeek(int pegValue) {
         String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE;
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        Calendar cal = Calendar.getInstance(Locale.US);
+        cal.setFirstDayOfWeek(Calendar.SUNDAY);
         cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
         String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(cal.getTime())};
 
@@ -500,7 +505,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
         Calendar cal = Calendar.getInstance(Locale.US);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         cal.add(Calendar.DAY_OF_WEEK, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
         cal.add(Calendar.DAY_OF_WEEK, 6); //1: +6, 2: +6

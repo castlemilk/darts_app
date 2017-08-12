@@ -3,6 +3,7 @@ package com.primewebtech.darts.scoring;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -69,6 +70,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private Button mIncrementOne;
     private Button mIncrementTwo;
     private Button mIncrementThree;
+    private Typeface tf_reg;
+    private Typeface tf_heavy;
+    private Typeface tf_bold;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -108,7 +112,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         super.onResume();
         setContentView(R.layout.one_dart_view);
 
-
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
 
@@ -137,11 +143,22 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         updateCountIndicators(40); //always start on pegValue 40.
     }
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        prefs.edit().putInt("POSITION", 0).apply();
+        Intent homepage = new Intent(this, HomePageActivity.class);
+        startActivity(homepage);
+        finish();
+        super.onBackPressed();
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_dart_view);
 
-
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
 
@@ -216,19 +233,11 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                prefs.edit().putInt("POSITION", 0).apply();
                 Intent homePageIntent = new Intent(OneDartActivity.this, HomePageActivity.class);
                 startActivity(homePageIntent);
                 finish();
             }
         });
-    }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        prefs.edit().putInt("POSITION", 0).apply();
-        Intent homepage = new Intent(this, HomePageActivity.class);
-        startActivity(homepage);
     }
 
     public void initialiseSound() {
@@ -342,6 +351,10 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mIncrementOne = (Button) findViewById(R.id.increment_one);
         mIncrementTwo = (Button) findViewById(R.id.increment_two);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mCountButton.setTypeface(tf_bold);
+        mIncrementOne.setTypeface(tf_heavy);
+        mIncrementTwo.setTypeface(tf_heavy);
+        mIncrementThree.setTypeface(tf_heavy);
         mIncrementOne.setSoundEffectsEnabled(false);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);
@@ -393,7 +406,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                    playSoundClickMulti(1, 1);
+                playSoundClickMulti(1, 1);
             }
         });
         mIncrementThree.setOnClickListener(new View.OnClickListener() {
@@ -411,7 +424,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 } else {
                     Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
                 }
-                    playSoundClickMulti(1, 2);
+                playSoundClickMulti(1, 2);
             }
         });
 
@@ -420,27 +433,28 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
-        mViewPager.setChangePositionFactor(100000000);
-            mViewPager.setAdapter(new CyclicAdapter() {
-                @Override
-                public int getItemsCount() {
-                    return 6;
-                }
+        mViewPager.setChangePositionFactor(5000);
+        mViewPager.setAdapter(new CyclicAdapter() {
+            @Override
+            public int getItemsCount() {
+                return 6;
+            }
 
-                @Override
-                public View createView(int i) {
-                    TextView scoreNumber = new TextView(OneDartActivity.this);
-                    scoreNumber.setText(String.valueOf(mPegs[i]));
-                    scoreNumber.setTextSize(75);
-                    scoreNumber.setTextColor(Color.BLACK);
-                    scoreNumber.setGravity(Gravity.CENTER);
-                    return scoreNumber;
-                }
-                @Override
-                public void removeView(int i, View view) {
+            @Override
+            public View createView(int i) {
+                TextView scoreNumber = new TextView(OneDartActivity.this);
+                scoreNumber.setText(String.valueOf(mPegs[i]));
+                scoreNumber.setTextSize(75);
+                scoreNumber.setTypeface(tf_heavy);
+                scoreNumber.setTextColor(Color.BLACK);
+                scoreNumber.setGravity(Gravity.CENTER);
+                return scoreNumber;
+            }
+            @Override
+            public void removeView(int i, View view) {
 
-                }
-            });
+            }
+        });
 //        }
         mViewPager.addOnPositionChangeListener(new CyclicView.OnPositionChangeListener() {
             @Override
@@ -492,6 +506,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     public void updateCountIndicators(int pegValue) {
         Log.d(TAG, "updateCountIndicators:pegValue:"+pegValue);
         int total = ScoreDatabase.mScoreOneDoa.getTotalPegCount(pegValue);
+        PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(pegValue, TYPE_2);
+        if (pegRecord.getPegCount() >= 100) {
+            mCountButton.setTextSize(15);
+        } else if (pegRecord.getPegCount() > 1000) {
+            mCountButton.setTextSize(10);
+        }
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
         if (total > 0 && total < 1100) {

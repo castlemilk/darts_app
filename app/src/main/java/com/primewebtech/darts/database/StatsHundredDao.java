@@ -226,8 +226,8 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
 
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=6; i++) {
-            int score = getPreviousScore(pegvalue, period, i);
+        for (int i = 0; i <=4; i++) {
+            int score = getPreviousScore(pegvalue, period, i+1);
             if (score >= highestValue) {
                 highestValue = score;
             }
@@ -363,7 +363,7 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public HashMap<String, String> getPreviousWeek(int previousWeekIndex) {
         HashMap<String, String> previousWeekWindow = new HashMap<>();
         Calendar cal = Calendar.getInstance(Locale.US);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         cal.add(Calendar.DAY_OF_WEEK, -7 * previousWeekIndex); // 1: -7, 2: -14, ...
         previousWeekWindow.put("start", df.format(cal.getTime()));
         cal.add(Calendar.DAY_OF_WEEK, 6); //1: +6, 2: +6
@@ -479,8 +479,8 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
      * @return
      */
     public int getTotalPegCountWeek(int pegValue) {
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        Calendar cal = Calendar.getInstance(Locale.US);
+        cal.setFirstDayOfWeek(Calendar.SUNDAY);
         cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
         String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(cal.getTime())};
         String queryString = "select sum(" + PEG_COUNT + ") from " + SCORE_TABLE_HUNDRED +

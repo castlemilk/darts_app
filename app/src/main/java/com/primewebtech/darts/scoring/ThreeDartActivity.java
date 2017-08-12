@@ -3,6 +3,7 @@ package com.primewebtech.darts.scoring;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -75,6 +76,9 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
+    private Typeface tf_reg;
+    private Typeface tf_heavy;
+    private Typeface tf_bold;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -122,8 +126,13 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.three_dart_view);
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        mMovePagerForwardTen.setTypeface(tf_reg);
+        mMovePagerBackwardsTen.setTypeface(tf_reg);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -148,8 +157,13 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.three_dart_view);
+        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/AsapCondensed-Regular.ttf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
+        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        mMovePagerForwardTen.setTypeface(tf_reg);
+        mMovePagerBackwardsTen.setTypeface(tf_reg);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -304,8 +318,10 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     }
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
+        mCountButtonThree.setTypeface(tf_bold);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
+        mIncrementThree.setTypeface(tf_heavy);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
@@ -389,6 +405,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 TextView scoreNumber = new TextView(ThreeDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPinValues.get(i)));
                 scoreNumber.setTextSize(55);
+                scoreNumber.setTypeface(tf_heavy);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;
@@ -426,9 +443,16 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         values.add(103);
         values.add(105);
         values.add(106);
-        for (int i=108; i<=170; i++) {
+        values.add(108);
+        values.add(109);
+        for (int i=111; i<=158; i++) {
             values.add(i);
         }
+        values.add(160);
+        values.add(161);
+        values.add(164);
+        values.add(167);
+        values.add(170);
         return values;
     }
     private void updatePinBoard(int pinValue) {

@@ -85,7 +85,7 @@
         android:layout_gravity="center"
         android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/back_image_button_back"
+        android:src="@drawable/back_icon"
         android:layout_marginStart="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

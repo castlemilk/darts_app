@@ -10,7 +10,7 @@
         android:right="10dp"
         android:top="5dp" />
     <stroke
-        android:width="4px"
+        android:width="7px"
         android:color="#ffffff" />
 
 </shape>
