@@ -452,16 +452,16 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         });
     }
     public int[] indicatorResources = {
-            R.id.indicator1001,
-            R.id.indicator1002,
-            R.id.indicator1003,
-            R.id.indicator1004,
-            R.id.indicator1005,
-            R.id.indicator1006,
-            R.id.indicator1007,
-            R.id.indicator1008,
-            R.id.indicator1009,
-            R.id.indicator10010,
+            R.id.indicator1,
+            R.id.indicator2,
+            R.id.indicator3,
+            R.id.indicator4,
+            R.id.indicator5,
+            R.id.indicator6,
+            R.id.indicator7,
+            R.id.indicator8,
+            R.id.indicator9,
+            R.id.indicator10,
     };
     public void initialiseCountIndicators() {
         for (int circleIndicator : indicatorResources) {
@@ -486,11 +486,14 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         int total = ScoreDatabase.mScoreHundredDoa.getTotalPegCount(pegValue);
         Log.d(TAG, "updateCountIndicators:total:"+total);
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(pegValue, TYPE_3);
-        if (pegRecord.getPegCount() >= 100) {
-            mCountButton.setTextSize(15);
-        } else if (pegRecord.getPegCount() > 1000) {
-            mCountButton.setTextSize(10);
+        if (pegRecord != null) {
+            if (pegRecord.getPegCount() >= 100) {
+                mCountButton.setTextSize(15);
+            } else if (pegRecord.getPegCount() > 1000) {
+                mCountButton.setTextSize(10);
+            }
         }
+
         int index = 0;
         if (total > 0 && total <= 1100) {
             for (int circleIndicator : indicatorResources) {
@@ -516,7 +519,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 index++;
 
             }
-        } else if (total > 1100 && total < 2100) {
+        } else if (total > 1100 && total <= 2100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / ((total - 1000) + 1) );
@@ -613,7 +616,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
-                scoreNumber.setTextSize(70);
+                scoreNumber.setTextSize(55);
                 scoreNumber.setTypeface(tf_reg);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);

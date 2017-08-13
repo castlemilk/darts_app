@@ -536,7 +536,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 index++;
 
             }
-        } else if (total > 1100 && total < 2100) {
+        } else if (total > 1100 && total <= 2100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / ((total - 1000) + 1) );
