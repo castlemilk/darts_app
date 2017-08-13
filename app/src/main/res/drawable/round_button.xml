@@ -3,13 +3,13 @@
     <item android:state_pressed="false">
         <shape android:shape="oval">
             <solid android:color="#000000" />
-            <stroke android:width="7px" android:color="#ffffff" />
+            <stroke android:width="@dimen/circle_button_ring_thickness" android:color="#ffffff" />
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
             <solid android:color="#000000" />
-            <stroke android:width="7px" android:color="#ffffff" />
+            <stroke android:width="@dimen/circle_button_ring_thickness" android:color="#ffffff" />
         </shape>
     </item>
 </selector>
