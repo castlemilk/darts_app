@@ -8,13 +8,13 @@
     >
     <TextView
         android:id="@+id/column_day"
-        android:layout_width="60dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/stats_bubble_current_period_width"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="10dp"
         android:text="@string/_stats_d"
         android:textColor="@color/list_choice_normal_bg_light"
-        android:textSize="25sp"
+        android:textSize="@dimen/stats_headers_text"
         android:textStyle="bold"
         android:typeface="monospace"
         android:gravity="center"
@@ -31,8 +31,8 @@
 
     <TextView
         android:id="@+id/column_week"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/stats_bubble_current_period_width"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/stats_w"
@@ -49,8 +49,8 @@
 
     <TextView
         android:id="@+id/column_month"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/stats_bubble_current_period_width"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginEnd="10dp"
         android:gravity="center"

@@ -38,6 +38,8 @@
     <string name="_0_stats">0</string>
     <string name="stats_w">W</string>
     <string name="stats_m">M</string>
+    <string name="w">W</string>
+    <string name="m">M</string>
 
 
 </resources>

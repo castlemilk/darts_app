@@ -5,8 +5,13 @@
     <dimen name="margin_right_handle">22dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <!-- stats -->
-    <dimen name="stats_headers">60dp</dimen>
-    <dimen name="stats_values">45dp</dimen>
+    <dimen name="stats_headers_text">30sp</dimen>
+    <dimen name="stats_text_PB_period_size">25sp</dimen>
+    <dimen name="stats_text_current_period_size">30sp</dimen>
+    <dimen name="stats_text_previous_period_size">25sp</dimen>
+    <dimen name="stats_bubble_PB_period_width">45dp</dimen>
+    <dimen name="stats_bubble_current_period_width">45dp</dimen>
+    <dimen name="stats_bubble_previous_width">45dp</dimen>
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_circle_button_width">80dp</dimen>
