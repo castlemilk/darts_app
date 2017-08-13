@@ -5,6 +5,7 @@
     <dimen name="margin_right">16dp</dimen>
     <dimen name="margin_right_handle">22dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="score_margin_top">40dp</dimen>
     <dimen name="circle_button_ring_thickness">4px</dimen>
     <!-- stats -->
     <dimen name="stats_headers_text">30sp</dimen>
@@ -24,7 +25,7 @@
     <dimen name="stats_summary_bubble_pegValue_text">35sp</dimen>
     <!-- gallery -->
     <!-- scoring -->
-    <dimen name="score_pin_board_size">300dp</dimen>
+    <dimen name="score_pin_board_size">250dp</dimen>
     <dimen name="score_indicator_bubble">17dp</dimen>
     <!-- indicator1 -->
     <dimen name="score_indicator1_margin_top">3.5dp</dimen>
@@ -122,6 +123,5 @@
     <!-- icons -->
     <dimen name="back_icon_width">30dp</dimen>
     <dimen name="back_icon_height">36dp</dimen>
-    <dimen name="score_margin_top">40dp</dimen>
 
 </resources>
