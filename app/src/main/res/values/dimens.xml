@@ -12,6 +12,8 @@
     <dimen name="stats_bubble_PB_period_width">45dp</dimen>
     <dimen name="stats_bubble_current_period_width">45dp</dimen>
     <dimen name="stats_bubble_previous_width">45dp</dimen>
+    <dimen name="stats_hundred_column_space">30dp</dimen>
+
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_circle_button_width">80dp</dimen>
