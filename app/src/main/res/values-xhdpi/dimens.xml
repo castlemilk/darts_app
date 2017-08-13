@@ -7,21 +7,31 @@
     <!-- stats -->
     <dimen name="stats_headers_text">30sp</dimen>
     <dimen name="stats_text_PB_period_size">25sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">40sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator">70dp</dimen>
+    <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
+    <dimen name="stats_text_pegvalue_total">50dp</dimen>
     <dimen name="stats_text_current_period_size">30sp</dimen>
     <dimen name="stats_text_previous_period_size">25sp</dimen>
-    <dimen name="stats_bubble_PB_period_width">45dp</dimen>
-    <dimen name="stats_bubble_current_period_width">45dp</dimen>
-    <dimen name="stats_bubble_previous_width">45dp</dimen>
+    <dimen name="stats_bubble_PB_period_width">65dp</dimen>
+    <dimen name="stats_bubble_current_period_width">75dp</dimen>
+    <dimen name="stats_bubble_previous_width">55dp</dimen>
+    <dimen name="stats_summary_bubble_values">55dp</dimen>
+    <dimen name="stats_summary_bubble_values_text">30sp</dimen>
+    <dimen name="stats_summary_bubble_pegValue">70dp</dimen>
+    <dimen name="stats_summary_bubble_pegValue_text">35sp</dimen>
     <!-- gallery -->
     <!-- scoring -->
-    <dimen name="score_circle_button_width">80dp</dimen>
-    <dimen name="score_circle_button_height">80dp</dimen>
+    <dimen name="score_circle_button_width">55dp</dimen>
+    <dimen name="score_circle_button_height">55dp</dimen>
     <dimen name="score_bubble_PB_score">70dp</dimen>
     <dimen name="score_bubble_PB_score_daily">65dp</dimen>
     <dimen name="score_bubble_small">55dp</dimen>
     <dimen name="score_bubble_total_aggregate">40dp</dimen>
     <dimen name="score_indicator">19sp</dimen>
-    <dimen name="increment_number_text_size">30sp</dimen>
+    <dimen name="increment_number_text_size">27sp</dimen>
+    <dimen name="increment_number_text_size_hundred">20sp</dimen>
+
     <!-- homepage -->
     <dimen name="home_page_sore_mode_text">25sp</dimen>
     <dimen name="home_page_nav_button_size">70dp</dimen>
@@ -30,8 +40,11 @@
     <!-- 56 + 8 small margin top -->
     <dimen name="dialog_padding_vertical">24dp</dimen>
     <dimen name="dialog_padding_horizontal">24dp</dimen>
-    <dimen name="back_icon_width">36dp</dimen>
-    <dimen name="back_icon_height">42dp</dimen>
+
+    <!-- icons -->
+    <dimen name="back_icon_width">30dp</dimen>
+    <dimen name="back_icon_height">36dp</dimen>
+
 
     <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
     <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>

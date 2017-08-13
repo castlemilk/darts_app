@@ -7,10 +7,14 @@
     <!-- stats -->
     <dimen name="stats_headers_text">30sp</dimen>
     <dimen name="stats_text_PB_period_size">25sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">25sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator">60dp</dimen>
+    <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
+    <dimen name="stats_text_pegvalue_total">40dp</dimen>
     <dimen name="stats_text_current_period_size">30sp</dimen>
     <dimen name="stats_text_previous_period_size">25sp</dimen>
-    <dimen name="stats_bubble_PB_period_width">45dp</dimen>
-    <dimen name="stats_bubble_current_period_width">70dp</dimen>
+    <dimen name="stats_bubble_PB_period_width">50dp</dimen>
+    <dimen name="stats_bubble_current_period_width">55dp</dimen>
     <dimen name="stats_bubble_previous_width">45dp</dimen>
     <dimen name="stats_summary_bubble_values">45dp</dimen>
     <dimen name="stats_summary_bubble_values_text">20sp</dimen>
