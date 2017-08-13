@@ -512,7 +512,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         }
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
-        if (total > 0 && total < 1100) {
+        if (total > 0 && total <= 1100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / (total + 1) );

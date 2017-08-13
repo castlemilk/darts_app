@@ -492,7 +492,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             mCountButton.setTextSize(10);
         }
         int index = 0;
-        if (total > 0 && total < 1100) {
+        if (total > 0 && total <= 1100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / (total + 1) );
