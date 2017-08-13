@@ -128,7 +128,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         setContentView(R.layout.three_dart_view);
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
         mMovePagerForwardTen.setTypeface(tf_reg);
@@ -159,7 +159,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         setContentView(R.layout.three_dart_view);
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/AsapCondensed-Regular.ttf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
         mMovePagerForwardTen.setTypeface(tf_reg);
@@ -318,10 +318,10 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     }
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
-        mCountButtonThree.setTypeface(tf_bold);
+        mCountButtonThree.setTypeface(tf_heavy);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
-        mIncrementThree.setTypeface(tf_heavy);
+        mIncrementThree.setTypeface(tf_reg);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {

@@ -12,16 +12,16 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_marginLeft="8dp"
-        android:src="@drawable/pin_40s"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="8dp"
+        android:src="@drawable/pin_40s"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
     <ImageView
-        android:id="@+id/indicator1001"
+        android:id="@+id/indicator1"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:background="@drawable/pin_count_indicator_white"
@@ -33,7 +33,7 @@
         android:layout_marginTop="2.5dp" />
 
     <ImageView
-        android:id="@+id/indicator1002"
+        android:id="@+id/indicator2"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="0.831" />
     <ImageView
-        android:id="@+id/indicator1003"
+        android:id="@+id/indicator3"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -57,7 +57,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="1.0" />
     <ImageView
-        android:id="@+id/indicator1004"
+        android:id="@+id/indicator4"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -69,7 +69,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="1.0" />
     <ImageView
-        android:id="@+id/indicator1005"
+        android:id="@+id/indicator5"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -81,7 +81,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="0.83" />
     <ImageView
-        android:id="@+id/indicator1006"
+        android:id="@+id/indicator6"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:background="@drawable/pin_count_indicator_white"
@@ -94,7 +94,7 @@
 
 
     <ImageView
-    android:id="@+id/indicator1007"
+    android:id="@+id/indicator7"
     android:layout_width="15dp"
     android:layout_height="15dp"
     android:layout_marginLeft="8dp"
@@ -106,7 +106,7 @@
     app:layout_constraintTop_toTopOf="@+id/pin"
     app:layout_constraintHorizontal_bias="0.83" />
     <ImageView
-        android:id="@+id/indicator1008"
+        android:id="@+id/indicator8"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -118,7 +118,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="1.0" />
     <ImageView
-        android:id="@+id/indicator1009"
+        android:id="@+id/indicator9"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -130,7 +130,7 @@
         app:layout_constraintTop_toTopOf="@+id/pin"
         app:layout_constraintHorizontal_bias="1.0" />
     <ImageView
-        android:id="@+id/indicator10010"
+        android:id="@+id/indicator10"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_marginLeft="8dp"
@@ -144,7 +144,7 @@
 
 
     <!--<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--android:id="@+id/pager_hundred_dart"-->
+        <!--android:id="@+id/pager_one_dart"-->
         <!--android:layout_width="100dp"-->
         <!--android:layout_height="110dp"-->
         <!--app:layout_constraintBottom_toTopOf="@+id/pin"-->
@@ -153,7 +153,7 @@
         <!--app:layout_constraintLeft_toRightOf="@+id/pin">-->
     <!--</android.support.v4.view.ViewPager>-->
     <org.malcdevelop.cyclicview.CyclicView
-        android:id="@+id/pager_hundred_dart"
+        android:id="@+id/pager_one_dart"
         android:layout_width="170dp"
         android:layout_height="190dp"
         app:layout_constraintBottom_toTopOf="@+id/pin"
@@ -161,34 +161,33 @@
         app:layout_constraintRight_toLeftOf="@+id/pin"
         app:layout_constraintLeft_toRightOf="@+id/pin">
     </org.malcdevelop.cyclicview.CyclicView>
-
-
     <Button
         android:id="@+id/count_button"
         android:layout_width="40dp"
         android:layout_height="25dp"
         android:text="0"
+        android:gravity="center"
         android:textSize="@dimen/score_indicator"
         android:background="@android:color/transparent"
         app:layout_constraintRight_toRightOf="@+id/pin"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/pin"
         app:layout_constraintBottom_toBottomOf="@+id/pin"
-        android:layout_marginBottom="29dp"
-        app:layout_constraintHorizontal_bias="0.502"
-        android:layout_marginRight="10dp"
-        app:layout_constraintTop_toTopOf="@+id/pager_hundred_dart"
-        android:layout_marginTop="8dp"
-        app:layout_constraintVertical_bias="0.981" />
+        android:layout_marginBottom="28dp"
+        app:layout_constraintHorizontal_bias="0.495"
+        android:layout_marginRight="0dp"
+        app:layout_constraintTop_toTopOf="@+id/pager_one_dart"
+        android:layout_marginTop="10dp"
+        app:layout_constraintVertical_bias="0.98" />
 
 
     <Button
-        android:id="@+id/increment_100plus"
+        android:id="@+id/increment_one"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_100"
+        android:background="@drawable/round_button_hdpi"
+        android:text="@string/_1"
         android:textSize="@dimen/increment_number_text_size"
         android:textColor="@android:color/background_light"
         android:layout_marginTop="8dp"
@@ -198,53 +197,56 @@
         app:layout_constraintTop_toBottomOf="@+id/pin"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.016" />
+        app:layout_constraintVertical_bias="0.00999999" />
 
     <Button
-        android:id="@+id/increment_140plus"
+        android:id="@+id/increment_two"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_140"
-        android:textSize="@dimen/increment_number_text_size"
-        android:textColor="@android:color/background_light"
-        app:layout_constraintHorizontal_bias="0.779"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="9dp"
-        app:layout_constraintTop_toBottomOf="@+id/increment_100plus" />
-
-    <Button
-        android:id="@+id/increment_180plus"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="@dimen/score_circle_button_width"
-        android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_180"
+        android:background="@drawable/round_button_hdpi"
+        android:text="@string/_2"
         android:textSize="@dimen/increment_number_text_size"
         android:textColor="@android:color/background_light"
         app:layout_constraintHorizontal_bias="0.779"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/increment_one"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/increment_three"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="@dimen/score_circle_button_width"
+        android:layout_height="@dimen/score_circle_button_height"
+        android:background="@drawable/round_button_hdpi"
+        android:text="@string/_3"
+        android:textSize="@dimen/increment_number_text_size"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintHorizontal_bias="0.779"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="-15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/increment_140plus"
+        app:layout_constraintTop_toBottomOf="@+id/increment_two"
         app:layout_constraintVertical_bias="0.0" />
     <ImageButton
         android:id="@+id/button_menu"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
-        android:src="@drawable/menu_icon"
+        android:background="@drawable/round_button_hdpi"
+        android:src="@drawable/menu_icon_hdpi"
         android:layout_marginStart="55dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.016"
+        app:layout_constraintVertical_bias="0.00999999"
         android:layout_marginLeft="55dp"
         app:layout_constraintTop_toBottomOf="@+id/pin"
         android:layout_marginRight="8dp"
@@ -256,12 +258,16 @@
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
+        android:background="@drawable/round_button_hdpi"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/back_icon"
+        android:soundEffectsEnabled="true"
+        android:src="@drawable/back_icon_hdpi"
         android:layout_marginStart="55dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="9dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="0.0"
         android:layout_marginLeft="55dp"
         app:layout_constraintTop_toBottomOf="@+id/button_menu"
         android:layout_marginRight="8dp"
@@ -272,19 +278,16 @@
         android:id="@+id/stats_button"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:gravity="center_vertical|center_horizontal"
-        android:src="@drawable/graph_icon"
-        android:textColor="#fff"
-        android:layout_marginStart="47dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="55dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/round_button_hdpi"
+        android:gravity="center_vertical|center_horizontal"
+        android:src="@drawable/graph_icon_hdpi"
+        android:textColor="#fff"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="47dp"
         app:layout_constraintTop_toBottomOf="@+id/button_back"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.087" />
 </android.support.constraint.ConstraintLayout>

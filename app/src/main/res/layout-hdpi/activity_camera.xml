@@ -88,7 +88,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
+        android:background="@drawable/round_button_medium"
         android:onClick="onBackButtonClick"
         android:src="@drawable/back_icon_small"
         app:layout_constraintRight_toLeftOf="@+id/button_take_photo"

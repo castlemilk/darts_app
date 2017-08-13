@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -111,7 +112,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.one_dart_view);
-
+        SavePBTask savePBTask = new SavePBTask();
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
@@ -125,9 +126,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            savePB();
-//            initialisePegCounts();
-//            initialiseCountButtons();
+            savePBTask.execute();
 
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
@@ -156,7 +155,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_dart_view);
-
+        SavePBTask savePBTask = new SavePBTask();
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
@@ -169,10 +168,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
-            //TODO: reset all the required variables and carry previous data into historical logs
-            savePB();
-//            initialisePegCounts();
-//            initialiseCountButtons();
+            savePBTask.execute();
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
 
@@ -604,8 +600,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         else {
             initialiseCountIndicators();
         }
-
-
-
+    }
+    private class SavePBTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            savePB();
+            return null;
+        }
     }
 }

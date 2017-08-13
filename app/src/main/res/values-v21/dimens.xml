@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="back_icon_width">36dp</dimen>
+    <dimen name="back_icon_height">42dp</dimen>
+    <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
+    <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>
+</resources>

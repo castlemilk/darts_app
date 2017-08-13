@@ -124,9 +124,11 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         setContentView(R.layout.two_dart_view);
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        mMovePagerBackwardsTen.setTypeface(tf_reg);
+        mMovePagerForwardTen.setTypeface(tf_reg);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -162,7 +164,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         super.onCreate(savedInstanceState);
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_heavy= Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
         setContentView(R.layout.two_dart_view);
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
@@ -325,8 +327,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementTwo = (Button) findViewById(R.id.increment_two);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
-        mCountButtonTwo.setTypeface(tf_bold);
-        mCountButtonThree.setTypeface(tf_bold);
+        mCountButtonTwo.setTypeface(tf_heavy);
+        mCountButtonThree.setTypeface(tf_heavy);
+        mIncrementTwo.setTypeface(tf_reg);
+        mIncrementThree.setTypeface(tf_reg);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
@@ -460,7 +464,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 TextView scoreNumber = new TextView(TwoDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPinValues.get(i)));
                 scoreNumber.setTextSize(75);
-                scoreNumber.setTypeface(tf_heavy);
+                scoreNumber.setTypeface(tf_reg);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;

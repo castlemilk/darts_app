@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -129,6 +130,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.hundred_dart_view);
+        SavePBTask savePBTask = new SavePBTask();
 //        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Ubuntu-Bold.ttf");
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
@@ -146,7 +148,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             //TODO: reset all the required variables and carry previous data into historical logs
 //            initialisePegCounts();
 //            initialiseCountButtons();
-            savePB();
+            savePBTask.execute();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
         pin = (ImageView) findViewById(R.id.pin);
@@ -165,7 +167,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hundred_dart_view);
-
+        SavePBTask savePBTask = new SavePBTask();
         tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
         tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
         tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
@@ -180,9 +182,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            savePB();
+//            savePB();
 //            initialisePegCounts();
 //            initialiseCountButtons();
+            savePBTask.execute();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
         pin = (ImageView) findViewById(R.id.pin);
@@ -357,10 +360,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100 = (Button) findViewById(R.id.increment_100plus);
         mIncrement140 = (Button) findViewById(R.id.increment_140plus);
         mIncrement180 = (Button) findViewById(R.id.increment_180plus);
-        mCountButton.setTypeface(tf_bold);
-        mIncrement100.setTypeface(tf_heavy);
-        mIncrement140.setTypeface(tf_heavy);
-        mIncrement180.setTypeface(tf_heavy);
+        mCountButton.setTypeface(tf_reg);
+        mIncrement100.setTypeface(tf_reg);
+        mIncrement140.setTypeface(tf_reg);
+        mIncrement180.setTypeface(tf_reg);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_3);
         if (pegRecord != null) {
@@ -687,7 +690,12 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((FrameLayout) object);
         }
-
-
+    }
+    private class SavePBTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            savePB();
+            return null;
+        }
     }
 }

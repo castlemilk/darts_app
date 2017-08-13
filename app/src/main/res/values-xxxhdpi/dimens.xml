@@ -27,9 +27,7 @@
     <dimen name="dialog_padding_horizontal">24dp</dimen>
     <dimen name="back_icon_width">36dp</dimen>
     <dimen name="back_icon_height">42dp</dimen>
-    <dimen name="increment_number_text_size_hundred">25sp</dimen>
 
-
-    <item name="back_icon_viewportwidth" type="dimen" format="float">36.0</item>
-    <item name="back_icon_viewportheight" type="dimen" format="float">42.0</item>
+    <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
+    <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>
 </resources>
