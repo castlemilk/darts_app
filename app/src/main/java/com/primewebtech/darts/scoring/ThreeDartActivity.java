@@ -406,7 +406,9 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             mViewPager.setCurrentPosition(getPegIndex(119));
         } else if (currentValue >= 111 && currentValue <= 148) {
             mViewPager.setCurrentPosition(currentIndex+10);
-        } else if (currentIndex + 10 > mPinValues.size() ){
+        } else if (currentValue == 160) {
+            mViewPager.setCurrentPosition(getPegIndex(170));
+        }else if (currentIndex + 10 > mPinValues.size() ){
             mViewPager.setCurrentPosition(mPinValues.size());
         } else {
             mViewPager.setCurrentPosition(currentIndex+10);
@@ -415,10 +417,25 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void movePagerBackwardsTen() {
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
-        if ( currentIndex-10 < 0) {
-            mViewPager.setCurrentPosition(getPegIndex(170));
-        }  else {
+        int currentValue = mPinValues.get(currentIndex);
+        if ( currentValue == 170) {
+            mViewPager.setCurrentPosition(getPegIndex(160));
+        } else if (currentValue == 167) {
+            mViewPager.setCurrentPosition(getPegIndex(157));
+        } else if (currentValue == 164) {
+            mViewPager.setCurrentPosition(getPegIndex(154));
+        } else if (currentValue == 161) {
+            mViewPager.setCurrentPosition(getPegIndex(151));
+        } else if (currentValue == 160) {
+            mViewPager.setCurrentPosition(getPegIndex(150));
+        } else if ( currentValue == 109 ) {
+            mViewPager.setCurrentPosition(getPegIndex(99));
+        } else if ( currentValue <= 158 && currentValue >=121 ) {
             mViewPager.setCurrentPosition(currentIndex-10);
+        } else if ( currentIndex - 10 < 0 ) {
+            mViewPager.setCurrentPosition(getPegIndex(170));
+        } else {
+        mViewPager.setCurrentPosition(currentIndex-10);
         }
     }
 
