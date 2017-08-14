@@ -75,7 +75,7 @@ public class SQLTests {
 //            int randomDay = 1 + (int)(Math.random() * 27);
 //            int randomMonth = 4 + (int)(Math.random() * 4);
 //                    int randomScore = i % 8;
-                    int randomScore = 7;
+                    int randomScore = 1001;
 //                int randomPegIndex = (int)(Math.random() * 6); // 0-6
 //            String date = String.format("2017-%02d-%02d", randomMonth, randomDay);
                     Calendar cal = Calendar.getInstance();

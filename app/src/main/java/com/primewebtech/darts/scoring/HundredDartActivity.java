@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -608,6 +609,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_hundred_dart);
+        final TypedValue outValue = new TypedValue();
+        getResources().getValue(R.dimen.score_pin_board_size_hundred_text,outValue, true);
         mViewPager.setChangePositionFactor(4000);
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
@@ -619,7 +622,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
-                scoreNumber.setTextSize(40);
+                scoreNumber.setTextSize(outValue.getFloat());
                 scoreNumber.setTypeface(tf_reg);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);

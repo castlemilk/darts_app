@@ -370,11 +370,43 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     }
 
     public void movePagerForwardTen() {
+        /**
+         * values.add(99);
+         values.add(102);
+         values.add(103);
+         values.add(105);
+         values.add(106);
+         values.add(108);
+         values.add(109);
+         for (int i=111; i<=158; i++) {
+         values.add(i);
+         }
+         values.add(160);
+         values.add(161);
+         values.add(164);
+         values.add(167);
+         values.add(170);
+         */
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
-        if ( mPinValues.get(currentIndex) < 109) {
+        int currentValue = mPinValues.get(currentIndex);
+        if ( currentValue == 99) {
             mViewPager.setCurrentPosition(getPegIndex(109));
-        } else if (currentIndex+10 > mPinValues.size() ){
+        } else if (currentValue == 102) {
+            mViewPager.setCurrentPosition(getPegIndex(112));
+        } else if (currentValue == 103) {
+            mViewPager.setCurrentPosition(getPegIndex(113));
+        } else if (currentValue == 105) {
+            mViewPager.setCurrentPosition(getPegIndex(115));
+        } else if (currentValue == 106) {
+            mViewPager.setCurrentPosition(getPegIndex(116));
+        } else if (currentValue == 108) {
+            mViewPager.setCurrentPosition(getPegIndex(118));
+        } else if (currentValue == 109) {
+            mViewPager.setCurrentPosition(getPegIndex(119));
+        } else if (currentValue >= 111 && currentValue <= 148) {
+            mViewPager.setCurrentPosition(currentIndex+10);
+        } else if (currentIndex + 10 > mPinValues.size() ){
             mViewPager.setCurrentPosition(mPinValues.size());
         } else {
             mViewPager.setCurrentPosition(currentIndex+10);

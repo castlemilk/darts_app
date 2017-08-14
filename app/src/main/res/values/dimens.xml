@@ -97,6 +97,8 @@
     <dimen name="score_indicator10_margin_left">8dp</dimen>
     <item name="score_indicator10_horizontal_bias" format="float" type="dimen">0.192</item>
     <item name="score_indicator10_vertical_bias" format="float" type="dimen">0.0</item>
+    <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
+    <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">15.0</item>
 
     <dimen name="score_count_button_margin_bottom">40.7dp</dimen>
     <dimen name="score_circle_button_width">80dp</dimen>

@@ -20,13 +20,17 @@
     <dimen name="stats_bubble_PB_period_width">80dp</dimen>
     <dimen name="stats_bubble_current_period_width">90dp</dimen>
     <dimen name="stats_bubble_previous_width">65dp</dimen>
-    <dimen name="stats_summary_bubble_values">55dp</dimen>
+    <dimen name="stats_summary_bubble_values">60dp</dimen>
     <dimen name="stats_summary_bubble_values_text">30sp</dimen>
     <dimen name="stats_summary_bubble_pegValue">70dp</dimen>
     <dimen name="stats_summary_bubble_pegValue_text">35sp</dimen>
+    <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
+    <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">18.0</item>
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_pin_board_size">280dp</dimen>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">75.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">35.0</item>
     <dimen name="score_indicator_bubble">17dp</dimen>
         <!-- indicator1 -->
         <dimen name="score_indicator1_margin_top">2.5dp</dimen>

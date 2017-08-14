@@ -95,6 +95,9 @@ public class StatsHundredFragmentSummary extends Fragment {
             int dailyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountDay(pegValues[index]);
             int weeklyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountWeek(pegValues[index]);
             int monthlyScore = ScoreDatabase.mStatsHundredDoa.getTotalPegCountMonth(pegValues[index]);
+            int dailyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "DAY");
+            int weeklyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "WEEK");
+            int monthlyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "MONTH");
             if (dailyScore > 1000) {
 
                 statsScoreDay.setTextSize(12);
@@ -109,7 +112,7 @@ public class StatsHundredFragmentSummary extends Fragment {
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
-            if (dailyScore != 0) {
+            if (dailyScore >= dailyPBscore) {
                 statsScoreDay.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreDay.setTextColor(Color.BLACK);
@@ -121,7 +124,7 @@ public class StatsHundredFragmentSummary extends Fragment {
             //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
                     weeklyScore));
-            if (weeklyScore != 0) {
+            if (weeklyScore >= weeklyPBscore) {
                 statsScoreWeek.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreWeek.setTextColor(Color.BLACK);
@@ -132,7 +135,7 @@ public class StatsHundredFragmentSummary extends Fragment {
             }
             //Set Month element:
             statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore ));
-            if (monthlyScore != 0) {
+            if (monthlyScore >= monthlyPBscore) {
                 statsScoreMonth.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreMonth.setTextColor(Color.BLACK);

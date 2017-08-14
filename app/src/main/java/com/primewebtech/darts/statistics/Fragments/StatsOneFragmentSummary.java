@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,8 @@ public class StatsOneFragmentSummary extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stats_one_summary, container, false);
-
+        TypedValue outValue1000 = new TypedValue();
+        getResources().getValue(R.dimen.stats_summary_bubble_pegValue_text_1000,outValue1000, true);
         mStatsRows = new ArrayList<>();
         mStatsRows.add(mStatsRow40);
         mStatsRows.add(mStatsRow32);
@@ -126,22 +128,25 @@ public class StatsOneFragmentSummary extends Fragment {
             int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
             int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
             int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);
-            if (dailyScore > 1000) {
+            int dailyPBscore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValues[index], "DAY");
+            int weeklyPBscore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValues[index], "WEEK");
+            int monthlyPBscore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValues[index], "MONTH");
 
-                statsScoreDay.setTextSize(12);
+            if (dailyScore > 1000) {
+                statsScoreDay.setTextSize(outValue1000.getFloat());
 
             }
             if (weeklyScore > 1000) {
-                statsScoreWeek.setTextSize(12);
+                statsScoreWeek.setTextSize(outValue1000.getFloat());
 
             }
             if (monthlyScore > 1000) {
-                statsScoreMonth.setTextSize(12);
+                statsScoreMonth.setTextSize(outValue1000.getFloat());
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
             statsScoreDay.setTextColor(Color.BLACK);
-            if (dailyScore != 0) {
+            if (dailyScore >= dailyPBscore) {
                 statsScoreDay.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreDay.setTextColor(Color.BLACK);
@@ -154,7 +159,7 @@ public class StatsOneFragmentSummary extends Fragment {
             //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
                     weeklyScore));
-            if (weeklyScore != 0) {
+            if (weeklyScore >= weeklyPBscore) {
                 statsScoreWeek.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreWeek.setTextColor(Color.BLACK);
@@ -165,7 +170,7 @@ public class StatsOneFragmentSummary extends Fragment {
             }
             //Set Month element:
             statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore));
-            if (weeklyScore != 0) {
+            if (monthlyScore >= monthlyPBscore) {
                 statsScoreMonth.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreMonth.setTextColor(Color.BLACK);

@@ -199,17 +199,16 @@
         android:layout_height="25dp"
         android:text="0"
         android:textSize="@dimen/score_indicator"
+        android:gravity="center"
         android:background="@android:color/transparent"
-        app:layout_constraintRight_toRightOf="@+id/pin"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/pin"
         app:layout_constraintBottom_toBottomOf="@+id/pin"
         android:layout_marginBottom="@dimen/score_count_button_margin_bottom"
-        app:layout_constraintHorizontal_bias="0.507"
-        android:layout_marginRight="12dp"
         android:layout_marginEnd="12dp"
-        />
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.515" />
 
 
     <Button

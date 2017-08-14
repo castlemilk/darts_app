@@ -24,9 +24,13 @@
     <dimen name="stats_summary_bubble_values_text">20sp</dimen>
     <dimen name="stats_summary_bubble_pegValue">60dp</dimen>
     <dimen name="stats_summary_bubble_pegValue_text">30sp</dimen>
+    <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
+    <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">15.0</item>
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_pin_board_size">220dp</dimen>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">75.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">35.0</item>
         <!-- indicator1 -->
         <dimen name="score_indicator1_margin_top">0.5dp</dimen>
         <dimen name="score_indicator1_margin_bottom">16dp</dimen>

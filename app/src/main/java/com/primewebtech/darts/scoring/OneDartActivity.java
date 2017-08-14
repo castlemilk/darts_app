@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -432,6 +433,8 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     public void initialisePager(int position) {
         mViewPager = (CyclicView) findViewById(R.id.pager_one_dart);
         mViewPager.setChangePositionFactor(5000);
+        final TypedValue outValue = new TypedValue();
+        getResources().getValue(R.dimen.score_pin_board_size_text,outValue, true);
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
             public int getItemsCount() {
@@ -442,7 +445,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             public View createView(int i) {
                 TextView scoreNumber = new TextView(OneDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegs[i]));
-                scoreNumber.setTextSize(75);
+                scoreNumber.setTextSize(outValue.getFloat());
                 scoreNumber.setTypeface(tf_heavy);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
