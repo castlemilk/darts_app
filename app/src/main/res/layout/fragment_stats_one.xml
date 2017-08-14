@@ -24,9 +24,9 @@
         app:layout_constraintRight_toRightOf="@+id/row_ld_6"
         android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/row_ld_6"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -41,12 +41,12 @@
         android:textStyle="bold"
         android:typeface="monospace"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/row_ld_4"
         android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/row_ld_4"
-        app:layout_constraintHorizontal_bias="0.5" />
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
         android:id="@+id/column_month"
@@ -61,12 +61,12 @@
         android:textStyle="bold"
         android:typeface="monospace"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/row_ld_2"
         android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/row_ld_2"
-        app:layout_constraintHorizontal_bias="0.5" />
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
         android:id="@+id/ld_text"

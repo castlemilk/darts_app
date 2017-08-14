@@ -10,8 +10,8 @@
     <!-- stats -->
     <dimen name="stats_headers_text">30sp</dimen>
     <dimen name="stats_text_PB_period_size">25sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_text">40sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator">115dp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">38sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator">80dp</dimen>
     <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
     <dimen name="stats_text_pegvalue_total">50dp</dimen>
     <dimen name="stats_text_current_period_size">30sp</dimen>
