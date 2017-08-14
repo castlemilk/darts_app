@@ -561,7 +561,7 @@
         android:layout_gravity="center"
         android:background="@drawable/peg_stats_value_background"
         android:text="@string/_100_stats"
-        android:textSize="@dimen/stats_text_pegvalue_indicator_text"
+        android:textSize="@dimen/stats_text_pegvalue_indicator_hundred_text"
         android:textStyle="bold"
         android:textColor="@color/colorBlack"
         android:typeface="monospace"
