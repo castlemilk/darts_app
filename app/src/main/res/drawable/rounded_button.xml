@@ -4,13 +4,9 @@
 
     <corners android:radius="30dp" />
     <solid android:color="#000000" />
-    <padding
-        android:bottom="5dp"
-        android:left="10dp"
-        android:right="10dp"
-        android:top="5dp" />
+
     <stroke
-        android:width="7px"
+        android:width="@dimen/home_page_rounded_button_thickness"
         android:color="#ffffff" />
 
 </shape>
