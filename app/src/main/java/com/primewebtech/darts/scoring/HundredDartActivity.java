@@ -364,6 +364,9 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100.setTypeface(tf_reg);
         mIncrement140.setTypeface(tf_reg);
         mIncrement180.setTypeface(tf_reg);
+        mIncrement100.setSoundEffectsEnabled(false);
+        mIncrement140.setSoundEffectsEnabled(false);
+        mIncrement180.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[currentIndex], TYPE_3);
         if (pegRecord != null) {
@@ -616,7 +619,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public View createView(int i) {
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
-                scoreNumber.setTextSize(55);
+                scoreNumber.setTextSize(40);
                 scoreNumber.setTypeface(tf_reg);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
