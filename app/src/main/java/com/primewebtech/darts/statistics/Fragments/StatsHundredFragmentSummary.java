@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,8 @@ public class StatsHundredFragmentSummary extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stats_hundred_summary, container, false);
+        TypedValue outValue1000 = new TypedValue();
+        getResources().getValue(R.dimen.stats_summary_bubble_pegValue_text_1000,outValue1000, true);
 
         for (int i = 0; i<3; i++) {
             final int j = i;
@@ -98,17 +101,17 @@ public class StatsHundredFragmentSummary extends Fragment {
             int dailyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "DAY");
             int weeklyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "WEEK");
             int monthlyPBscore = ScoreDatabase.mStatsHundredDoa.getHighestScore(pegValues[index], "MONTH");
-            if (dailyScore > 1000) {
+            if (dailyScore >= 1000) {
 
-                statsScoreDay.setTextSize(12);
-
-            }
-            if (weeklyScore > 1000) {
-                statsScoreWeek.setTextSize(12);
+                statsScoreDay.setTextSize(outValue1000.getFloat());
 
             }
-            if (monthlyScore > 1000) {
-                statsScoreMonth.setTextSize(12);
+            if (weeklyScore >= 1000) {
+                statsScoreWeek.setTextSize(outValue1000.getFloat());
+
+            }
+            if (monthlyScore >= 1000) {
+                statsScoreMonth.setTextSize(outValue1000.getFloat());
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));

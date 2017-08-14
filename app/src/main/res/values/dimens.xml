@@ -108,8 +108,9 @@
     <dimen name="score_bubble_small">55dp</dimen>
     <dimen name="score_bubble_total_aggregate">40dp</dimen>
     <dimen name="score_indicator">19sp</dimen>
-    <dimen name="increment_number_text_size">45sp</dimen>
+    <dimen name="increment_number_text_size">38sp</dimen>
     <dimen name="increment_number_text_size_hundred">20sp</dimen>
+    <dimen name="move_ten_text_size">33dp</dimen>
     <dimen name="score_menu_icon_width">30dp</dimen>
     <dimen name="score_menu_icon_height">36dp</dimen>
 
@@ -134,6 +135,16 @@
     <!-- icons -->
     <dimen name="back_icon_width">30dp</dimen>
     <dimen name="back_icon_height">36dp</dimen>
+    <dimen name="score_two_pin_width">270dp</dimen>
+    <dimen name="score_two_pin_height">270dp</dimen>
+    <dimen name="score_two_pin_margin_top">30dp</dimen>
+    <dimen name="score_three_pin_width">270dp</dimen>
+    <dimen name="score_three_pin_height">270dp</dimen>
+    <dimen name="score_three_pin_margin_top">30dp</dimen>
+    <dimen name="score_three_count_indicator">7dp</dimen>
+    <dimen name="score_two_count_indiactor_two_margin_top">45dp</dimen>
+    <dimen name="score_two_count_indicactor_two_margin_top">45dp</dimen>
+    <dimen name="score_two_count_indicactor_three_margin_bottom">45dp</dimen>
 
 
 </resources>

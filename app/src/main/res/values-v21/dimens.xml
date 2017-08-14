@@ -10,6 +10,17 @@
     <dimen name="home_page_nav_button_margin_top">10dp</dimen>
     <dimen name="home_page_gallery_button_margin_top">20dp</dimen>
     <dimen name="home_page_logo_margin_bottom">20dp</dimen>
+    <dimen name="score_two_pin_width">270dp</dimen>
+    <dimen name="score_two_pin_height">270dp</dimen>
+    <dimen name="score_two_pin_margin_top">30dp</dimen>
+    <dimen name="move_ten_text_size">37dp</dimen>
+    <dimen name="score_three_pin_width">270dp</dimen>
+    <dimen name="score_three_pin_height">270dp</dimen>
+    <dimen name="score_three_pin_margin_top">30dp</dimen>
+    <dimen name="score_three_count_indicator">7dp</dimen>
+    <dimen name="score_two_count_indiactor_two_margin_top">45dp</dimen>
+    <dimen name="score_two_count_indicactor_two_margin_top">45dp</dimen>
+    <dimen name="score_two_count_indicactor_three_margin_bottom">45dp</dimen>
     <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
     <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>
     <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>

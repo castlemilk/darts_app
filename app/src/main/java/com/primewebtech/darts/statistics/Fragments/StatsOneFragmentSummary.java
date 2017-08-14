@@ -132,15 +132,15 @@ public class StatsOneFragmentSummary extends Fragment {
             int weeklyPBscore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValues[index], "WEEK");
             int monthlyPBscore = ScoreDatabase.mStatsOneDoa.getHighestScore(pegValues[index], "MONTH");
 
-            if (dailyScore > 1000) {
+            if (dailyScore >= 1000) {
                 statsScoreDay.setTextSize(outValue1000.getFloat());
 
             }
-            if (weeklyScore > 1000) {
+            if (weeklyScore >= 1000) {
                 statsScoreWeek.setTextSize(outValue1000.getFloat());
 
             }
-            if (monthlyScore > 1000) {
+            if (monthlyScore >= 1000) {
                 statsScoreMonth.setTextSize(outValue1000.getFloat());
             }
             //Set Day element:
