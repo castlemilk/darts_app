@@ -76,9 +76,10 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
-    private Typeface tf_reg;
-    private Typeface tf_heavy;
-    private Typeface tf_bold;
+    private Typeface tf_ios;
+    private Typeface tf_ios_bold;
+    private Typeface tf_viewpager;
+    private Typeface tf_increment_button;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -126,13 +127,14 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     protected void onResume() {
         super.onResume();
         setContentView(R.layout.three_dart_view);
-        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Regular.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
-        mMovePagerForwardTen.setTypeface(tf_reg);
-        mMovePagerBackwardsTen.setTypeface(tf_reg);
+        mMovePagerForwardTen.setTypeface(tf_ios);
+        mMovePagerBackwardsTen.setTypeface(tf_ios);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -157,13 +159,14 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.three_dart_view);
-        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/AsapCondensed-Regular.ttf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Bold.otf");
-        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoDisplay-Heavy.otf");
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
         mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
-        mMovePagerForwardTen.setTypeface(tf_reg);
-        mMovePagerBackwardsTen.setTypeface(tf_reg);
+        mMovePagerForwardTen.setTypeface(tf_increment_button);
+        mMovePagerBackwardsTen.setTypeface(tf_increment_button);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -318,10 +321,10 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     }
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
-        mCountButtonThree.setTypeface(tf_heavy);
+        mCountButtonThree.setTypeface(tf_ios_bold);
         mIncrementThree = (Button) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
-        mIncrementThree.setTypeface(tf_reg);
+        mIncrementThree.setTypeface(tf_increment_button);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
@@ -453,8 +456,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public View createView(int i) {
                 TextView scoreNumber = new TextView(ThreeDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPinValues.get(i)));
-                scoreNumber.setTextSize(55);
-                scoreNumber.setTypeface(tf_heavy);
+                scoreNumber.setTextSize(50);
+                scoreNumber.setTypeface(tf_viewpager);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;

@@ -84,9 +84,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private Button mIncrement100;
     private Button mIncrement140;
     private Button mIncrement180;
-    private Typeface tf_reg;
-    private Typeface tf_heavy;
-    private Typeface tf_bold;
+    private Typeface tf_ios;
+    private Typeface tf_ios_bold;
+    private Typeface tf_viewpager;
+    private Typeface tf_increment_button;
     // Stream type.
     private static final int streamType = AudioManager.STREAM_MUSIC;
     private SoundPool soundPool;
@@ -133,9 +134,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         setContentView(R.layout.hundred_dart_view);
         SavePBTask savePBTask = new SavePBTask();
 //        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Ubuntu-Bold.ttf");
-        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
-        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
 
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
@@ -169,9 +171,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hundred_dart_view);
         SavePBTask savePBTask = new SavePBTask();
-        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Semibold.otf");
-        tf_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Bold.otf");
-        tf_heavy = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/SanFranciscoText-Heavy.otf");
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
 
         app = (MainApplication) getApplication();
         curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
@@ -361,10 +364,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100 = (Button) findViewById(R.id.increment_100plus);
         mIncrement140 = (Button) findViewById(R.id.increment_140plus);
         mIncrement180 = (Button) findViewById(R.id.increment_180plus);
-        mCountButton.setTypeface(tf_reg);
-        mIncrement100.setTypeface(tf_reg);
-        mIncrement140.setTypeface(tf_reg);
-        mIncrement180.setTypeface(tf_reg);
+        mCountButton.setTypeface(tf_ios_bold);
+        mIncrement100.setTypeface(tf_ios);
+        mIncrement140.setTypeface(tf_ios);
+        mIncrement180.setTypeface(tf_ios);
         mIncrement100.setSoundEffectsEnabled(false);
         mIncrement140.setSoundEffectsEnabled(false);
         mIncrement180.setSoundEffectsEnabled(false);
@@ -623,7 +626,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 TextView scoreNumber = new TextView(HundredDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPegsStrings[i]));
                 scoreNumber.setTextSize(outValue.getFloat());
-                scoreNumber.setTypeface(tf_reg);
+                scoreNumber.setTypeface(tf_viewpager);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);
                 return scoreNumber;

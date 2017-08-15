@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -88,6 +89,10 @@ public class CameraActivity extends AppCompatActivity {
     public long mCaptureStartTime;
     private boolean cameraPermissionGranted = false;
     private FrameLayout preview;
+    private Typeface tf_ios;
+    private Typeface tf_ios_bold;
+    private Typeface tf_viewpager;
+    private Typeface tf_increment_button;
     private String scoreType;
     private ImageView mLogoText;
     private ImageView mScoreTypeBackground;
@@ -170,10 +175,15 @@ public class CameraActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mScoreType = (WheelPicker) findViewById(R.id.score_type);
         mScoreValue = (WheelPicker) findViewById(R.id.score_value);
         mScoreNumber = (TextView) findViewById(R.id.score_number);
+        mScoreNumber.setTypeface(tf_viewpager);
         mScoreTypeBackground = (ImageView) findViewById(R.id.score_type_background);
         mTakePhotoButton = (ImageButton) findViewById(R.id.button_take_photo);
         mPreviousImageThumbnail = (CircleImageView) findViewById(R.id.button_previous);
@@ -182,6 +192,7 @@ public class CameraActivity extends AppCompatActivity {
         preview = (FrameLayout) findViewById(R.id.camera_preview);
         mSaveImageButton = (ImageButton) findViewById(R.id.save_photo);
         mBackButton = (ImageButton) findViewById(R.id.button_back);
+
 //        mViewPager = (ViewPager) findViewById(R.id.pager);
 
 //        mViewPager.setVisibility(View.GONE);
@@ -405,6 +416,10 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
+        tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+        tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         try {
             Log.d(TAG, "onResume");
             if (mCamera == null && cameraPermissionGranted) {
@@ -430,6 +445,7 @@ public class CameraActivity extends AppCompatActivity {
             mScoreType.setVisibility(View.GONE);
             mScoreTypeBackground.setVisibility(View.GONE);
             mLogoText.setVisibility(View.GONE);
+
             initTypeSpinners();
             initScoreSpinner("Peg");
             initialiseSound();
@@ -439,6 +455,7 @@ public class CameraActivity extends AppCompatActivity {
             mBackButton.setVisibility(View.GONE);
             mTakePhotoButton.setVisibility(View.VISIBLE);
             mScoreNumber.setVisibility(View.GONE);
+            mScoreNumber.setTypeface(tf_viewpager);
             Util.initialize(this);
             mContentResolver = this.getContentResolver();
             mNamedImages = new NamedImages();
@@ -581,7 +598,7 @@ public class CameraActivity extends AppCompatActivity {
             if (date == -1) date = mCaptureStartTime;
             if (result) {
                 Log.e(TAG, "attempting async save");
-                mMediaSaver.addImage(mJPEGdata, logo, pin, title, scoreType,
+                mMediaSaver.addImage(this, mJPEGdata, logo, pin, title, scoreType,
                         String.valueOf(mScoreNumberValue), date, mLocation,
                         width, height, 0,  mOnMediaSavedListener);
             }
@@ -858,6 +875,7 @@ public class CameraActivity extends AppCompatActivity {
                     updateScoreDisplay(180);
                     mScoreNumberValue = makeScores().get(0);
                     mScoreNumber.setText(String.format(Locale.US, "%s", "180"));
+
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
                     mScoreNumber.setVisibility(View.VISIBLE);
 

@@ -1,6 +1,7 @@
 package com.primewebtech.darts.camera;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -19,6 +20,7 @@ public class MediaSaver extends Thread {
     private ArrayList<SaveRequest> mQueue;
     private boolean mStop;
     private ContentResolver mContentResolver;
+    private Context mContext;
 
 
     public interface OnMediaSavedListener {
@@ -35,9 +37,10 @@ public class MediaSaver extends Thread {
         return (mQueue.size() >= SAVE_QUEUE_LIMIT);
     }
     // Runs in main thread
-    public void addImage(final byte[] data, Bitmap logo, Bitmap pin, String title, String score_type,
+    public void addImage(Context ctx, final byte[] data, Bitmap logo, Bitmap pin, String title, String score_type,
                          String score, long date, Location loc,
                          int width, int height, int orientation, OnMediaSavedListener l) {
+        mContext = ctx;
         SaveRequest r = new SaveRequest();
         r.data = data;
         r.logo = logo;
@@ -88,7 +91,7 @@ public class MediaSaver extends Thread {
                 notifyAll();  // the main thread may wait in addImage
             }
             final long t0 = System.currentTimeMillis();
-            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(r.data, r.logo, r.pin, r.score)), r.title, r.score_type, r.score, r.date, r.loc, r.width, r.height,
+            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(mContext, r.data, r.logo, r.pin, r.score)), r.title, r.score_type, r.score, r.date, r.loc, r.width, r.height,
                     r.orientation);
             Log.d(TAG, String.format("storeImage took %dms", System.currentTimeMillis() - t0));
             r.listener.onMediaSaved(uri);

@@ -116,7 +116,7 @@ public class Util {
      * @return
      */
 
-    public static Bitmap combineElements(byte[] picture, Bitmap logo, Bitmap pin, String score) {
+    public static Bitmap combineElements(Context mContext, byte[] picture, Bitmap logo, Bitmap pin, String score) {
         final long t0 = System.currentTimeMillis();
 
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
@@ -174,7 +174,7 @@ public class Util {
         comboImage.drawBitmap(rotatedImg, 0f, 0f, null);
         comboImage.drawBitmap(BITMAP_RESIZER(logo, logoSizeIntWidth, logoSizeIntHeight), logoFloatRight, logoFloatTop, null);
         comboImage.drawBitmap(BITMAP_RESIZER(pin, pinSizeInt, pinSizeInt), pinFloatLeft, pinFloatTop, null);
-
+        Typeface tf_viewpager = Typeface.createFromAsset(mContext.getAssets(), "fonts/arlrbd.ttf");
         if (score != "RH") {
             comboImage.save();
             TextPaint textPaint = new TextPaint();
@@ -183,7 +183,7 @@ public class Util {
             textPaint.setColor(Color.BLACK);
             Rect bounds = new Rect();
             textPaint.getTextBounds(String.valueOf(score), 0, String.valueOf(score).length(), bounds);
-            textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            textPaint.setTypeface(tf_viewpager);
             int textHeight  = bounds.height();
             Log.d("bytes:textHeight", Integer.toString(textHeight));
             Log.d("bytes:textSize", Integer.toString(textSize));

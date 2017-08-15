@@ -146,7 +146,7 @@ public class StatsOneFragmentSummary extends Fragment {
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
             statsScoreDay.setTextColor(Color.BLACK);
-            if (dailyScore >= dailyPBscore) {
+            if (dailyScore >= dailyPBscore && dailyScore > 0) {
                 statsScoreDay.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreDay.setTextColor(Color.BLACK);
@@ -159,7 +159,7 @@ public class StatsOneFragmentSummary extends Fragment {
             //Set Week element:
             statsScoreWeek.setText(String.format(Locale.getDefault(),"%d",
                     weeklyScore));
-            if (weeklyScore >= weeklyPBscore) {
+            if (weeklyScore >= weeklyPBscore && weeklyScore > 0) {
                 statsScoreWeek.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreWeek.setTextColor(Color.BLACK);
@@ -170,7 +170,7 @@ public class StatsOneFragmentSummary extends Fragment {
             }
             //Set Month element:
             statsScoreMonth.setText(String.format(Locale.getDefault(),"%d",monthlyScore));
-            if (monthlyScore >= monthlyPBscore) {
+            if (monthlyScore >= monthlyPBscore && monthlyScore > 0) {
                 statsScoreMonth.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreMonth.setTextColor(Color.BLACK);

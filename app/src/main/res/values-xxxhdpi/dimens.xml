@@ -114,7 +114,7 @@
 
     <dimen name="increment_number_text_size">39sp</dimen>
     <dimen name="increment_number_text_size_hundred">30sp</dimen>
-    <dimen name="move_ten_text_size">30dp</dimen>
+    <dimen name="move_ten_text_size">35dp</dimen>
     <dimen name="score_menu_icon_width">30dp</dimen>
     <dimen name="score_menu_icon_height">36dp</dimen>
 

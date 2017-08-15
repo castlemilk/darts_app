@@ -115,7 +115,7 @@ public class StatsHundredFragmentSummary extends Fragment {
             }
             //Set Day element:
             statsScoreDay.setText(String.format(Locale.getDefault(),"%d", dailyScore));
-            if (dailyScore >= dailyPBscore) {
+            if (dailyScore >= dailyPBscore && dailyScore > 0) {
                 statsScoreDay.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 statsScoreDay.setTextColor(Color.BLACK);
