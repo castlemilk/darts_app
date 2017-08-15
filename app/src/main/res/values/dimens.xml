@@ -27,6 +27,8 @@
     <!-- scoring -->
     <dimen name="score_pin_board_size">250dp</dimen>
     <dimen name="score_indicator_bubble">17dp</dimen>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">50.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">35.0</item>
     <!-- indicator1 -->
     <dimen name="score_indicator1_margin_top">3.5dp</dimen>
     <dimen name="score_indicator1_margin_bottom">0dp</dimen>
@@ -145,6 +147,8 @@
     <dimen name="score_two_count_indiactor_two_margin_top">45dp</dimen>
     <dimen name="score_two_count_indicactor_two_margin_top">45dp</dimen>
     <dimen name="score_two_count_indicactor_three_margin_bottom">45dp</dimen>
+    <dimen name="stats_text_PB_period_size_text">25sp</dimen>
+    <dimen name="stats_text_current_period_size_text">25sp</dimen>
 
 
 </resources>

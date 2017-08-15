@@ -2,6 +2,7 @@ package com.primewebtech.darts.statistics.Fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
@@ -24,6 +25,8 @@ import java.util.Locale;
 public class StatsOneFragmentSummary extends Fragment {
 
     private static final String TAG = StatsOneFragmentSummary.class.getSimpleName();
+    private Typeface tf_ios;
+    private Typeface tf_pegValue;
     public int[] mStatsRow40 = {
             R.id.row_40_d,
             R.id.row_40_w,
@@ -93,6 +96,8 @@ public class StatsOneFragmentSummary extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stats_one_summary, container, false);
+        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arial.ttf");
         TypedValue outValue1000 = new TypedValue();
         getResources().getValue(R.dimen.stats_summary_bubble_pegValue_text_1000,outValue1000, true);
         mStatsRows = new ArrayList<>();
@@ -105,6 +110,7 @@ public class StatsOneFragmentSummary extends Fragment {
         for (int i = 0; i<6; i++) {
             final int j = i;
             TextView rowPegValue = (TextView) rootView.findViewById(mRowPegValues[j]);
+            rowPegValue.setTypeface(tf_pegValue);
             rowPegValue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -125,6 +131,9 @@ public class StatsOneFragmentSummary extends Fragment {
             TextView statsScoreDay = (TextView) rootView.findViewById(statRow[0]);
             TextView statsScoreWeek = (TextView) rootView.findViewById(statRow[1]);
             TextView statsScoreMonth = (TextView) rootView.findViewById(statRow[2]);
+            statsScoreDay.setTypeface(tf_ios);
+            statsScoreWeek.setTypeface(tf_ios);
+            statsScoreMonth.setTypeface(tf_ios);
             int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
             int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
             int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);

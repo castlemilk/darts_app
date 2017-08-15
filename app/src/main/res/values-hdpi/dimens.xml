@@ -148,6 +148,8 @@
     <dimen name="score_three_count_indicator">23.9dp</dimen>
     <dimen name="score_two_count_indicactor_two_margin_top">30.5dp</dimen>
     <dimen name="score_two_count_indicactor_three_margin_bottom">29.0dp</dimen>
+    <dimen name="stats_text_PB_period_size_text">25sp</dimen>
+    <dimen name="stats_text_current_period_size_text">25sp</dimen>
 
 
 </resources>

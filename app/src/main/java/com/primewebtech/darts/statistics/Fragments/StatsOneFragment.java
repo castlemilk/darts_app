@@ -1,6 +1,7 @@
 package com.primewebtech.darts.statistics.Fragments;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,6 +24,8 @@ import java.util.Locale;
 public class StatsOneFragment extends Fragment {
 
     private static final String TAG = StatsOneFragment.class.getSimpleName();
+    private Typeface tf_ios;
+    private Typeface tf_pegValue;
 
     public int[] mStatsRowLD = {
             R.id.row_ld_2,
@@ -80,6 +83,8 @@ public class StatsOneFragment extends Fragment {
         super.onCreate(savedInstanceState);
         type = getArguments().getString("type");
         pegValue = getArguments().getInt("PEG_VALUE");
+        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+        tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arial.ttf");
     }
 
     @Override
@@ -140,6 +145,7 @@ public class StatsOneFragment extends Fragment {
                             getResources().getDrawable(R.drawable.peg_stats_score_background));
                     rowNode.setTextColor(Color.WHITE);
                 }
+                rowNode.setTypeface(tf_ios);
 
                 previous_period_index++;
             }
@@ -164,7 +170,7 @@ public class StatsOneFragment extends Fragment {
                         getResources().getDrawable(R.drawable.peg_stats_score_background));
                 currentPeriodNode.setTextColor(Color.WHITE);
             }
-            if (bestScore > 0) {
+            if (bestScore >= 0) {
                 bestNode.setBackground(
                         getResources().getDrawable(R.drawable.peg_stats_score_background_white));
                 bestNode.setTextColor(Color.BLACK);
@@ -173,9 +179,12 @@ public class StatsOneFragment extends Fragment {
                         getResources().getDrawable(R.drawable.peg_stats_score_background));
                 bestNode.setTextColor(Color.WHITE);
             }
+            bestNode.setTypeface(tf_ios);
+            currentPeriodNode.setTypeface(tf_ios);
             k++;
         }
         TextView pegValueIndicator = (TextView) rootView.findViewById(R.id.peg_value_indicator);
+        pegValueIndicator.setTypeface(tf_pegValue);
         pegValueIndicator.setText(String.valueOf(pegValue));
         TextView pegValueTotal = (TextView) rootView.findViewById(R.id.stats_total_peg_count);
         int totalPegCount = ScoreDatabase.mStatsOneDoa.getTotalPegCount(pegValue);
