@@ -38,6 +38,7 @@ public interface ActionSchema {
     String ID_WHERE                  = ID + " = ?";
     String GAME_MODE_WHERE                  = GAME_MODE + " = ?";
     String PEG_TYPE_WHERE            = PEG_TYPE + " = ?";
-    String DATE_WHERE                   = DATE + " >= ?";
+    String DATE_WHERE_GT                   = DATE + " >= ?";
+    String DATE_WHERE_LT                   = DATE + " <= ?";
 
 }

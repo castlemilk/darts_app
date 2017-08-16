@@ -89,8 +89,8 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         String ORDER_BY = ID+" DESC";
         String LIMIT = "1";
         Action action;
-        final String selection = GAME_MODE_WHERE + " AND " + DATE_WHERE;
-        final String selectionArgs[] = { String.valueOf(gameMode), getTodaysDate() };
+        final String selection = GAME_MODE_WHERE + " AND " + DATE_WHERE_GT;
+        final String selectionArgs[] = { String.valueOf(gameMode), getTodaysDate()};
 
         cursor = super.query(getActionTableName(), ACTION_COLUMNS, selection,
                 selectionArgs, ORDER_BY, LIMIT);
