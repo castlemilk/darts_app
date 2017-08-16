@@ -149,8 +149,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-//            initialisePegCounts();
-//            initialiseCountButtons();
+            initialisePegCounts();
+            initialiseCountButtons();
             savePBTask.execute();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
@@ -186,10 +186,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-//            savePB();
-//            initialisePegCounts();
-//            initialiseCountButtons();
             savePBTask.execute();
+
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
         pin = (ImageView) findViewById(R.id.pin);
@@ -707,6 +705,8 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         @Override
         protected Void doInBackground(Void... voids) {
             savePB();
+//            initialisePegCounts();
+//            initialiseCountButtons();
             return null;
         }
     }

@@ -130,7 +130,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
             savePBTask.execute();
-
             prefs.edit().putString("lastResetTime", curTime).apply();
         }
         int lastPosition = prefs.getInt("POSITION", 0);
@@ -174,6 +173,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             Log.d(TAG, "NEW_DAY:resetting counts");
             savePBTask.execute();
             prefs.edit().putString("lastResetTime", curTime).apply();
+
         }
 
         int lastPosition = prefs.getInt("POSITION", 0);
@@ -511,11 +511,14 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         Log.d(TAG, "updateCountIndicators:pegValue:"+pegValue);
         int total = ScoreDatabase.mScoreOneDoa.getTotalPegCount(pegValue);
         PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(pegValue, TYPE_2);
-        if (pegRecord.getPegCount() >= 100) {
-            mCountButton.setTextSize(15);
-        } else if (pegRecord.getPegCount() > 1000) {
-            mCountButton.setTextSize(10);
+        if (pegRecord != null) {
+            if (pegRecord.getPegCount() >= 100) {
+                mCountButton.setTextSize(15);
+            } else if (pegRecord.getPegCount() > 1000) {
+                mCountButton.setTextSize(10);
+            }
         }
+
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
         if (total > 0 && total <= 1100) {
@@ -611,6 +614,8 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         @Override
         protected Void doInBackground(Void... voids) {
             savePB();
+//            initialisePegCounts();
+//            initialiseCountButtons();
             return null;
         }
     }
