@@ -705,9 +705,12 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         @Override
         protected Void doInBackground(Void... voids) {
             savePB();
-//            initialisePegCounts();
-//            initialiseCountButtons();
             return null;
+        }
+        @Override
+        protected void onPostExecute(Void voids) {
+            initialisePegCounts();
+            initialiseCountButtons();
         }
     }
 }

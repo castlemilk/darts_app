@@ -614,9 +614,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         @Override
         protected Void doInBackground(Void... voids) {
             savePB();
-//            initialisePegCounts();
-//            initialiseCountButtons();
             return null;
+        }
+        @Override
+        protected void onPostExecute(Void voids) {
+            initialisePegCounts();
+            initialiseCountButtons();
         }
     }
 }
