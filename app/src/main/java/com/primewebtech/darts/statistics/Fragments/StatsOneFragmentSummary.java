@@ -131,9 +131,9 @@ public class StatsOneFragmentSummary extends Fragment {
             TextView statsScoreDay = (TextView) rootView.findViewById(statRow[0]);
             TextView statsScoreWeek = (TextView) rootView.findViewById(statRow[1]);
             TextView statsScoreMonth = (TextView) rootView.findViewById(statRow[2]);
-//            statsScoreDay.setTypeface(tf_ios);
-//            statsScoreWeek.setTypeface(tf_ios);
-//            statsScoreMonth.setTypeface(tf_ios);
+            statsScoreDay.setTypeface(tf_ios);
+            statsScoreWeek.setTypeface(tf_ios);
+            statsScoreMonth.setTypeface(tf_ios);
             int dailyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountDay(pegValues[index]);
             int weeklyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountWeek(pegValues[index]);
             int monthlyScore = ScoreDatabase.mStatsOneDoa.getTotalPegCountMonth(pegValues[index]);

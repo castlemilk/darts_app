@@ -208,19 +208,18 @@ public class GalleryDatabaseService {
                 selectionArgs,
                 null
         );
-        int titleIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE);
-        int dateIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN);
-        int descriptionIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DESCRIPTION);
         if (mCursor == null) {
             // Some providers return null if an error occurs whereas others throw an exception
-            return null;
+            return "NA";
         }
         else if (mCursor.getCount() < 1) {
             // No matches found
-            return null;
+            return "NA";
         }
         else {
-
+            int titleIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.TITLE);
+            int dateIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATE_TAKEN);
+            int descriptionIndex = mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DESCRIPTION);
             while (mCursor.moveToFirst()) {
                 String title = mCursor.getString(titleIndex);
                 String date = mCursor.getString(dateIndex);
@@ -235,7 +234,7 @@ public class GalleryDatabaseService {
             }
 
         }
-        return null;
+        return "NA";
     }
     public void removeItem(IFlexible item) {
         mItems.remove(item);
