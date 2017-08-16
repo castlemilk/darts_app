@@ -204,11 +204,11 @@ public class GalleryActivity extends AppCompatActivity
                 PhotoItem photoItem = (PhotoItem) mAdapter.getItem(position);
                 Log.d(TAG, "onItemClick:Clicked:postition:"+position);
 
-//                Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 Uri photoURI = FileProvider.getUriForFile(this,
                         getApplicationContext().getPackageName() + ".provider",
                         photoItem.getFile());
                 // ROUTE TO SINGULAR GALLERY ITEM
+//                Intent intent = new Intent(Intent.ACTION_VIEW, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 //                intent.setDataAndType(photoURI, "image/*");
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

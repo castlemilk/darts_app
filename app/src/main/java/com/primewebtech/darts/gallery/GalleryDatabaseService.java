@@ -158,24 +158,6 @@ public class GalleryDatabaseService {
         return item;
     }
 
-
-
-    /*
- 	 * Creates a staggered item with a Header linked.
- 	 */
-    private HeaderHolder newHeaderHolder(int i, Date date) {
-        HeaderModel model = new HeaderModel("H" + i);
-        model.setTitle(new SimpleDateFormat("EEE, MMM d", Locale.US).format(date));
-        return new HeaderHolder(model);
-    }
-    private ItemHolder newItemHolder(int i, File file, HeaderHolder header) {
-        ItemModel model = new ItemModel("I" + i);
-        model.setFile(file);
-        model.setTitle("Holder Item " + i);
-        model.setSubtitle("Subtitle " + i);
-        return new ItemHolder(model, header);
-    }
-
     /*-----------------------*/
 	/* MAIN DATABASE METHODS */
 	/*-----------------------*/

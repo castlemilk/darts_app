@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,7 +35,6 @@ public class PhotoViewer extends FragmentActivity {
     private LinkedList<File> photos;
     private ImageButton mShareButton;
     private ImageButton mDeleteButton;
-    private ShareActionProvider mShareActionProvider;
     public static final String TAG = PhotoViewer.class.getSimpleName();
 
 

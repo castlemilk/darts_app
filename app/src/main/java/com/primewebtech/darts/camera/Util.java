@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by benebsworth on 3/5/17.
@@ -45,7 +45,6 @@ public class Util {
 
     private static final String TAG = "Util";
     private static ImageFileNamer sImageFileNamer;
-    public static final String ACTION_NEW_PICTURE = "android.hardware.action.NEW_PICTURE";
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
@@ -59,12 +58,6 @@ public class Util {
         synchronized (sImageFileNamer) {
             return sImageFileNamer.generateName(dateTaken, score, scoreType);
         }
-    }
-
-    public static void broadcastNewPicture(Context context, Uri uri) {
-        context.sendBroadcast(new Intent(ACTION_NEW_PICTURE, uri));
-        // Keep compatibility
-        context.sendBroadcast(new Intent("com.android.camera.NEW_PICTURE", uri));
     }
 
 
@@ -133,16 +126,11 @@ public class Util {
 
         int pictureWidth = rotatedImg.getWidth();
         int pictureHeight = rotatedImg.getHeight();
-//        int pictureWidth = pictureImg.getWidth();
-//        int pictureHeight = pictureImg.getHeight();
         Double pinSize = pictureWidth * 0.3;
         int textSize = (int) (pictureHeight * 0.06f);
         int pinSizeInt = pinSize.intValue();
         Double logoWidth = pictureWidth * 0.37;
         Double logoHeight = pictureHeight * 0.13;
-//        Double logoHeight = 300d;
-
-//        int logoSizeInt = pinSize.intValue();
         int logoSizeIntWidth = logoWidth.intValue();
 
         int logoSizeIntHeight = logoHeight.intValue();
@@ -187,7 +175,6 @@ public class Util {
             int textHeight  = bounds.height();
             Log.d("bytes:textHeight", Integer.toString(textHeight));
             Log.d("bytes:textSize", Integer.toString(textSize));
-            int textWidth = bounds.width();
             int textPositionHeight = (int) (pinFloatTop +
                     pinSizeInt / 2 - (textHeight/1.25));
             StaticLayout staticLayout = new StaticLayout(String.valueOf(score),
@@ -284,7 +271,7 @@ public class Util {
 
         final long t0 = System.currentTimeMillis();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
         byte[] b = baos.toByteArray();
         bitmap.recycle();
         Log.d(TAG, String.format("BitMapToByteArray took %dms", System.currentTimeMillis() - t0));
@@ -310,7 +297,7 @@ public class Util {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
@@ -323,31 +310,6 @@ public class Util {
         }
 
         return mediaFile;
-    }
-
-    public Camera openFrontFacingCamera() {
-
-//        if (mCamera != null) {
-//            mCamera.release();
-//            mCamera = null;}
-
-        int cameraCount = 0;
-        Camera cam = null;
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        cameraCount = Camera.getNumberOfCameras();
-        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
-            Camera.getCameraInfo(camIdx, cameraInfo);
-            Log.d(TAG, "Camera Info: " + cameraInfo.facing);
-            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                try {
-                    return Camera.open(camIdx);
-                } catch (RuntimeException e) {
-                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
-                }
-            }
-        }
-
-        return null;
     }
     public static int findBackFacingCamera() {
         int cameraId = -1;

@@ -65,14 +65,6 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
         this.title = title;
     }
 
-//    public String getSubtitle() {
-//        return subtitle;
-//    }
-//
-//    public void setSubtitle(String subtitle) {
-//        this.subtitle = subtitle;
-//    }
-
 
     @Override
     public int getLayoutRes() {
@@ -106,13 +98,11 @@ public class HeaderItem extends AbstractHeaderItem<HeaderItem.HeaderViewHolder> 
     static class HeaderViewHolder extends FlexibleViewHolder {
 
         TextView mTitle;
-        TextView mSubtitle;
         ImageView mHandleView;
 
         HeaderViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);//True for sticky
             mTitle = (TextView) view.findViewById(R.id.title);
-//            mSubtitle = (TextView) view.findViewById(R.id.subtitle);
             mTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
