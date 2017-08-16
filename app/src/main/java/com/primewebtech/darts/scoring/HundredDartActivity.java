@@ -1,6 +1,5 @@
 package com.primewebtech.darts.scoring;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,16 +10,12 @@ import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,7 +36,6 @@ import org.malcdevelop.cyclicview.CyclicView;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -70,8 +64,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
      */
     private static final String TAG = HundredDartActivity.class.getSimpleName();
     private ImageView pin;
-    private int pegsCompleted;
-    private HashMap<Integer, Integer> scoreCounts;
     private CyclicView mViewPager;
     private Button mCountButton;
     private ImageButton mMenuButton;
@@ -96,7 +88,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     private float volume;
     // Maximumn sound stream.
     private static final int MAX_STREAMS = 1;
-    private int soundIdScroll;
     private int soundIdClick;
     private int soundIdClickMulti;
 
@@ -133,7 +124,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         super.onResume();
         setContentView(R.layout.hundred_dart_view);
         SavePBTask savePBTask = new SavePBTask();
-//        tf_reg = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Ubuntu-Bold.ttf");
         tf_ios = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
         tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
@@ -149,8 +139,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            initialisePegCounts();
-            initialiseCountButtons();
             savePBTask.execute();
             prefs.edit().putString("lastResetTime_hundred", curTime).apply();
         }
@@ -209,7 +197,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         prefs.edit().putInt("POSITION_HUNDRED", 0).apply();
         Intent homepage = new Intent(this, HomePageActivity.class);
         startActivity(homepage);
-//        finish();
     }
     public void savePB() {
         for (int peg : mPegs) {
@@ -259,7 +246,6 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
                 loaded = true;
             }
         });
-        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
         soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
@@ -655,52 +641,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         });
         mViewPager.setCurrentPosition(position);
     }
-    public class ScorePagerAdapter extends PagerAdapter {
 
-        Context mContext;
-        LayoutInflater mLayoutInflater;
-        private int[] mResources;
-        public TextView scoreNumber;
-
-
-        public ScorePagerAdapter(Context context, int[] resources) {
-            mContext = context;
-            mResources = resources;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public int getCount() {
-            return mResources.length;
-        }
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.pager_item_one_dart, container, false);
-
-            scoreNumber = (TextView) itemView.findViewById(R.id.score_number_one_dart);
-            scoreNumber.setText(String.valueOf(mResources[position]));
-
-
-            container.addView(itemView);
-            return itemView;
-        }
-
-        public void updateScoreValue(int score) {
-
-        }
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((FrameLayout) object);
-        }
-    }
     private class SavePBTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {

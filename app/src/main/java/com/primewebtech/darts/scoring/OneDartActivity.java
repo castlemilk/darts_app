@@ -36,7 +36,6 @@ import org.malcdevelop.cyclicview.CyclicView;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -59,8 +58,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     private static final String TAG = OneDartActivity.class.getSimpleName();
     private ImageView pin;
-    private int pegsCompleted;
-    private HashMap<Integer, Integer> scoreCounts;
     private CyclicView mViewPager;
     private Button mCountButton;
     private ImageButton mMenuButton;
@@ -84,7 +81,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     private float volume;
     // Maximumn sound stream.
     private static final int MAX_STREAMS = 1;
-    private int soundIdScroll;
     private int soundIdClick;
     private int soundIdClickMulti;
 
@@ -284,7 +280,6 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 loaded = true;
             }
         });
-        soundIdScroll = soundPool.load(this, R.raw.typing, 1);
         soundIdClick = soundPool.load(this, R.raw.click, 1);
         soundIdClickMulti = soundPool.load(this, R.raw.multiclick, 1);
 
