@@ -9,6 +9,7 @@ import com.primewebtech.darts.database.model.Action;
 import com.primewebtech.darts.database.model.ActionSchema;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -53,6 +54,13 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         Date now = new Date();
         return dateFormat.format(now);
     }
+    public String getTodaysDate() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cal.add(Calendar.DAY_OF_YEAR, 0);
+        Date yesterday = cal.getTime();
+        return df.format(yesterday);
+    }
     /** Takes the Action object and translates it into the corresponding columns within the action
      * table.
      * @param action The action object to add to the historical action table
@@ -81,8 +89,8 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
         String ORDER_BY = ID+" DESC";
         String LIMIT = "1";
         Action action;
-        final String selection = GAME_MODE_WHERE;
-        final String selectionArgs[] = { String.valueOf(gameMode)};
+        final String selection = GAME_MODE_WHERE + " AND " + DATE_WHERE;
+        final String selectionArgs[] = { String.valueOf(gameMode), getTodaysDate() };
 
         cursor = super.query(getActionTableName(), ACTION_COLUMNS, selection,
                 selectionArgs, ORDER_BY, LIMIT);

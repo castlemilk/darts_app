@@ -127,7 +127,7 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
         PegRecord pegRecord = getTodayPegValue(pegValue, type);
         String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE+ "AND " + TYPE_WHERE;
         String selectorArgs[] = new String[]{String.valueOf(pegValue), getDateNow(), String.valueOf(type)};
-
+//        Log.d(TAG, "selector:"+selector);
         if (pegRecord != null) {
             Log.d(TAG, "decreaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
             ContentValues contentValues = new ContentValues();

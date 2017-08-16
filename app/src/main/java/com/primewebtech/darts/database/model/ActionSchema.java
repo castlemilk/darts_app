@@ -33,19 +33,11 @@ public interface ActionSchema {
             ACTION_TYPE + " INTEGER, " +
             ACTION_VALUE + " INTEGER, " +
             DATE + " DATETIME);";
-    String CREATE_PB_ACTION_TABLE = "CREATE TABLE IF NOT EXISTS " + PB_ACTION_TABLE + " (" +
-            ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            GAME_MODE + " INTEGER, " +
-            PEG_VALUE + " INTEGER, " +
-            PEG_TYPE + " INTEGER, " +
-            PEG_COUNT + " INTEGER, " +
-            ACTION_TYPE + " INTEGER, " +
-            ACTION_VALUE + " INTEGER, " +
-            DATE + " DATETIME);";
     String[] ACTION_COLUMNS = new String[] {ID,
             GAME_MODE, PEG_VALUE, PEG_TYPE, PEG_COUNT, ACTION_TYPE, ACTION_VALUE, DATE };
     String ID_WHERE                  = ID + " = ?";
     String GAME_MODE_WHERE                  = GAME_MODE + " = ?";
     String PEG_TYPE_WHERE            = PEG_TYPE + " = ?";
+    String DATE_WHERE                   = DATE + " >= ?";
 
 }
