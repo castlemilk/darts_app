@@ -71,8 +71,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     private Button mCountButtonThree;
     private ImageButton mIncrementTwo;
     private ImageButton mIncrementThree;
-    private Button mMovePagerForwardTen;
-    private Button mMovePagerBackwardsTen;
+    private ImageButton mMovePagerForwardTen;
+    private ImageButton mMovePagerBackwardsTen;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
@@ -127,10 +127,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
-        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
-        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
-        mMovePagerBackwardsTen.setTypeface(tf_ios);
-        mMovePagerForwardTen.setTypeface(tf_ios);
+        mMovePagerBackwardsTen = (ImageButton) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -169,8 +167,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         setContentView(R.layout.two_dart_view);
-        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
-        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
+        mMovePagerBackwardsTen = (ImageButton) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
         curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
@@ -330,8 +328,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mIncrementTwo = (ImageButton) findViewById(R.id.increment_two);
         mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
-        mCountButtonTwo.setTypeface(tf_ios_bold);
-        mCountButtonThree.setTypeface(tf_ios_bold);
+        mCountButtonTwo.setTypeface(tf_viewpager);
+        mCountButtonThree.setTypeface(tf_viewpager);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();

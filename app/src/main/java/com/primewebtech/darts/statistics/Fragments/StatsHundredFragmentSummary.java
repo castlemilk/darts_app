@@ -71,7 +71,7 @@ public class StatsHundredFragmentSummary extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stats_hundred_summary, container, false);
         tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
-        tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arial.ttf");
+        tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         TypedValue outValue1000 = new TypedValue();
         getResources().getValue(R.dimen.stats_summary_bubble_pegValue_text_1000,outValue1000, true);
 

@@ -348,7 +348,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mIncrement100 = (ImageButton) findViewById(R.id.increment_100plus);
         mIncrement140 = (ImageButton) findViewById(R.id.increment_140plus);
         mIncrement180 = (ImageButton) findViewById(R.id.increment_180plus);
-        mCountButton.setTypeface(tf_ios_bold);
+        mCountButton.setTypeface(tf_viewpager);
         mIncrement100.setSoundEffectsEnabled(false);
         mIncrement140.setSoundEffectsEnabled(false);
         mIncrement180.setSoundEffectsEnabled(false);

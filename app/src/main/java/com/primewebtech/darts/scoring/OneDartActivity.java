@@ -348,7 +348,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mIncrementOne = (ImageButton) findViewById(R.id.increment_one);
         mIncrementTwo = (ImageButton) findViewById(R.id.increment_two);
         mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
-        mCountButton.setTypeface(tf_ios_bold);
+        mCountButton.setTypeface(tf_viewpager);
         mIncrementOne.setSoundEffectsEnabled(false);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);

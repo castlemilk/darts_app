@@ -71,8 +71,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     private String lastResetTime;
     private Button mCountButtonThree;
     private ImageButton mIncrementThree;
-    private Button mMovePagerForwardTen;
-    private Button mMovePagerBackwardsTen;
+    private ImageButton mMovePagerForwardTen;
+    private ImageButton mMovePagerBackwardsTen;
     private ImageButton mMenuButton;
     private ImageButton mBackButton;
     public MainApplication app;
@@ -131,10 +131,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
-        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
-        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
-        mMovePagerForwardTen.setTypeface(tf_ios);
-        mMovePagerBackwardsTen.setTypeface(tf_ios);
+        mMovePagerBackwardsTen = (ImageButton) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -163,10 +161,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         tf_ios_bold = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/ios_bold.ttf");
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
-        mMovePagerBackwardsTen = (Button) findViewById(R.id.minus_ten);
-        mMovePagerForwardTen = (Button) findViewById(R.id.plus_ten);
-        mMovePagerForwardTen.setTypeface(tf_increment_button);
-        mMovePagerBackwardsTen.setTypeface(tf_increment_button);
+        mMovePagerBackwardsTen = (ImageButton) findViewById(R.id.minus_ten);
+        mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
@@ -321,7 +317,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     }
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
-        mCountButtonThree.setTypeface(tf_ios_bold);
+        mCountButtonThree.setTypeface(tf_viewpager);
         mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();

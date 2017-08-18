@@ -73,9 +73,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/score_two_buttons_margin_top"
         app:layout_constraintTop_toBottomOf="@+id/pin"
-        app:layout_constraintVertical_bias="0.29000002" />
+        app:layout_constraintVertical_bias="0.0" />
     <ImageButton
         android:id="@+id/increment_three"
         style="@style/Widget.AppCompat.Button.Borderless"

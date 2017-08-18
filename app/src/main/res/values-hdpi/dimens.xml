@@ -21,9 +21,9 @@
     <dimen name="stats_bubble_current_period_width">55dp</dimen>
     <dimen name="stats_bubble_previous_width">45dp</dimen>
     <dimen name="stats_summary_bubble_values">45dp</dimen>
-    <dimen name="stats_summary_bubble_values_text">20sp</dimen>
-    <dimen name="stats_summary_bubble_pegValue">60dp</dimen>
-    <dimen name="stats_summary_bubble_pegValue_text">30sp</dimen>
+    <dimen name="stats_summary_bubble_values_text">17sp</dimen>
+    <dimen name="stats_summary_bubble_pegValue">52dp</dimen>
+    <dimen name="stats_summary_bubble_pegValue_text">20sp</dimen>
     <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
     <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">15.0</item>
     <!-- gallery -->
@@ -105,14 +105,14 @@
 
     <dimen name="score_count_button_margin_bottom">25.5dp</dimen>
 
-    <dimen name="score_circle_button_width">50dp</dimen>
-    <dimen name="score_circle_button_height">50dp</dimen>
+    <dimen name="score_circle_button_width">60dp</dimen>
+    <dimen name="score_circle_button_height">60dp</dimen>
     <dimen name="score_bubble_PB_score">70dp</dimen>
     <dimen name="score_bubble_PB_score_daily">65dp</dimen>
     <dimen name="score_bubble_small">55dp</dimen>
     <dimen name="score_bubble_total_aggregate">40dp</dimen>
     <dimen name="score_indicator_bubble">15dp</dimen>
-    <dimen name="score_indicator">19sp</dimen>
+    <dimen name="score_indicator">15sp</dimen>
     <dimen name="score_menu_icon_width">24dp</dimen>
     <dimen name="score_menu_icon_height">30dp</dimen>
     <dimen name="increment_number_text_size">27sp</dimen>
@@ -152,9 +152,12 @@
     <dimen name="stats_text_current_period_size_text">25sp</dimen>
     <dimen name="score_increment_margin_right">35dp</dimen>
     <dimen name="score_menu_margin_left">35dp</dimen>
-    <dimen name="score_button_margin_top">40dp</dimen>
+    <dimen name="score_button_margin_top">20dp</dimen>
     <dimen name="score_button_margin_top_three">100dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
+    <dimen name="score_two_buttons_margin_top">45dp</dimen>
+    <dimen name="stats_summary_column_separation">40dp</dimen>
+    <dimen name="stats_summary_row_spacing">13dp</dimen>
 
 
 </resources>
