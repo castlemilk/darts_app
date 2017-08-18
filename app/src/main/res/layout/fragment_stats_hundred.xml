@@ -14,9 +14,7 @@
         android:layout_marginStart="10dp"
         android:text="@string/_stats_d"
         android:textColor="@color/list_choice_normal_bg_light"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
+        android:textSize="@dimen/stats_headers_text"
         android:gravity="center"
         android:layout_marginRight="0dp"
         android:layout_marginEnd="8dp"
@@ -26,6 +24,42 @@
         app:layout_constraintRight_toRightOf="@+id/row_ld_6"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="0dp" />
+
+    <TextView
+        android:id="@+id/column_week"
+        android:layout_width="@dimen/stats_bubble_previous_width"
+        android:layout_height="@dimen/stats_bubble_previous_width"
+        android:layout_gravity="center"
+        android:text="@string/stats_w"
+        android:textColor="@color/list_choice_normal_bg_light"
+        android:textSize="@dimen/stats_headers_text"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/column_month"
+        android:layout_width="@dimen/stats_bubble_previous_width"
+        android:layout_height="@dimen/stats_bubble_previous_width"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/stats_m"
+        android:textColor="@color/list_choice_normal_bg_light"
+        android:textSize="@dimen/stats_headers_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/row_ld_2"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/row_ld_2"
+        app:layout_constraintHorizontal_bias="1.0" />
 
     <TextView
         android:id="@+id/ld_text"
@@ -74,10 +108,6 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginStart="10dp"
         android:gravity="bottom|center"
         android:text="@string/_stat_lm_text"
         android:textColor="@color/list_choice_normal_bg_light"
@@ -90,45 +120,7 @@
         app:layout_constraintBottom_toTopOf="@+id/row_lm_2"
         android:layout_marginBottom="0dp" />
 
-    <TextView
-        android:id="@+id/column_week"
-        android:layout_width="@dimen/stats_bubble_previous_width"
-        android:layout_height="@dimen/stats_bubble_previous_width"
-        android:layout_gravity="center"
-        android:text="@string/stats_w"
-        android:textColor="@color/list_choice_normal_bg_light"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.501" />
 
-    <TextView
-        android:id="@+id/column_month"
-        android:layout_width="@dimen/stats_bubble_previous_width"
-        android:layout_height="@dimen/stats_bubble_previous_width"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/stats_m"
-        android:textColor="@color/list_choice_normal_bg_light"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/row_ld_2"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/row_ld_2"
-        app:layout_constraintHorizontal_bias="1.0" />
 
 
     <TextView
@@ -144,11 +136,10 @@
         android:typeface="monospace"
         android:gravity="center"
         app:layout_constraintLeft_toLeftOf="@+id/column_day"
-        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_day"
         app:layout_constraintTop_toBottomOf="@+id/column_day"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="0dp" />
 
     <TextView
@@ -206,14 +197,10 @@
         android:textSize="@dimen/stats_text_PB_period_size_text"
         android:textStyle="bold"
         android:typeface="monospace"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="@+id/column_day"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/column_day"
-        app:layout_constraintHorizontal_bias="0.391"
-        app:layout_constraintTop_toTopOf="@+id/best_score_weekly"
-        android:layout_marginTop="0dp" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="@+id/best_score_weekly" />
 
     <TextView
         android:id="@+id/best_score_weekly"
@@ -257,7 +244,7 @@
         android:typeface="monospace"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
         app:layout_constraintRight_toRightOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.451"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="@+id/best_score_weekly"
         android:layout_marginTop="0dp" />
 
@@ -286,7 +273,7 @@
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="13dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
@@ -305,7 +292,7 @@
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="0dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
@@ -314,11 +301,12 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="monospace"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="27dp"
         app:layout_constraintTop_toBottomOf="@+id/best_score_weekly"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <TextView
         android:id="@+id/row_ld_3"
@@ -337,7 +325,7 @@
         android:layout_marginTop="0dp"
         app:layout_constraintTop_toTopOf="@+id/row_ld_4"
         app:layout_constraintLeft_toRightOf="@+id/row_ld_4"
-        android:layout_marginLeft="7dp" />
+        android:layout_marginLeft="8dp" />
 
     <TextView
         android:id="@+id/row_ld_2"
@@ -401,10 +389,6 @@
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -442,9 +426,6 @@
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -454,7 +435,8 @@
         android:typeface="monospace"
         android:layout_marginTop="2dp"
         app:layout_constraintTop_toTopOf="@+id/row_lw_4"
-        app:layout_constraintLeft_toRightOf="@+id/row_lw_3" />
+        app:layout_constraintLeft_toRightOf="@+id/row_lw_3"
+        android:layout_marginLeft="8dp" />
 
 
 
@@ -463,8 +445,6 @@
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -475,15 +455,13 @@
         app:layout_constraintTop_toTopOf="@+id/row_lm_4"
         android:layout_marginTop="0dp"
         app:layout_constraintRight_toLeftOf="@+id/row_lm_5"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="8dp" />
 
     <TextView
         android:id="@+id/row_lm_5"
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -492,7 +470,7 @@
         android:textStyle="bold"
         android:typeface="monospace"
         app:layout_constraintRight_toLeftOf="@+id/row_lm_4"
-        android:layout_marginRight="13dp"
+        android:layout_marginRight="8dp"
         app:layout_constraintTop_toTopOf="@+id/row_lm_4"
         android:layout_marginTop="0dp" />
 
@@ -501,8 +479,6 @@
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -510,19 +486,18 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="monospace"
-        android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="26dp"
-        app:layout_constraintTop_toBottomOf="@+id/row_lw_4" />
+        android:layout_marginTop="28dp"
+        app:layout_constraintTop_toBottomOf="@+id/row_lw_4"
+        app:layout_constraintHorizontal_bias="0.501" />
     <TextView
         android:id="@+id/row_lm_3"
         android:layout_width="@dimen/stats_bubble_previous_width"
         android:layout_height="@dimen/stats_bubble_previous_width"
         android:layout_gravity="center"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="7dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
@@ -566,22 +541,19 @@
         android:textColor="@color/colorBlack"
         android:typeface="monospace"
         android:gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/row_lm_4" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp" />
 
     <TextView
         android:id="@+id/stats_total_peg_count"
         android:layout_width="@dimen/stats_text_pegvalue_total"
         android:layout_height="@dimen/stats_text_pegvalue_total"
         android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
         android:background="@drawable/peg_stats_score_background"
         android:gravity="center"
         android:text="@string/_0"
@@ -589,13 +561,9 @@
         android:textSize="@dimen/stats_text_pegvalue_total_text"
         android:textStyle="bold"
         android:typeface="monospace"
-        android:layout_marginRight="0dp"
-        app:layout_constraintTop_toTopOf="@+id/peg_value_indicator"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/peg_value_indicator"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/row_lm_3"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintRight_toLeftOf="@+id/row_lm_2" />
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

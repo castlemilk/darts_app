@@ -70,7 +70,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     private String curTime;
     private String lastResetTime;
     private Button mCountButtonThree;
-    private Button mIncrementThree;
+    private ImageButton mIncrementThree;
     private Button mMovePagerForwardTen;
     private Button mMovePagerBackwardsTen;
     private ImageButton mMenuButton;
@@ -322,9 +322,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void initialiseCountButtons() {
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
         mCountButtonThree.setTypeface(tf_ios_bold);
-        mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
-        mIncrementThree.setTypeface(tf_increment_button);
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {

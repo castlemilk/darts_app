@@ -203,68 +203,55 @@
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/pin"
         android:layout_marginBottom="@dimen/score_count_button_margin_bottom"
-        android:layout_marginEnd="12dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.515" />
+        app:layout_constraintHorizontal_bias="0.5" />
 
 
-    <Button
+    <ImageButton
         android:id="@+id/increment_100plus"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_100"
-        android:textSize="@dimen/increment_number_text_size_hundred"
-        android:textColor="@android:color/background_light"
+        android:src="@drawable/dart_button_100_score"
         app:layout_constraintRight_toRightOf="@+id/pin"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginRight="@dimen/score_increment_margin_right"
+        android:layout_marginTop="@dimen/score_button_margin_top"
         app:layout_constraintTop_toBottomOf="@+id/pin" />
 
-    <Button
+    <ImageButton
         android:id="@+id/increment_140plus"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_140"
-        android:textSize="@dimen/increment_number_text_size_hundred"
-        android:textColor="@android:color/background_light"
+        android:src="@drawable/dart_button_140_score"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/increment_100plus"
         app:layout_constraintRight_toRightOf="@+id/increment_100plus"
         app:layout_constraintTop_toBottomOf="@+id/increment_100plus"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="28dp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/increment_180plus"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_180"
-        android:textSize="@dimen/increment_number_text_size_hundred"
-        android:textColor="@android:color/background_light"
+        android:src="@drawable/dart_button_180_score"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/increment_100plus"
         app:layout_constraintRight_toRightOf="@+id/increment_100plus"
         app:layout_constraintTop_toBottomOf="@+id/increment_140plus"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="28dp" />
     <ImageButton
         android:id="@+id/button_menu"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
-        android:src="@drawable/menu_icon"
+        android:src="@drawable/score_menu_icon"
         app:layout_constraintLeft_toLeftOf="@+id/pin"
         app:layout_constraintTop_toTopOf="@+id/increment_100plus"
-        android:layout_marginLeft="26dp"
+        android:layout_marginLeft="@dimen/score_menu_margin_left"
         android:layout_marginTop="0dp" />
 
     <ImageButton
@@ -272,26 +259,22 @@
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/back_icon"
+        android:src="@drawable/score_back_icon"
         app:layout_constraintLeft_toLeftOf="@+id/button_menu"
         app:layout_constraintTop_toBottomOf="@+id/button_menu"
         app:layout_constraintRight_toRightOf="@+id/button_menu"
         app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="28dp" />
 
     <ImageButton
         android:id="@+id/stats_button"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:gravity="center_vertical|center_horizontal"
-        android:src="@drawable/graph_icon"
-        android:textColor="#fff"
+        android:src="@drawable/score_graph_icon"
         app:layout_constraintLeft_toLeftOf="@+id/button_menu"
         app:layout_constraintTop_toBottomOf="@+id/button_back"
         app:layout_constraintRight_toRightOf="@+id/button_menu"
         app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="28dp" />
 </android.support.constraint.ConstraintLayout>

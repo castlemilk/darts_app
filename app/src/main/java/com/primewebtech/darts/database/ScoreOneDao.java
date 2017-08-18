@@ -26,9 +26,6 @@ public class ScoreOneDao extends DatabaseContentProvider implements ScoreSchema 
 
     private Cursor cursor;
 
-    protected String getTodayScoreTableName() {
-        return TODAY_SCORE_TABLE;
-    }
     protected String getScoreTableName() {
         return SCORE_TABLE_ONE;
     }

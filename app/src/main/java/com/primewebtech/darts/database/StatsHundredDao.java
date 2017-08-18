@@ -28,12 +28,9 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
 
     private Cursor cursor;
     protected String getScoreTableBest() { return SCORE_TABLE_BEST; }
-
     protected String getScoreTableName() {
         return SCORE_TABLE_HUNDRED;
     }
-    protected String getScoreTableBestPrevious() { return SCORE_TABLE_BEST_PREVIOUS; }
-    protected String getScoreTableBestToday() { return SCORE_TABLE_BEST_TODAY; }
     private String[] periods = { "DAY", "WEEK", "MONTH"};
 
     public StatsHundredDao(SQLiteDatabase database) {
@@ -71,55 +68,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         Log.d(TAG, "addPegValue:" + scoreRecord.toString());
         return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
     }
-    public boolean setBestScorePrevious(String period, int pegValue, int pegCount) {
-        /**
-         * On the detection of a new personal best score being made for a given peg value then we
-         * update the the value in the best scores table. This activity will be carried it out when
-         * viewing the stats view. Alternatively this functionality could be implemented via a
-         * set trigger.
-         */
-        Log.d(TAG, "setBestScorePrevious:period:"+period);
-        Log.d(TAG, "setBestScorePrevious:pegValue:"+pegValue);
-        Log.d(TAG, "setBestScorePrevious:pegCount:"+pegCount);
-        if (getPeriodsHighestScorePrevious(pegValue, period) != null) {
-            return updateBestScorePrevious(period, pegValue, pegCount);
-        } else {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_VALUE, pegValue);
-            contentValues.put(PERIOD, period);
-            contentValues.put(TYPE, TYPE_2);
-            contentValues.put(PEG_COUNT, pegCount);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
-        }
-    }
-
-    public boolean updateBestScorePrevious(String period, int pegValue, int pegCount) {
-        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
-        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
-        Log.d(TAG, "updateBestScorePrevious:pegCount:"+pegCount);
-
-        PegRecord currentBestScorePrevious = getPeriodsHighestScorePrevious(pegValue, period);
-        if (currentBestScorePrevious != null) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_VALUE, pegValue);
-            contentValues.put(PERIOD, period);
-            contentValues.put(TYPE, TYPE_2);
-            contentValues.put(PEG_COUNT, pegCount);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableBestPrevious(), contentValues, selection,
-                    selectionArgs) > 0;
-        } else {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_VALUE, pegValue);
-            contentValues.put(PERIOD, period);
-            contentValues.put(TYPE, TYPE_2);
-            contentValues.put(PEG_COUNT, pegCount);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.insert(getScoreTableBestPrevious(), contentValues) > 0;
-        }
-
-    }
 
     public boolean setBestScore(String period, int pegValue, int pegCount) {
         /**
@@ -154,7 +102,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public boolean updateBestScore(String period, int pegValue, int pegCount){
         final String selectionArgs[] =  {period, String.valueOf(pegValue)};
         final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
-        PegRecord currentBestScore = getPeriodsHighestScoreToday(pegValue, period);
         ContentValues contentValues = new ContentValues();
         contentValues.put(PEG_VALUE, pegValue);
         contentValues.put(PERIOD, period);
@@ -191,22 +138,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         }
         return null;
     }
-    public PegRecord getPeriodsHighestScorePrevious(int pegValue, String period) {
-        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
-        final String selectionArgs[] = { String.valueOf(pegValue),
-                period};
-        PegRecord pegRecord;
-        cursor = super.query(getScoreTableBestPrevious(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                pegRecord = cursorToEntity(cursor);
-                Log.d(TAG, "getBestScorePrevious:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
-                cursor.close();
-                return pegRecord;
-            }
-        }
-        return null;
-    }
 
     public int getHighestScore(int pegvalue, String period) {
         int highetScoreWithin6Months = getHighestScoreForPeriodToday(pegvalue, period);
@@ -218,7 +149,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                 return highetScoreWithin6Months;
             }
         } else {
-//            setBestScore(period, pegvalue, highetScoreWithin6Months);
             return highetScoreWithin6Months;
         }
 
@@ -235,51 +165,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         return highestValue;
     }
 
-    public boolean updateBestScoreToday(String period, int pegValue, int pegCount){
-        final String selectionArgs[] =  {period, String.valueOf(pegValue)};
-        final String selection = PERIOD + "= ?"+ " AND "+ PEG_VALUE_WHERE;
-        Log.d(TAG, "updateBestScore:pegValue:"+pegValue);
-        Log.d(TAG, "updateBestScore:pegCount:"+pegCount);
-        PegRecord currentBestScore = getPeriodsHighestScoreToday(pegValue, period);
-        if (currentBestScore != null) {
-
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_VALUE, pegValue);
-            contentValues.put(PERIOD, period);
-            contentValues.put(TYPE, TYPE_2);
-            contentValues.put(PEG_COUNT, pegCount);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.update(getScoreTableBest(), contentValues, selection,
-                    selectionArgs) > 0;
-        } else {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(PEG_VALUE, pegValue);
-            contentValues.put(PERIOD, period);
-            contentValues.put(TYPE, TYPE_2);
-            contentValues.put(PEG_COUNT, pegCount);
-            contentValues.put(LAST_MODIFIED, getDateNow());
-            return super.insert(getScoreTableBest(), contentValues) > 0;
-        }
-
-    }
-
-    public PegRecord getPeriodsHighestScoreToday(int pegValue, String period) {
-        final String selection = PEG_VALUE_WHERE+ " AND "+ PERIOD_WHERE;
-        final String selectionArgs[] = { String.valueOf(pegValue),
-                period};
-        PegRecord pegRecord;
-        cursor = super.query(getScoreTableBestToday(), ScoreSchema.BEST_SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                pegRecord = cursorToEntity(cursor);
-                Log.d(TAG, "getBestScorePrevious:foundMatch:HighestScore:["+period+"]:"+pegRecord.toString());
-                cursor.close();
-                return pegRecord;
-            }
-        }
-        return null;
-    }
-
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         if (period.equals("DAY")){
             final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
@@ -287,7 +172,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
             Log.d(TAG, "Query:day:"+queryString);
             cursor = super.rawQuery(queryString, null);
-//            cursor = super.query(getScoreTableName(), ScoreSchema.SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     Log.d(TAG, "foundMax[week]:"+cursor.getInt(0));
@@ -295,8 +179,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     cursor.close();
                     return pegCountTotal;
                 }
-
-
             }
             return 0;
         } else if (period.equals("WEEK")) {
@@ -306,7 +188,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     " AND " + LAST_MODIFIED + ">='" + datePeriod.get("start") + "'" +
                     " AND " + LAST_MODIFIED + "<='" + datePeriod.get("end")+"';";
             Log.d(TAG, "Query: "+queryString);
-
             cursor = super.rawQuery(queryString, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -315,11 +196,8 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     cursor.close();
                     return maxPegValue;
                 }
-
-
             }
             return 0;
-
         } else if (period.equals("MONTH")) {
             HashMap<String, String> datePeriod = getPreviousMonth(previousPeriodIndex);
             final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
@@ -327,7 +205,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     " AND " + LAST_MODIFIED + ">='" + datePeriod.get("start") +"'"+
                     " AND " + LAST_MODIFIED + "<='" + datePeriod.get("end")+"';";
             Log.d(TAG, "Query: "+queryString);
-
             cursor = super.rawQuery(queryString, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -336,15 +213,11 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
                     cursor.close();
                     return maxPegValue;
                 }
-
-
             }
             return 0;
-
         } else {
             return 0;
         }
-
     }
     public String getDateNow() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -506,8 +379,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
     public int getTotalPegCountMonth(int pegValue) {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-//        Date now = new Date();
-//        Log.d(TAG, "getTotalPegCountMonth:currentDate:"+df.format(now));
         cal.set(Calendar.DAY_OF_MONTH, 1);
         Date startOfMonth = cal.getTime();
         String selectorArgs[] = new String[]{String.valueOf(pegValue), df.format(startOfMonth)};
@@ -532,22 +403,6 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
         Date yesterday = cal.getTime();
         Log.d(TAG, "getTodaysDate:"+df.format(yesterday));
         return df.format(yesterday);
-    }
-    public String getLastWeeksDate() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        cal.add(Calendar.DAY_OF_YEAR, -6);
-        Date lastWeek = cal.getTime();
-        Log.d(TAG, "getLastWeeksDate:"+df.format(lastWeek));
-        return df.format(lastWeek);
-    }
-    public String getLastMonthsDate() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        cal.add(Calendar.MONTH, -1);
-        Date lastMonth = cal.getTime();
-        Log.d(TAG, "getLastMonthsDate:"+df.format(lastMonth));
-        return df.format(lastMonth);
     }
     public PegRecord getTodayPegValue(int pegValue, int type) {
 

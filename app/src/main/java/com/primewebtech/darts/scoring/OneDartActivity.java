@@ -66,9 +66,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
     public MainApplication app;
     private String curTime;
     private String lastResetTime;
-    private Button mIncrementOne;
-    private Button mIncrementTwo;
-    private Button mIncrementThree;
+    private ImageButton mIncrementOne;
+    private ImageButton mIncrementTwo;
+    private ImageButton mIncrementThree;
     private Typeface tf_ios;
     private Typeface tf_ios_bold;
     private Typeface tf_viewpager;
@@ -345,13 +345,10 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
     public void initialiseCountButtons() {
         mCountButton = (Button) findViewById(R.id.count_button);
-        mIncrementOne = (Button) findViewById(R.id.increment_one);
-        mIncrementTwo = (Button) findViewById(R.id.increment_two);
-        mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementOne = (ImageButton) findViewById(R.id.increment_one);
+        mIncrementTwo = (ImageButton) findViewById(R.id.increment_two);
+        mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
         mCountButton.setTypeface(tf_ios_bold);
-        mIncrementOne.setTypeface(tf_increment_button);
-        mIncrementTwo.setTypeface(tf_increment_button);
-        mIncrementThree.setTypeface(tf_increment_button);
         mIncrementOne.setSoundEffectsEnabled(false);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);

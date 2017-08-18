@@ -149,6 +149,11 @@
     <dimen name="score_two_count_indicactor_three_margin_bottom">45dp</dimen>
     <dimen name="stats_text_PB_period_size_text">25sp</dimen>
     <dimen name="stats_text_current_period_size_text">25sp</dimen>
+    <dimen name="score_increment_margin_right">20dp</dimen>
+    <dimen name="score_menu_margin_left">20dp</dimen>
+    <dimen name="score_button_margin_top">20dp</dimen>
+    <dimen name="score_button_margin_top_three">120dp</dimen>
+    <dimen name="score_three_button_separation">18dp</dimen>
 
 
 </resources>

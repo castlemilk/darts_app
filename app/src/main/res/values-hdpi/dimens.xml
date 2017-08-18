@@ -8,17 +8,17 @@
     <dimen name="score_margin_top">5dp</dimen>
 
     <!-- stats -->
-    <dimen name="stats_headers_text">30sp</dimen>
+    <dimen name="stats_headers_text">22sp</dimen>
     <dimen name="stats_text_PB_period_size">25sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_text">32sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_hundred_text">20sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator">58dp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">40sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_hundred_text">24sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator">65dp</dimen>
     <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
-    <dimen name="stats_text_pegvalue_total">40dp</dimen>
+    <dimen name="stats_text_pegvalue_total">50dp</dimen>
     <dimen name="stats_text_current_period_size">30sp</dimen>
     <dimen name="stats_text_previous_period_size">25sp</dimen>
-    <dimen name="stats_bubble_PB_period_width">58dp</dimen>
-    <dimen name="stats_bubble_current_period_width">68dp</dimen>
+    <dimen name="stats_bubble_PB_period_width">55dp</dimen>
+    <dimen name="stats_bubble_current_period_width">55dp</dimen>
     <dimen name="stats_bubble_previous_width">45dp</dimen>
     <dimen name="stats_summary_bubble_values">45dp</dimen>
     <dimen name="stats_summary_bubble_values_text">20sp</dimen>
@@ -39,7 +39,7 @@
         <item name="score_indicator1_horizontal_bias" format="float" type="dimen">0.5</item>
         <item name="score_indicator1_vertical_bias" format="float" type="dimen">0.0</item>
         <!-- indicator2 -->
-        <dimen name="score_indicator2_margin_top">19.9dp</dimen>
+        <dimen name="score_indicator2_margin_top">18.9dp</dimen>
         <dimen name="score_indicator2_margin_bottom">0dp</dimen>
         <dimen name="score_indicator2_margin_right">0dp</dimen>
         <dimen name="score_indicator2_margin_left">0dp</dimen>
@@ -105,8 +105,8 @@
 
     <dimen name="score_count_button_margin_bottom">25.5dp</dimen>
 
-    <dimen name="score_circle_button_width">60dp</dimen>
-    <dimen name="score_circle_button_height">60dp</dimen>
+    <dimen name="score_circle_button_width">50dp</dimen>
+    <dimen name="score_circle_button_height">50dp</dimen>
     <dimen name="score_bubble_PB_score">70dp</dimen>
     <dimen name="score_bubble_PB_score_daily">65dp</dimen>
     <dimen name="score_bubble_small">55dp</dimen>
@@ -117,7 +117,7 @@
     <dimen name="score_menu_icon_height">30dp</dimen>
     <dimen name="increment_number_text_size">27sp</dimen>
     <dimen name="increment_number_text_size_hundred">20sp</dimen>
-    <dimen name="move_ten_text_size">27dp</dimen>
+    <dimen name="move_ten_text_size">20dp</dimen>
 
     <!-- homepage -->
     <dimen name="home_page_sore_mode_text">25sp</dimen>
@@ -128,7 +128,7 @@
     <dimen name="home_page_logo_margin_top">10dp</dimen>
     <dimen name="home_page_nav_button_text_size">20sp</dimen>
     <dimen name="home_page_nav_button_margin_top">15dp</dimen>
-    <dimen name="home_page_gallery_button_margin_top">20dp</dimen>
+    <dimen name="home_page_gallery_button_margin_top">0dp</dimen>
     <dimen name="home_page_logo_margin_bottom">0dp</dimen>
     <dimen name="text_size_large">20sp</dimen>
     <dimen name="text_size_large_one_dart">50sp</dimen>
@@ -150,6 +150,11 @@
     <dimen name="score_two_count_indicactor_three_margin_bottom">29.0dp</dimen>
     <dimen name="stats_text_PB_period_size_text">25sp</dimen>
     <dimen name="stats_text_current_period_size_text">25sp</dimen>
+    <dimen name="score_increment_margin_right">35dp</dimen>
+    <dimen name="score_menu_margin_left">35dp</dimen>
+    <dimen name="score_button_margin_top">40dp</dimen>
+    <dimen name="score_button_margin_top_three">100dp</dimen>
+    <dimen name="score_three_button_separation">18dp</dimen>
 
 
 </resources>

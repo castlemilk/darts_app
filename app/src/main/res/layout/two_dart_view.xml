@@ -63,31 +63,25 @@
         app:layout_constraintRight_toLeftOf="@+id/pin"
         app:layout_constraintLeft_toRightOf="@+id/pin">
     </org.malcdevelop.cyclicview.CyclicView>
-    <Button
+    <ImageButton
         android:id="@+id/increment_two"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_2"
-        android:textSize="@dimen/increment_number_text_size"
-        android:textColor="@android:color/background_light"
+        android:src='@drawable/dart_button_2_score'
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/pin"
-        app:layout_constraintVertical_bias="0.099" />
-    <Button
+        app:layout_constraintVertical_bias="0.29000002" />
+    <ImageButton
         android:id="@+id/increment_three"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_3"
-        android:textSize="@dimen/increment_number_text_size"
-        android:textColor="@android:color/background_light"
+        android:src='@drawable/dart_button_3_score'
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="40dp"
@@ -96,40 +90,36 @@
         app:layout_constraintTop_toBottomOf="@+id/increment_two"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/plus_ten"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/round_button"
-        android:text="@string/_plus_ten"
-        android:textSize="@dimen/move_ten_text_size"
-        android:textColor="@android:color/background_light"
+        android:src="@drawable/dart_button_plus_10"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.811"
         app:layout_constraintTop_toTopOf="@+id/increment_two"
         android:layout_marginTop="0dp"
-        app:layout_constraintVertical_bias="0.0" />
-    <Button
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/increment_two"
+        android:layout_marginLeft="35dp"
+        app:layout_constraintHorizontal_bias="0.0" />
+    <ImageButton
         android:id="@+id/minus_ten"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
-        android:background="@drawable/round_button"
-        android:text="@string/_minus_ten"
-        android:textSize="@dimen/move_ten_text_size"
-        android:textColor="@android:color/background_light"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/dart_button_minus_10"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.815"
-        app:layout_constraintTop_toTopOf="@+id/increment_three" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toTopOf="@+id/increment_three"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/plus_ten" />
 
 
     <ImageButton
@@ -137,39 +127,23 @@
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
-        android:src="@drawable/menu_icon"
-        android:layout_marginStart="55dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/score_menu_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="55dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.01"
-        android:layout_marginEnd="8dp"
         app:layout_constraintTop_toTopOf="@+id/increment_two"
-        android:layout_marginTop="0dp"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintRight_toLeftOf="@+id/increment_two"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginRight="35dp" />
     <ImageButton
         android:id="@+id/button_back"
         android:layout_width="@dimen/score_circle_button_width"
         android:layout_height="@dimen/score_circle_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/round_button"
         android:onClick="onBackButtonClick"
-        android:src="@drawable/back_icon"
-        android:layout_marginStart="55dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/score_back_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginLeft="55dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.025"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintTop_toTopOf="@+id/increment_three" />
+        app:layout_constraintTop_toTopOf="@+id/increment_three"
+        app:layout_constraintRight_toRightOf="@+id/button_menu"
+        android:layout_marginRight="0dp"
+        app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>

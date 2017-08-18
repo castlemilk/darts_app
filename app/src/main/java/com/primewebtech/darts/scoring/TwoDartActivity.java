@@ -69,8 +69,8 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     private String lastResetTime;
     private Button mCountButtonTwo;
     private Button mCountButtonThree;
-    private Button mIncrementTwo;
-    private Button mIncrementThree;
+    private ImageButton mIncrementTwo;
+    private ImageButton mIncrementThree;
     private Button mMovePagerForwardTen;
     private Button mMovePagerBackwardsTen;
     private ImageButton mMenuButton;
@@ -328,12 +328,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     public void initialiseCountButtons() {
         mCountButtonTwo = (Button) findViewById(R.id.two_count_button);
         mCountButtonThree = (Button) findViewById(R.id.three_count_button);
-        mIncrementTwo = (Button) findViewById(R.id.increment_two);
-        mIncrementThree = (Button) findViewById(R.id.increment_three);
+        mIncrementTwo = (ImageButton) findViewById(R.id.increment_two);
+        mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
         mCountButtonTwo.setTypeface(tf_ios_bold);
         mCountButtonThree.setTypeface(tf_ios_bold);
-        mIncrementTwo.setTypeface(tf_increment_button);
-        mIncrementThree.setTypeface(tf_increment_button);
         mIncrementTwo.setSoundEffectsEnabled(false);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
@@ -417,9 +415,14 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     public void movePagerBackwardsTen() {
         //TODO: answer question: do we want to always arrive at the start of the next interval
         int currentIndex = mViewPager.getCurrentPosition();
+        int currentValue = mPinValues.get(currentIndex);
         if ( currentIndex-10 < 0) {
             mViewPager.setCurrentPosition(getPegIndex(110));
-        } else if (currentIndex == getPegIndex(110)) {
+        } else if (currentValue == 107) {
+            mViewPager.setCurrentPosition(getPegIndex(97));
+        } else if (currentValue == 104) {
+            mViewPager.setCurrentPosition(getPegIndex(94));
+        }else if (currentIndex == getPegIndex(110)) {
             mViewPager.setCurrentPosition(getPegIndex(100));
         } else{
             mViewPager.setCurrentPosition(currentIndex-10);

@@ -6,7 +6,6 @@ package com.primewebtech.darts.database.model;
 
 public interface ActionSchema {
     String ACTION_TABLE              = "darts_action_history";
-    String PB_ACTION_TABLE           = "darts_pb_action_history";
     String ID                        = "_id";
     String ACTION_TYPE               = "action_type"; //i.e add/delete
     int INCREASE_PB                  = 2;

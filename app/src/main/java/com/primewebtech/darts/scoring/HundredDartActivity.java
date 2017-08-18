@@ -73,9 +73,9 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
     public MainApplication app;
     private String curTime;
     private String lastResetTime;
-    private Button mIncrement100;
-    private Button mIncrement140;
-    private Button mIncrement180;
+    private ImageButton mIncrement100;
+    private ImageButton mIncrement140;
+    private ImageButton mIncrement180;
     private Typeface tf_ios;
     private Typeface tf_ios_bold;
     private Typeface tf_viewpager;
@@ -345,13 +345,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
 
     public void initialiseCountButtons() {
         mCountButton = (Button) findViewById(R.id.count_button);
-        mIncrement100 = (Button) findViewById(R.id.increment_100plus);
-        mIncrement140 = (Button) findViewById(R.id.increment_140plus);
-        mIncrement180 = (Button) findViewById(R.id.increment_180plus);
+        mIncrement100 = (ImageButton) findViewById(R.id.increment_100plus);
+        mIncrement140 = (ImageButton) findViewById(R.id.increment_140plus);
+        mIncrement180 = (ImageButton) findViewById(R.id.increment_180plus);
         mCountButton.setTypeface(tf_ios_bold);
-        mIncrement100.setTypeface(tf_ios);
-        mIncrement140.setTypeface(tf_ios);
-        mIncrement180.setTypeface(tf_ios);
         mIncrement100.setSoundEffectsEnabled(false);
         mIncrement140.setSoundEffectsEnabled(false);
         mIncrement180.setSoundEffectsEnabled(false);

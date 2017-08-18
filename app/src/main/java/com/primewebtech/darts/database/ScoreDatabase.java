@@ -74,8 +74,6 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
             db.execSQL(CREATE_SCORE_TABLE_THREE);
             db.execSQL(CREATE_SCORE_TABLE_HUNDRED);
             db.execSQL(CREATE_SCORE_TABLE_BEST);
-            db.execSQL(CREATE_SCORE_TABLE_BEST_TODAY);
-            db.execSQL(CREATE_SCORE_TABLE_BEST_PREVIOUS);
             db.execSQL(CREATE_ACTION_TABLE);
             db.execSQL(deleteActionTrigger());
         }
@@ -98,10 +96,6 @@ public class ScoreDatabase implements ScoreSchema, ActionSchema{
                     + SCORE_TABLE_HUNDRED);
             db.execSQL("DROP TABLE IF EXISTS "
                     + SCORE_TABLE_BEST);
-            db.execSQL("DROP TABLE IF EXISTS "
-                    + SCORE_TABLE_BEST_PREVIOUS);
-            db.execSQL("DROP TABLE IF EXISTS "
-                    + SCORE_TABLE_BEST_TODAY);
             db.execSQL("DROP TABLE IF EXISTS "
                     + TODAY_SCORE_TABLE);
             db.execSQL("DROP TABLE IF EXISTS "

@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.primewebtech.darts.R;
@@ -34,13 +33,13 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_home_page);
 
         //Scoring buttons
-        Button darts1 = (Button) findViewById(R.id.darts1);
+        ImageButton darts1 = (ImageButton) findViewById(R.id.darts1);
         darts1.setOnClickListener(this);
-        Button darts2 = (Button) findViewById(R.id.darts2);
+        ImageButton darts2 = (ImageButton) findViewById(R.id.darts2);
         darts2.setOnClickListener(this);
-        Button darts3 = (Button) findViewById(R.id.darts3);
+        ImageButton darts3 = (ImageButton) findViewById(R.id.darts3);
         darts3.setOnClickListener(this);
-        Button darts100 = (Button) findViewById(R.id.darts100);
+        ImageButton darts100 = (ImageButton) findViewById(R.id.darts100);
         darts100.setOnClickListener(this);
 
         //Misc buttons
