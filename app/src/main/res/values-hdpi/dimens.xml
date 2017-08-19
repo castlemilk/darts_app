@@ -10,27 +10,27 @@
     <!-- stats -->
     <dimen name="stats_headers_text">22sp</dimen>
     <dimen name="stats_text_PB_period_size">25sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_text">40sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_hundred_text">24sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">32sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_hundred_text">25sp</dimen>
     <dimen name="stats_text_pegvalue_indicator">65dp</dimen>
     <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
     <dimen name="stats_text_pegvalue_total">50dp</dimen>
-    <dimen name="stats_text_current_period_size">30sp</dimen>
-    <dimen name="stats_text_previous_period_size">25sp</dimen>
+    <dimen name="stats_text_current_period_size">20sp</dimen>
+    <dimen name="stats_text_previous_period_size">17sp</dimen>
     <dimen name="stats_bubble_PB_period_width">55dp</dimen>
     <dimen name="stats_bubble_current_period_width">55dp</dimen>
     <dimen name="stats_bubble_previous_width">45dp</dimen>
     <dimen name="stats_summary_bubble_values">45dp</dimen>
     <dimen name="stats_summary_bubble_values_text">17sp</dimen>
     <dimen name="stats_summary_bubble_pegValue">52dp</dimen>
-    <dimen name="stats_summary_bubble_pegValue_text">20sp</dimen>
-    <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
-    <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">15.0</item>
+    <dimen name="stats_summary_bubble_pegValue_text">25sp</dimen>
+    <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">17.0</item>
+    <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">12.0</item>
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_pin_board_size">220dp</dimen>
-    <item name="score_pin_board_size_text"  format="float" type="dimen">75.0</item>
-    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">35.0</item>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">42.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">42.0</item>
         <!-- indicator1 -->
         <dimen name="score_indicator1_margin_top">0.5dp</dimen>
         <dimen name="score_indicator1_margin_bottom">16dp</dimen>
@@ -148,16 +148,19 @@
     <dimen name="score_three_count_indicator">23.9dp</dimen>
     <dimen name="score_two_count_indicactor_two_margin_top">30.5dp</dimen>
     <dimen name="score_two_count_indicactor_three_margin_bottom">29.0dp</dimen>
-    <dimen name="stats_text_PB_period_size_text">25sp</dimen>
-    <dimen name="stats_text_current_period_size_text">25sp</dimen>
-    <dimen name="score_increment_margin_right">35dp</dimen>
-    <dimen name="score_menu_margin_left">35dp</dimen>
+    <dimen name="stats_text_PB_period_size_text">17sp</dimen>
+    <dimen name="stats_text_current_period_size_text">17sp</dimen>
+    <dimen name="score_increment_margin_right">25dp</dimen>
+    <dimen name="score_menu_margin_left">25dp</dimen>
     <dimen name="score_button_margin_top">20dp</dimen>
     <dimen name="score_button_margin_top_three">100dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
     <dimen name="score_two_buttons_margin_top">45dp</dimen>
     <dimen name="stats_summary_column_separation">30dp</dimen>
     <dimen name="stats_summary_row_spacing">13dp</dimen>
+    <dimen name="stats_bubble_previous_column_spacing">14dp</dimen>
+    <dimen name="stats_bubble_previous_row_spacing">30dp</dimen>
+    <dimen name="stats_margin_top">0dp</dimen>
 
 
 </resources>

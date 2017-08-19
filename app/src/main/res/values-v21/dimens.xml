@@ -31,6 +31,9 @@
     <dimen name="score_two_buttons_margin_top">20dp</dimen>
     <dimen name="stats_summary_column_separation">20dp</dimen>
     <dimen name="stats_summary_row_spacing">10dp</dimen>
+    <dimen name="stats_bubble_previous_column_spacing">10dp</dimen>
+    <dimen name="stats_bubble_previous_row_spacing">30dp</dimen>
+    <dimen name="stats_margin_top">10dp</dimen>
     <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
     <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>
     <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>

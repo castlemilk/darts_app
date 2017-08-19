@@ -9,28 +9,28 @@
     <dimen name="circle_button_ring_thickness">5.5px</dimen>
     <!-- stats -->
     <dimen name="stats_headers_text">30sp</dimen>
-    <dimen name="stats_text_PB_period_size">25sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator_text">38sp</dimen>
+    <dimen name="stats_text_PB_period_size">18sp</dimen>
+    <dimen name="stats_text_pegvalue_indicator_text">35sp</dimen>
     <dimen name="stats_text_pegvalue_indicator_hundred_text">30sp</dimen>
-    <dimen name="stats_text_pegvalue_indicator">80dp</dimen>
-    <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
-    <dimen name="stats_text_pegvalue_total">50dp</dimen>
-    <dimen name="stats_text_current_period_size">30sp</dimen>
-    <dimen name="stats_text_previous_period_size">25sp</dimen>
-    <dimen name="stats_bubble_PB_period_width">80dp</dimen>
-    <dimen name="stats_bubble_current_period_width">90dp</dimen>
-    <dimen name="stats_bubble_previous_width">65dp</dimen>
-    <dimen name="stats_summary_bubble_values">60dp</dimen>
-    <dimen name="stats_summary_bubble_values_text">21sp</dimen>
-    <dimen name="stats_summary_bubble_pegValue">70dp</dimen>
+    <dimen name="stats_text_pegvalue_indicator">75dp</dimen>
+    <dimen name="stats_text_pegvalue_total_text">21sp</dimen>
+    <dimen name="stats_text_pegvalue_total">62dp</dimen>
+    <dimen name="stats_text_current_period_size">18sp</dimen>
+    <dimen name="stats_text_previous_period_size">19sp</dimen>
+    <dimen name="stats_bubble_PB_period_width">70dp</dimen>
+    <dimen name="stats_bubble_current_period_width">70dp</dimen>
+    <dimen name="stats_bubble_previous_width">58dp</dimen>
+    <dimen name="stats_summary_bubble_values">52dp</dimen>
+    <dimen name="stats_summary_bubble_values_text">17sp</dimen>
+    <dimen name="stats_summary_bubble_pegValue">62dp</dimen>
     <dimen name="stats_summary_bubble_pegValue_text">25sp</dimen>
     <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
     <item name="stats_summary_bubble_pegValue_text_1000" type="dimen" format="float">18.0</item>
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_pin_board_size">280dp</dimen>
-    <item name="score_pin_board_size_text"  format="float" type="dimen">50.0</item>
-    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">35.0</item>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">45.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">40.0</item>
     <dimen name="score_indicator_bubble">17dp</dimen>
         <!-- indicator1 -->
         <dimen name="score_indicator1_margin_top">2.5dp</dimen>
@@ -149,16 +149,19 @@
     <dimen name="score_two_count_indiactor_two_margin_top">45dp</dimen>
     <dimen name="score_two_count_indicactor_two_margin_top">45dp</dimen>
     <dimen name="score_two_count_indicactor_three_margin_bottom">45dp</dimen>
-    <dimen name="stats_text_PB_period_size_text">25sp</dimen>
-    <dimen name="stats_text_current_period_size_text">25sp</dimen>
-    <dimen name="score_increment_margin_right">45dp</dimen>
-    <dimen name="score_menu_margin_left">45dp</dimen>
+    <dimen name="stats_text_PB_period_size_text">19sp</dimen>
+    <dimen name="stats_text_current_period_size_text">19sp</dimen>
+    <dimen name="score_increment_margin_right">35dp</dimen>
+    <dimen name="score_menu_margin_left">35dp</dimen>
     <dimen name="score_button_margin_top">45dp</dimen>
     <dimen name="score_button_margin_top_three">140dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
     <dimen name="score_two_buttons_margin_top">65dp</dimen>
     <dimen name="stats_summary_column_separation">59dp</dimen>
     <dimen name="stats_summary_row_spacing">10dp</dimen>
+    <dimen name="stats_bubble_previous_column_spacing">20dp</dimen>
+    <dimen name="stats_bubble_previous_row_spacing">35dp</dimen>
+    <dimen name="stats_margin_top">20dp</dimen>
 
 
 </resources>

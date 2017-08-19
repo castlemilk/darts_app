@@ -12,6 +12,6 @@
     <color name="material_color_grey_500">#9e9e9e</color>
 
     <color name="material_text_color_purple_500">@color/material_text_color_white_text</color>
-    <color name="bar_covering_gallery_image">#C4B4A4</color>
+    <color name="bar_covering_gallery_image">#908E8E</color>
 
 </resources>
