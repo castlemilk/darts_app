@@ -35,14 +35,12 @@
         android:textSize="30sp"
         android:typeface="monospace"
         android:gravity="center"
-        android:layout_marginBottom="7dp"
-        app:layout_constraintBottom_toTopOf="@+id/row_40_w"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/row_40"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/column_month"
@@ -114,7 +112,6 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/row_40"
         android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintRight_toRightOf="@+id/column_week"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintHorizontal_bias="0.5" />
@@ -247,10 +244,9 @@
         android:gravity="center"
         app:layout_constraintLeft_toLeftOf="@+id/column_day"
         app:layout_constraintRight_toRightOf="@+id/column_day"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="@+id/row_24"
-        app:layout_constraintBottom_toBottomOf="@+id/row_24"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintBottom_toBottomOf="@+id/row_24" />
     <TextView
         android:id="@+id/row_24_w"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -265,8 +261,7 @@
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@+id/row_24"
         app:layout_constraintBottom_toBottomOf="@+id/row_24"
-        app:layout_constraintVertical_bias="0.5"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintRight_toRightOf="@+id/column_week" />
     <TextView
@@ -341,7 +336,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintRight_toRightOf="@+id/column_week"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        app:layout_constraintVertical_bias="0.0" />
     <TextView
         android:id="@+id/row_36_m"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -356,10 +352,10 @@
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@+id/row_36"
         app:layout_constraintBottom_toBottomOf="@+id/row_36"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_month"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintHorizontal_bias="0.5"
         android:layout_marginTop="0dp" />
 
     <TextView
@@ -399,7 +395,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/row_50"
         app:layout_constraintLeft_toLeftOf="@+id/column_day"
         app:layout_constraintRight_toRightOf="@+id/column_day"
-        app:layout_constraintHorizontal_bias="0.5" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.6" />
     <TextView
         android:id="@+id/row_50_w"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -416,9 +413,10 @@
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/row_50"
         android:layout_marginBottom="0dp"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
-        app:layout_constraintRight_toRightOf="@+id/column_week" />
+        app:layout_constraintRight_toRightOf="@+id/column_week"
+        app:layout_constraintVertical_bias="0.6" />
     <TextView
         android:id="@+id/row_50_m"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -437,7 +435,8 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_month"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.285" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.6" />
 
     <TextView
         android:id="@+id/row_4"
@@ -477,7 +476,7 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/column_day"
         app:layout_constraintRight_toRightOf="@+id/column_day"
-        app:layout_constraintHorizontal_bias="0.428" />
+        app:layout_constraintHorizontal_bias="0.5" />
     <TextView
         android:id="@+id/row_4_w"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -494,7 +493,7 @@
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/row_4"
         android:layout_marginBottom="0dp"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintRight_toRightOf="@+id/column_week" />
     <TextView
@@ -515,6 +514,6 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_month"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.285" />
+        app:layout_constraintHorizontal_bias="0.5" />
 
 </android.support.constraint.ConstraintLayout>
