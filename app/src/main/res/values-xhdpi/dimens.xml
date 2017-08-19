@@ -122,7 +122,7 @@
     <dimen name="home_page_nav_button_size">70dp</dimen>
     <dimen name="text_size_large">20sp</dimen>
     <dimen name="text_size_large_one_dart">50sp</dimen>
-    <dimen name="home_page_logo_margin_top">26dp</dimen>
+    <dimen name="home_page_logo_margin_top">10dp</dimen>
     <dimen name="home_page_rounded_button_thickness">3px</dimen>
     <dimen name="home_page_nav_button_width">120dp</dimen>
     <dimen name="home_page_nav_button_text_size">24sp</dimen>
@@ -134,9 +134,10 @@
     <!-- icons -->
     <dimen name="back_icon_width">30dp</dimen>
     <dimen name="back_icon_height">36dp</dimen>
-    <dimen name="home_page_logo_width">300dp</dimen>
-    <dimen name="home_page_gallery_button_margin_top">20dp</dimen>
-    <dimen name="home_page_logo_margin_bottom">20dp</dimen>
+    <dimen name="home_page_logo_width">140dp</dimen>
+    <dimen name="home_page_logo_height">100dp</dimen>
+    <dimen name="home_page_gallery_button_margin_top">50dp</dimen>
+    <dimen name="home_page_logo_margin_bottom">30dp</dimen>
     <dimen name="score_two_pin_width">250dp</dimen>
     <dimen name="score_two_pin_height">250dp</dimen>
     <dimen name="score_two_pin_margin_top">30dp</dimen>
