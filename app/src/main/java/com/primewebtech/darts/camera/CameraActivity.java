@@ -159,8 +159,15 @@ public class CameraActivity extends AppCompatActivity {
             R.drawable.pin_160ns,
             R.drawable.pin_170ns,
     };
-    private int[] mScoreResources = {
-            R.drawable.green_hat,
+    private int[] mScoreResourcesDisplay = {
+            R.drawable.score_board_rh,
+//            R.drawable.score_board_p,
+            R.drawable.score_board_s_display,
+            R.drawable.score_board_r_display,
+
+    };
+    private int[] mScoreResourcesSave = {
+            R.drawable.score_board_rh,
 //            R.drawable.score_board_p,
             R.drawable.score_board_s,
             R.drawable.score_board_r,
@@ -764,18 +771,18 @@ public class CameraActivity extends AppCompatActivity {
     private int updateScoreDisplay(Object item) {
         Log.d(TAG, "updateScoreDisplay:score:"+item);
         if (item == "RH") {
-            mScoreTypeBackground.setImageResource(mScoreResources[0]);
-            return mScoreResources[0];
+            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[0]);
+            return mScoreResourcesDisplay[0];
 
         } else if ( 0 <= (int)item && (int)item <= 179 ) {
-            mScoreTypeBackground.setImageResource(mScoreResources[1]);
-            return mScoreResources[1];
+            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[1]);
+            return mScoreResourcesDisplay[1];
 
         } else if( ((int) item) == 180 ) {
-            mScoreTypeBackground.setImageResource(mScoreResources[2]);
-            return mScoreResources[2];
+            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[2]);
+            return mScoreResourcesDisplay[2];
         } else {
-            return mScoreResources[0];
+            return mScoreResourcesDisplay[0];
         }
 
     }
@@ -1097,6 +1104,7 @@ public class CameraActivity extends AppCompatActivity {
             Log.d(TAG, "getLastPicture:path:"+imageLocation);
             File imageFile = new File(imageLocation);
             if (imageFile.exists()) {   // TODO: is there a better way to do this?
+                Log.d(TAG, "getLastPicture:file:exists:");
                 return imageFile;
             } else {
                 return null;

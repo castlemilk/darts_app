@@ -9,13 +9,13 @@
 
     <!-- stats -->
     <dimen name="stats_headers_text">22sp</dimen>
-    <dimen name="stats_text_PB_period_size">25sp</dimen>
+    <dimen name="stats_text_PB_period_size">17sp</dimen>
     <dimen name="stats_text_pegvalue_indicator_text">32sp</dimen>
     <dimen name="stats_text_pegvalue_indicator_hundred_text">25sp</dimen>
     <dimen name="stats_text_pegvalue_indicator">65dp</dimen>
     <dimen name="stats_text_pegvalue_total_text">20sp</dimen>
     <dimen name="stats_text_pegvalue_total">50dp</dimen>
-    <dimen name="stats_text_current_period_size">20sp</dimen>
+    <dimen name="stats_text_current_period_size">15sp</dimen>
     <dimen name="stats_text_previous_period_size">17sp</dimen>
     <dimen name="stats_bubble_PB_period_width">55dp</dimen>
     <dimen name="stats_bubble_current_period_width">55dp</dimen>
@@ -122,7 +122,7 @@
     <!-- homepage -->
     <dimen name="home_page_sore_mode_text">25sp</dimen>
     <dimen name="home_page_nav_button_size">70dp</dimen>
-    <dimen name="home_page_logo_width">130dp</dimen>
+    <dimen name="home_page_logo_width">150dp</dimen>
     <dimen name="home_page_logo_height">90dp</dimen>
     <dimen name="home_page_rounded_button_thickness">3px</dimen>
     <dimen name="home_page_nav_button_width">100dp</dimen>
@@ -157,7 +157,7 @@
     <dimen name="score_button_margin_top_three">100dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
     <dimen name="score_two_buttons_margin_top">45dp</dimen>
-    <dimen name="stats_summary_column_separation">30dp</dimen>
+    <dimen name="stats_summary_column_separation">45dp</dimen>
     <dimen name="stats_summary_row_spacing">13dp</dimen>
     <dimen name="stats_bubble_previous_column_spacing">14dp</dimen>
     <dimen name="stats_bubble_previous_row_spacing">30dp</dimen>

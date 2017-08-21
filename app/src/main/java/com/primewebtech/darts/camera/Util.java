@@ -141,10 +141,10 @@ public class Util {
         float pinFloatLeft;
         float pinFloatTop;
         if (score.contains("RH")) {
-            pinFloatLeft = pictureWidth - pinSizeInt * 0.85f - margin;
-            pinFloatTop = pictureHeight - pinSizeInt * 1.1f - margin;
+            pinFloatLeft = pictureWidth - pinSizeInt * 0.9f - margin;
+            pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
         } else {
-            pinFloatLeft = pictureWidth - pinSizeInt * 0.85f - margin;
+            pinFloatLeft = pictureWidth - pinSizeInt * 0.9f - margin;
             pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
         }
 

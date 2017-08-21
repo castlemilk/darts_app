@@ -83,7 +83,7 @@ public class StatsOneFragment extends Fragment {
         super.onCreate(savedInstanceState);
         type = getArguments().getString("type");
         pegValue = getArguments().getInt("PEG_VALUE");
-        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+//        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
         tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
     }
 
@@ -145,7 +145,7 @@ public class StatsOneFragment extends Fragment {
                             getResources().getDrawable(R.drawable.peg_stats_score_background));
                     rowNode.setTextColor(Color.WHITE);
                 }
-                rowNode.setTypeface(tf_ios);
+//                rowNode.setTypeface(tf_ios);
 
                 previous_period_index++;
             }

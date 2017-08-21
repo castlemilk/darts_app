@@ -83,7 +83,7 @@ public class StatsHundredFragment extends Fragment {
         super.onCreate(savedInstanceState);
         type = getArguments().getString("type");
         pegValue = getArguments().getInt("PEG_VALUE");
-        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
+//        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
         tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
     }
 

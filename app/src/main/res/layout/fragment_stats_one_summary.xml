@@ -55,6 +55,8 @@
         app:layout_constraintTop_toTopOf="@+id/column_week"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toTopOf="@+id/row_40_m"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/column_week"
@@ -333,11 +335,11 @@
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@+id/row_36"
         app:layout_constraintBottom_toBottomOf="@+id/row_36"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintRight_toRightOf="@+id/column_week"
         android:layout_marginTop="0dp"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.5" />
     <TextView
         android:id="@+id/row_36_m"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -355,8 +357,9 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_month"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginTop="0dp" />
+        app:layout_constraintHorizontal_bias="0.49"
+        android:layout_marginTop="0dp"
+        app:layout_constraintVertical_bias="0.5" />
 
     <TextView
         android:id="@+id/row_50"
@@ -416,7 +419,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="@+id/column_week"
         app:layout_constraintRight_toRightOf="@+id/column_week"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintVertical_bias="0.5" />
     <TextView
         android:id="@+id/row_50_m"
         android:layout_width="@dimen/stats_summary_bubble_values"
@@ -435,8 +438,8 @@
         android:layout_marginBottom="0dp"
         app:layout_constraintRight_toRightOf="@+id/column_month"
         app:layout_constraintLeft_toLeftOf="@+id/column_month"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintVertical_bias="0.5" />
 
     <TextView
         android:id="@+id/row_4"

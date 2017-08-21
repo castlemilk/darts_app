@@ -478,7 +478,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             if (pegRecord.getPegCount() >= 100) {
                 mCountButton.setTextSize(15);
             } else if (pegRecord.getPegCount() > 1000) {
-                mCountButton.setTextSize(10);
+                mCountButton.setTextSize(8);
             }
         }
 
