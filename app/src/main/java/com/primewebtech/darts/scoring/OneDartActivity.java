@@ -505,7 +505,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         int total = ScoreDatabase.mScoreOneDoa.getTotalPegCount(pegValue);
         PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(pegValue, TYPE_2);
         if (pegRecord != null) {
-            if (pegRecord.getPegCount() >= 100) {
+            if (pegRecord.getPegCount() < 100) {
+                mCountButton.setTextSize(19);
+            } else if (pegRecord.getPegCount() >= 100) {
                 mCountButton.setTextSize(13);
             } else if (pegRecord.getPegCount() > 1000) {
                 mCountButton.setTextSize(8);

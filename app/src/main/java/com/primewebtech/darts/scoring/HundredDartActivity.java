@@ -475,7 +475,9 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         Log.d(TAG, "updateCountIndicators:total:"+total);
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(pegValue, TYPE_3);
         if (pegRecord != null) {
-            if (pegRecord.getPegCount() >= 100) {
+            if (pegRecord.getPegCount() < 100) {
+                mCountButton.setTextSize(19);
+            } else if (pegRecord.getPegCount() >= 100) {
                 mCountButton.setTextSize(13);
             } else if (pegRecord.getPegCount() > 1000) {
                 mCountButton.setTextSize(8);
@@ -622,6 +624,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
             public void onPositionChange(int i) {
                 PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(mPegs[i], TYPE_3);
                 if (pegRecord != null) {
+
                     mCountButton.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()));
                     updateCountIndicators(mPegs[i]);
                 } else {

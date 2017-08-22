@@ -279,6 +279,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                     if (mPinValues.get(currentIndex) == action.getPegValue()) {
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
+                            updateCountButtonTextSize(Integer.valueOf(action.getRollBackValue()));
                             mCountButtonThree.setText(action.getRollBackValue());
                             playSoundClick(1, 0);
                         } else {
@@ -290,6 +291,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                         mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         if(ScoreDatabase.mScoreThreeDoa.rollbackScore(action)) {
                             Log.d(TAG, "Successfully Deleted action");
+                            updateCountButtonTextSize(Integer.valueOf(action.getRollBackValue()));
                             mCountButtonThree.setText(action.getRollBackValue());
                             playSoundClick(1, 0);
                         } else {
@@ -323,11 +325,6 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
-                if (pegRecord.getPegCount() >= 100) {
-                    mCountButtonThree.setTextSize(13);
-                } else if (pegRecord.getPegCount() > 1000) {
-                    mCountButtonThree.setTextSize(9);
-                }
             mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
 
         } else {
@@ -347,16 +344,22 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
-                if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+                if (pegRecord != null) {
 
+                    if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
 
-                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-                    ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClickMulti(1, 2);
+                        updateCountButtonTextSize(pegRecord.getPegCount()+1);
+                        mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                        Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                        ScoreDatabase.mActionDoa.addAction(action);
+                        playSoundClickMulti(1, 2);
+                    } else {
+
+                    }
                 } else {
-                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE:pegRecord:null");
                 }
+
             }
         });
         mMovePagerForwardTen.setOnClickListener(new View.OnClickListener() {
@@ -477,6 +480,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 updatePinBoard(mPinValues.get(i));
                 PegRecord pegRecord3 = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(i), TYPE_3);
                 if (pegRecord3 != null) {
+                    updateCountButtonTextSize(pegRecord3.getPegCount());
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
                     PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(i) , 0);
@@ -490,7 +494,18 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             }
         });
     }
-
+    private void updateCountButtonTextSize(int pegCount) {
+        if (mCountButtonThree == null) {
+            return;
+        }
+        if (pegCount < 100) {
+            mCountButtonThree.setTextSize(19);
+        } else if (pegCount >= 100) {
+            mCountButtonThree.setTextSize(13);
+        } else if (pegCount > 1000) {
+            mCountButtonThree.setTextSize(9);
+        }
+    }
     public List<Integer> generatePinValues() {
         List<Integer> values = new ArrayList<>();
         values.add(99);

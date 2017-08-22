@@ -358,14 +358,21 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_2);
-                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
-                    mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
-                    ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClickMulti(1, 1);
+                if (pegRecord != null ) {
+
+                    if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_2,  1)) {
+                        updateTwoCountButtonTextSize(pegRecord.getPegCount()+1);
+                        mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                        Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_2, pegRecord.getPegCount()+1);
+                        ScoreDatabase.mActionDoa.addAction(action);
+                        playSoundClickMulti(1, 1);
+                    } else {
+                        Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                    }
                 } else {
-                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE:pegRecord:null");
                 }
+
             }
         });
         mIncrementThree.setOnClickListener(new View.OnClickListener() {
@@ -376,14 +383,21 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 int currentIndex = mViewPager.getCurrentPosition();
                 PegRecord pegRecord = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
-                if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
-                    mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
-                    Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
-                    ScoreDatabase.mActionDoa.addAction(action);
-                    playSoundClickMulti(1, 2);
+                if (pegRecord != null ) {
+
+                    if (ScoreDatabase.mScoreTwoDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+                        updateThreeCountButtonTextSize(pegRecord.getPegCount()+1);
+                        mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
+                        Action action = new Action(MODE_TWO, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
+                        ScoreDatabase.mActionDoa.addAction(action);
+                        playSoundClickMulti(1, 2);
+                    } else {
+                        Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                    }
                 } else {
-                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE");
+                    Log.d(TAG, "onClick:FAILED_TO_INCRAEASE_TODAY_VALUE:pegRecord:null");
                 }
+
             }
         });
         mMovePagerForwardTen.setOnClickListener(new View.OnClickListener() {
@@ -488,6 +502,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
 
                 if (pegRecord2 != null) {
                     Log.d(TAG, "onPageSelected:RECORD_FOUND:TYPE_2");
+                    updateTwoCountButtonTextSize(pegRecord2.getPegCount());
                     mCountButtonTwo.setText(String.format(Locale.getDefault(),"%d", pegRecord2.getPegCount()));
                 } else {
                     Log.d(TAG, "onPageSelected:RECORD_NOT_FOUND:INITIALISING");
@@ -501,6 +516,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
                 }
                 PegRecord pegRecord3 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(mPinValues.get(i), TYPE_3);
                 if (pegRecord3 != null) {
+                    updateThreeCountButtonTextSize(pegRecord3.getPegCount());
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
                     PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(i) , 0);
@@ -517,7 +533,30 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
     }
 
 
-
+    private void updateThreeCountButtonTextSize(int pegCount) {
+        if (mCountButtonThree == null) {
+            return;
+        }
+        if (pegCount < 100) {
+            mCountButtonThree.setTextSize(19);
+        } else if (pegCount >= 100) {
+            mCountButtonThree.setTextSize(13);
+        } else if (pegCount > 1000) {
+            mCountButtonThree.setTextSize(9);
+        }
+    }
+    private void updateTwoCountButtonTextSize(int pegCount) {
+        if (mCountButtonTwo == null) {
+            return;
+        }
+        if (pegCount < 100) {
+            mCountButtonTwo.setTextSize(19);
+        } else if (pegCount >= 100) {
+            mCountButtonTwo.setTextSize(13);
+        } else if (pegCount > 1000) {
+            mCountButtonTwo.setTextSize(9);
+        }
+    }
     private void updatePinBoard(int pinValue) {
         PegRecord pegRecord2 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(pinValue, TYPE_2);
         PegRecord pegRecord3 = ScoreDatabase.mScoreTwoDoa.getTodayPegValue(pinValue, TYPE_3);
