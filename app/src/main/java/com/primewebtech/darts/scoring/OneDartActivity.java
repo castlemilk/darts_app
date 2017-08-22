@@ -116,7 +116,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime", "00000000");
@@ -125,8 +125,9 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         if ( !curTime.equals(lastResetTime)) {
             Log.d(TAG, "NEW_DAY:resetting counts");
             //TODO: reset all the required variables and carry previous data into historical logs
-            savePBTask.execute();
             prefs.edit().putString("lastResetTime", curTime).apply();
+            savePBTask.execute();
+
         }
         int lastPosition = prefs.getInt("POSITION", 0);
         pin = (ImageView) findViewById(R.id.pin);
@@ -159,7 +160,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         tf_viewpager = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime", "00000000");
@@ -505,7 +506,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         PegRecord pegRecord = ScoreDatabase.mScoreOneDoa.getTodayPegValue(pegValue, TYPE_2);
         if (pegRecord != null) {
             if (pegRecord.getPegCount() >= 100) {
-                mCountButton.setTextSize(15);
+                mCountButton.setTextSize(13);
             } else if (pegRecord.getPegCount() > 1000) {
                 mCountButton.setTextSize(8);
             }

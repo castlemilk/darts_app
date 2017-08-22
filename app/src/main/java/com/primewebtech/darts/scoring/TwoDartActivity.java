@@ -131,7 +131,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_two", curTime);
         Log.d(TAG, "CUR_TIME:"+curTime);
@@ -171,7 +171,7 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mMovePagerForwardTen = (ImageButton) findViewById(R.id.plus_ten);
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_two", curTime);
         Log.d(TAG, "CUR_TIME:"+curTime);

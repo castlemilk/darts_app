@@ -130,7 +130,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
 
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_hundred", "0000000");
@@ -165,7 +165,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         tf_increment_button = Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/raavi.ttf");
 
         app = (MainApplication) getApplication();
-        curTime = new SimpleDateFormat("yyyymmdd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
 
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_hundred", "0000000");
@@ -476,7 +476,7 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         PegRecord pegRecord = ScoreDatabase.mScoreHundredDoa.getTodayPegValue(pegValue, TYPE_3);
         if (pegRecord != null) {
             if (pegRecord.getPegCount() >= 100) {
-                mCountButton.setTextSize(15);
+                mCountButton.setTextSize(13);
             } else if (pegRecord.getPegCount() > 1000) {
                 mCountButton.setTextSize(8);
             }

@@ -136,7 +136,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_three", curTime);
         Log.d(TAG, "CUR_TIME:"+curTime);
@@ -166,7 +166,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
-        curTime = new SimpleDateFormat("yyyydd", Locale.getDefault()).format(new Date());
+        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
         lastResetTime = prefs.getString("lastResetTime_three", curTime);
         Log.d(TAG, "CUR_TIME:"+curTime);
@@ -323,7 +323,13 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         int currentIndex = mViewPager.getCurrentPosition();
         PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
+                if (pegRecord.getPegCount() >= 100) {
+                    mCountButtonThree.setTextSize(13);
+                } else if (pegRecord.getPegCount() > 1000) {
+                    mCountButtonThree.setTextSize(9);
+                }
             mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
+
         } else {
             try {
                 PegRecord peg3 = new PegRecord(getDate(), TYPE_3, mPinValues.get(currentIndex), 0);
@@ -342,6 +348,8 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
                 if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+
+
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
                     Action action = new Action(MODE_THREE, ADD, 1, mPinValues.get(currentIndex), TYPE_3, pegRecord.getPegCount()+1);
                     ScoreDatabase.mActionDoa.addAction(action);

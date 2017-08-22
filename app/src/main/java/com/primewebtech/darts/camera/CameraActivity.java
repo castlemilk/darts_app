@@ -145,7 +145,7 @@ public class CameraActivity extends AppCompatActivity {
             "Score",
     };
     private int[] mPegResources = {
-            R.drawable.score_board_s,
+            R.drawable.score_board_s_display,
             R.drawable.pin_60ns,
             R.drawable.pin_70ns,
             R.drawable.pin_80ns,
@@ -169,8 +169,8 @@ public class CameraActivity extends AppCompatActivity {
     private int[] mScoreResourcesSave = {
             R.drawable.score_board_rh,
 //            R.drawable.score_board_p,
-            R.drawable.score_board_s,
-            R.drawable.score_board_r,
+            R.drawable.score_board_s_display,
+            R.drawable.score_board_r_display,
 
     };
 
@@ -771,18 +771,18 @@ public class CameraActivity extends AppCompatActivity {
     private int updateScoreDisplay(Object item) {
         Log.d(TAG, "updateScoreDisplay:score:"+item);
         if (item == "RH") {
-            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[0]);
-            return mScoreResourcesDisplay[0];
+            mScoreTypeBackground.setImageResource(mScoreResourcesSave[0]);
+            return mScoreResourcesSave[0];
 
         } else if ( 0 <= (int)item && (int)item <= 179 ) {
-            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[1]);
-            return mScoreResourcesDisplay[1];
+            mScoreTypeBackground.setImageResource(mScoreResourcesSave[1]);
+            return mScoreResourcesSave[1];
 
         } else if( ((int) item) == 180 ) {
-            mScoreTypeBackground.setImageResource(mScoreResourcesDisplay[2]);
-            return mScoreResourcesDisplay[2];
+            mScoreTypeBackground.setImageResource(mScoreResourcesSave[2]);
+            return mScoreResourcesSave[2];
         } else {
-            return mScoreResourcesDisplay[0];
+            return mScoreResourcesSave[0];
         }
 
     }
