@@ -84,13 +84,14 @@ public class ActionDao extends DatabaseContentProvider implements ActionSchema {
      * modes
      * @return The action object that was at the top of the stack (now removed)
      */
-    public Action getAndDeleteLastHistoryAction(int gameMode) {
+    public Action getAndDeleteLastHistoryAction(int gameMode, int pegValue) {
         Log.d(TAG, "getAndDeleteLastestHistoryAction");
         String ORDER_BY = ID+" DESC";
         String LIMIT = "1";
         Action action;
-        final String selection = GAME_MODE_WHERE + " AND " + DATE_WHERE_GT;
-        final String selectionArgs[] = { String.valueOf(gameMode), getTodaysDate()};
+        final String selection = ActionSchema.GAME_MODE_WHERE + " AND "
+                + ActionSchema.DATE_WHERE_GT + " AND " + ActionSchema.PEG_VALUE_WHERE;
+        final String selectionArgs[] = { String.valueOf(gameMode), getTodaysDate(), String.valueOf(pegValue)};
 
         cursor = super.query(getActionTableName(), ACTION_COLUMNS, selection,
                 selectionArgs, ORDER_BY, LIMIT);

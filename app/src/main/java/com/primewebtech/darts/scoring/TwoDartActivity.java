@@ -207,9 +207,10 @@ public class TwoDartActivity extends AppCompatActivity implements ActionSchema, 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_TWO);
+                int currentIndex = mViewPager.getCurrentPosition();
+                int currentPegValue = mPinValues.get(currentIndex);
+                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_TWO, currentPegValue);
                 if (action != null) {
-                    int currentIndex = mViewPager.getCurrentPosition();
                     if (mPinValues.get(currentIndex) == action.getPegValue()) {
 //                        mViewPager.setCurrentItem(getPegIndex(action.getPegValue()));
                         if(ScoreDatabase.mScoreTwoDoa.rollbackScore(action)) {

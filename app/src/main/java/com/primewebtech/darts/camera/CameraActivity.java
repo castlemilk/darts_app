@@ -51,6 +51,7 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
+import static java.lang.Math.abs;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -373,7 +374,7 @@ public class CameraActivity extends AppCompatActivity {
 
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int scrollingId = this.soundPool.play(this.soundIdScrolling,leftVolumn, rightVolumn, 1, 160, speed);
+            int scrollingId = this.soundPool.play(this.soundIdScrolling,leftVolumn, rightVolumn, 1, 10, speed);
 
             Log.d(TAG, "playSoundScroll:playing:id"+scrollingId);
             return scrollingId;
@@ -936,10 +937,39 @@ public class CameraActivity extends AppCompatActivity {
             int scrolls = 0;
             @Override
             public void onWheelScrolled(int offset) {
+                Log.d(TAG, "onWheelScrolled:offset:"+offset);
+                Log.d(TAG, "onWheelScrolled:abs:"+abs(offset) / 66 );
+                Log.d(TAG, "onWheelScrolled:pegValue:"+makeScores().get(abs(offset) / 66) );
+
+                Object value;
+                if (scoreType.equals("PEG")) {
+                    value = makePegs().get(abs(offset) / 66);
+                    mScoreNumberValue = value;
+                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
+                    mScoreNumber.setText(String.format(Locale.US, "%s", value));
+                    updatePegDisplay(value);
+                } else if (scoreType.equals("SCORE")) {
+                    value = makeScores().get(abs(offset) / 66);
+                    mScoreNumberValue = value;
+                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
+                    updateScoreDisplay(value);
+                    mScoreTypeBackground.setVisibility(View.VISIBLE);
+                    mScoreNumber.setVisibility(View.VISIBLE);
+                    if (value == "RH") {
+                        mScoreNumber.setText(String.format(Locale.US, "%s", ""));
+                    } else {
+                        mScoreNumber.setText(String.format(Locale.US, "%s", value));
+                    }
+
+                }
             }
+
 
             @Override
             public void onWheelSelected(int position) {
+                Log.d(TAG, "onWheelSelected:"+position);
                 if (mMode != SAVING) {
                     return;
                 }
@@ -953,12 +983,17 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onWheelScrollStateChanged(int state) {
+
+                Log.d(TAG, "onWheelScrollStateChanged:state:"+state);
                 if (mMode != SAVING) {
                     return;
                 }
                 scrolls++;
                 Log.d(TAG, "onWheelScrollStateChanged:scrolls:"+scrolls);
-                if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && scrolls > 20) {
+                Log.d(TAG, "onWheelScrollStateChanged:index:"+mScoreValue.getCurrentItemPosition());
+                Log.d(TAG, "onWheelScrollStateChanged:pegValue:"+makePegs().get(mScoreValue.getCurrentItemPosition()));
+
+                if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && scrolls > 14) {
                     id = playSoundScrolling(1.1f);
                     playingScrollingSound = true;
                 } else if (state == mScoreValue.SCROLL_STATE_IDLE ) {

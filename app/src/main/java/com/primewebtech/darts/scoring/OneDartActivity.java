@@ -304,10 +304,11 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_ONE);
+                int currentIndex = mViewPager.getCurrentPosition();
+                int currentPegValue = mPegs[currentIndex];
+                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_ONE, currentPegValue);
                 if (action != null) {
-                    int currentIndex = mViewPager.getCurrentPosition();
-                    if (mPegs[currentIndex] == action.getPegValue()) {
+                    if (currentPegValue == action.getPegValue()) {
                         mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
                         ScoreDatabase.mScoreOneDoa.rollbackScore(action);
                         mCountButton.setText(action.getRollBackValue());

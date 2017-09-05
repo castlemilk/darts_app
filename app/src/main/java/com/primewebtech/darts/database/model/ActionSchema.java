@@ -39,5 +39,6 @@ public interface ActionSchema {
     String PEG_TYPE_WHERE            = PEG_TYPE + " = ?";
     String DATE_WHERE_GT                   = DATE + " >= ?";
     String DATE_WHERE_LT                   = DATE + " <= ?";
+    String PEG_VALUE_WHERE                 = PEG_VALUE + " = ?";
 
 }

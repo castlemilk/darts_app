@@ -317,9 +317,10 @@ public class HundredDartActivity extends AppCompatActivity implements ActionSche
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_HUNDRED);
+                int currentIndex = mViewPager.getCurrentPosition();
+                int currentPegValue = mPegs[currentIndex];
+                Action action = ScoreDatabase.mActionDoa.getAndDeleteLastHistoryAction(MODE_HUNDRED, currentPegValue);
                 if (action != null) {
-                    int currentIndex = mViewPager.getCurrentPosition();
                     if (mPegs[currentIndex] == action.getPegValue()) {
                         Log.d(TAG, "UNDO:ON_ACTIVE_PEG");
                         mViewPager.setCurrentPosition(getPegIndex(action.getPegValue()));
