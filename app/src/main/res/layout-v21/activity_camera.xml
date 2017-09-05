@@ -80,8 +80,8 @@
     <ImageButton
         android:id="@+id/button_back"
         android:visibility="gone"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_gravity="center"
         android:onClick="onBackButtonClick"
         android:src="@drawable/camera_back_button"
@@ -97,8 +97,8 @@
     <ImageButton
         android:id="@+id/save_photo"
         android:visibility="gone"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:layout_marginEnd="20dp"

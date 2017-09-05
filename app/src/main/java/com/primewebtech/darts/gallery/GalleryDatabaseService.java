@@ -141,7 +141,7 @@ public class GalleryDatabaseService {
      */
     public HeaderItem newHeader(int index, Date date) {
         HeaderItem header = new HeaderItem("H"+ index);
-        header.setTitle(new SimpleDateFormat("MMM, YYYY", Locale.US).format(date));
+        header.setTitle(new SimpleDateFormat("MMM, yyyy", Locale.US).format(date));
         //header is hidden and un-selectable by default!
         return header;
     }

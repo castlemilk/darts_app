@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class StatsOneFragment extends Fragment {
             "MONTH",
     };
 
-    private String type;
+//    private String type;
     private int pegValue;
 
     public static StatsOneFragment newInstance(int pegValue) {
@@ -81,7 +80,7 @@ public class StatsOneFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        type = getArguments().getString("type");
+//        type = getArguments().getString("type");
         pegValue = getArguments().getInt("PEG_VALUE");
 //        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
         tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
@@ -106,7 +105,7 @@ public class StatsOneFragment extends Fragment {
                 // iterate over the 6 items for each period
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
 //                int previousInex = previous_period_index + 1;
-                Log.d(TAG, "previous_period_index:"+previous_period_index);
+//                Log.d(TAG, "previous_period_index:"+previous_period_index);
                 int previousScore = ScoreDatabase.mStatsOneDoa.getPreviousScore(pegValue,
                         periods[period_index], previous_period_index);
                 scores.add(previousScore);
@@ -122,7 +121,7 @@ public class StatsOneFragment extends Fragment {
         }
         // POST PAINT ACTIVITY: we now determine what needs to be highlighted as PB's. This is to
         // save us re-evaluating any SQL or building more SQL functions etc. could be a TODO.
-        Log.d(TAG, "scoreMap: "+scoreMap.toString());
+//        Log.d(TAG, "scoreMap: "+scoreMap.toString());
         period_index = 0;
         for ( int[] statRow : mStatsRows) {
             int previous_period_index = 0; //this is the first previous period
@@ -131,9 +130,9 @@ public class StatsOneFragment extends Fragment {
             for ( int resourceID : statRow) {
                 TextView rowNode = (TextView) rootView.findViewById(resourceID);
                 int previousScore = scoreMap.get(periods[period_index]).get(previous_period_index);
-                Log.d(TAG, "Painting:white:previousScore:"+previousScore);
-                Log.d(TAG, "Painting:white:period"+periods[period_index]);
-                Log.d(TAG, "Painting:white:alltimehighest:" + allTimeHighestScoreForPeriodToday);
+//                Log.d(TAG, "Painting:white:previousScore:"+previousScore);
+//                Log.d(TAG, "Painting:white:period"+periods[period_index]);
+//                Log.d(TAG, "Painting:white:alltimehighest:" + allTimeHighestScoreForPeriodToday);
                 if (previousScore >= allTimeHighestScoreForPeriodToday &&
                         previousScore > 0) {
 

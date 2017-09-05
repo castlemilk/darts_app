@@ -21,7 +21,7 @@ public class StatsOneActivity extends FragmentActivity{
      * for each of the peg bords, 4,2,... etc in the one score mode.
      */
     CyclicView mViewPager;
-    String type;
+    int pegValue;
     int[] pegValues = {
             40,
             32,
@@ -50,7 +50,7 @@ public class StatsOneActivity extends FragmentActivity{
         Bundle b = getIntent().getExtras();
 
         if (b != null) {
-            type = b.getString("type");
+            pegValue = b.getInt("PEG_VALUE");
         }
 
         mViewPager = (CyclicView) findViewById(R.id.pager);
@@ -69,23 +69,23 @@ public class StatsOneActivity extends FragmentActivity{
             }
         });
         if (b != null) {
-            switch (type) {
-                case "40":
+            switch (pegValue) {
+                case 40:
                     mViewPager.setCurrentPosition(0);
                     break;
-                case "32":
+                case 32:
                     mViewPager.setCurrentPosition(1);
                     break;
-                case "24":
+                case 24:
                     mViewPager.setCurrentPosition(2);
                     break;
-                case "36":
+                case 36:
                     mViewPager.setCurrentPosition(3);
                     break;
-                case "50":
+                case 50:
                     mViewPager.setCurrentPosition(4);
                     break;
-                case "4":
+                case 4:
                     mViewPager.setCurrentPosition(5);
                     break;
 

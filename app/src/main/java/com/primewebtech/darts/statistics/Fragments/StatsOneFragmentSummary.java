@@ -117,8 +117,9 @@ public class StatsOneFragmentSummary extends Fragment {
                     Intent statsIntent;
                     statsIntent = new Intent(getActivity(), StatsOneActivity.class);
                     Bundle b = new Bundle();
-                    b.putString("type", String.valueOf(pegValues[j]));
+                    b.putInt("PEG_VALUE", pegValues[j]);
                     statsIntent.putExtras(b);
+                    statsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(statsIntent);
                 }
             });

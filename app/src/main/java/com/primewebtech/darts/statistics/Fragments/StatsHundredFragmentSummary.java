@@ -87,6 +87,7 @@ public class StatsHundredFragmentSummary extends Fragment {
                     Bundle b = new Bundle();
                     b.putInt("PEG_VALUE",pegValues[j]);
                     statsIntent.putExtras(b);
+
                     startActivity(statsIntent);
                 }
             });
