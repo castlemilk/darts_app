@@ -91,7 +91,7 @@ public class MediaSaver extends Thread {
                 notifyAll();  // the main thread may wait in addImage
             }
             final long t0 = System.currentTimeMillis();
-            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(mContext, r.data, r.logo, r.pin, r.score)), r.title, r.score_type, r.score, r.date, r.loc, r.width, r.height,
+            Uri uri = storeImage(Util.BitMapToByteArray(Util.combineElements(mContext, r.data, r.logo, r.pin, r.score, r.score_type)), r.title, r.score_type, r.score, r.date, r.loc, r.width, r.height,
                     r.orientation);
             Log.d(TAG, String.format("storeImage took %dms", System.currentTimeMillis() - t0));
             r.listener.onMediaSaved(uri);

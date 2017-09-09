@@ -109,7 +109,7 @@ public class Util {
      * @return
      */
 
-    public static Bitmap combineElements(Context mContext, byte[] picture, Bitmap logo, Bitmap pin, String score) {
+    public static Bitmap combineElements(Context mContext, byte[] picture, Bitmap logo, Bitmap pin, String score, String scoreType) {
         final long t0 = System.currentTimeMillis();
 
         Bitmap pictureImg = BitmapFactory.decodeByteArray(picture, 0, picture.length);
@@ -127,25 +127,34 @@ public class Util {
         int pictureWidth = rotatedImg.getWidth();
         int pictureHeight = rotatedImg.getHeight();
         Double pinSize = pictureWidth * 0.3;
-        int textSize = (int) (pictureHeight * 0.06f);
+        int textSize = (int) (pictureHeight * 0.055f);
         int pinSizeInt = pinSize.intValue();
-        Double logoWidth = pictureWidth * 0.37;
-        Double logoHeight = pictureHeight * 0.13;
+        Double logoWidth = pictureWidth * 0.42;
+        Double logoHeight = pictureHeight * 0.15;
         int logoSizeIntWidth = logoWidth.intValue();
 
         int logoSizeIntHeight = logoHeight.intValue();
         float marginBottom = pinSizeInt + pictureWidth * 0.05f;
         float logoFloatRight = pictureWidth * 0.05f;
         float margin = pictureWidth * 0.05f;
-        float logoFloatTop = pictureHeight - logoSizeIntHeight - margin * 0.4f;
+        float logoFloatTop = pictureHeight - logoSizeIntHeight - margin * 1.05f;
         float pinFloatLeft;
         float pinFloatTop;
         if (score.contains("RH")) {
             pinFloatLeft = pictureWidth - pinSizeInt * 0.9f - margin;
-            pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
+            if (scoreType.contains("Peg")) {
+                pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
+            } else {
+                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
+            }
+
         } else {
             pinFloatLeft = pictureWidth - pinSizeInt * 0.9f - margin;
-            pinFloatTop = pictureHeight - pinSizeInt * 0.9f - margin;
+            if (scoreType.contains("Peg")) {
+                pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
+            } else {
+                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
+            }
         }
 
 
