@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -451,7 +452,9 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
 
     public void initialisePager() {
         mViewPager = (CyclicView) findViewById(R.id.pager_three_dart);
-        mViewPager.setChangePositionFactor(2000);
+        final TypedValue outValue = new TypedValue();
+        getResources().getValue(R.dimen.score_pin_board_size_hundred_text,outValue, true);
+        mViewPager.setChangePositionFactor(4000);
         final int size = generatePinValues().size();
         mViewPager.setAdapter(new CyclicAdapter() {
             @Override
@@ -463,7 +466,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             public View createView(int i) {
                 TextView scoreNumber = new TextView(ThreeDartActivity.this);
                 scoreNumber.setText(String.valueOf(mPinValues.get(i)));
-                scoreNumber.setTextSize(50);
+                scoreNumber.setTextSize(outValue.getFloat());
                 scoreNumber.setTypeface(tf_viewpager);
                 scoreNumber.setTextColor(Color.BLACK);
                 scoreNumber.setGravity(Gravity.CENTER);

@@ -31,8 +31,8 @@
     <!-- gallery -->
     <!-- scoring -->
     <dimen name="score_pin_board_size">250dp</dimen>
-    <item name="score_pin_board_size_text"  format="float" type="dimen">45.0</item>
-    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">45.0</item>
+    <item name="score_pin_board_size_text"  format="float" type="dimen">48.0</item>
+    <item name="score_pin_board_size_hundred_text"  format="float" type="dimen">42.0</item>
     <dimen name="score_indicator_bubble">17dp</dimen>
     <!-- indicator1 -->
     <dimen name="score_indicator1_margin_top">1.8dp</dimen>

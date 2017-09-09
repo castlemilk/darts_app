@@ -21,6 +21,7 @@ import android.media.MediaScannerConnection;
 import android.media.SoundPool;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -62,6 +63,8 @@ public class CameraActivity extends AppCompatActivity {
     private static final String TAG = CameraActivity.class.getSimpleName();
 
     private int mMode;
+    private boolean SETTLED = false;
+    private Object settledValue;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -109,6 +112,8 @@ public class CameraActivity extends AppCompatActivity {
     private static final int MAX_STREAMS = 2;
     private int soundIdScrolling;
     private int soundIdClick;
+    private int scrolls = 0;
+    private boolean playingScrollingSound = false;
 
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
@@ -374,7 +379,7 @@ public class CameraActivity extends AppCompatActivity {
 
             float leftVolumn = volume;
             float rightVolumn = volume;
-            int scrollingId = this.soundPool.play(this.soundIdScrolling,leftVolumn, rightVolumn, 1, 10, speed);
+            int scrollingId = this.soundPool.play(this.soundIdScrolling,leftVolumn, rightVolumn, 1, 160, speed);
 
             Log.d(TAG, "playSoundScroll:playing:id"+scrollingId);
             return scrollingId;
@@ -851,6 +856,18 @@ public class CameraActivity extends AppCompatActivity {
         ret.add("RH");
         return ret;
     }
+    private int getScoreIndex(Object value) {
+        Log.d(TAG,"getScoreIndex:value:"+value);
+        int index = 0;
+        for ( Object object : makeScores()) {
+            if (object.equals(value)) {
+                Log.d(TAG,"getScoreIndex:index:"+index);
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
     private List<Integer> makePegs() {
         List<Integer> ret = new ArrayList<>();
         ret.add(170);
@@ -862,6 +879,18 @@ public class CameraActivity extends AppCompatActivity {
             ret.add(i);
         }
         return ret;
+    }
+    private int getPegIndex(Integer value) {
+        Log.d(TAG,"getPegIndex:value:"+value);
+        int index = 0;
+        for ( Integer item : makePegs()) {
+            if (item.equals(value)) {
+                Log.d(TAG,"getPegIndex:index:"+index);
+                return index;
+            }
+            index++;
+        }
+        return 0;
     }
 
     private void initTypeSpinners() {
@@ -928,30 +957,52 @@ public class CameraActivity extends AppCompatActivity {
                 mScoreNumber.setVisibility(View.GONE);
                 break;
         }
+        final SpinnerState spinnerState = new SpinnerState();
         mScoreValue.setData(data);
         mScoreValue.setVisibleItemCount(3);
         mScoreValue.setSelectedItemPosition(0);
+        mScoreValue.getItemSpace();
         mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
-            int id = 0;
-            boolean playingScrollingSound = false;
-            int scrolls = 0;
+
+
+            List<Integer> pegs = makePegs();
+            List<Object> scores = makeScores();
             @Override
             public void onWheelScrolled(int offset) {
+                int denominator = mScoreValue.getItemSpace() * 2 + 2;
+                int itemIndex = abs(offset) / denominator;
+
                 Log.d(TAG, "onWheelScrolled:offset:"+offset);
-                Log.d(TAG, "onWheelScrolled:abs:"+abs(offset) / 66 );
-                Log.d(TAG, "onWheelScrolled:pegValue:"+makeScores().get(abs(offset) / 66) );
+                Log.d(TAG, "onWheelScrolled:itemspacing:"+mScoreValue.getItemSpace());
+                Log.d(TAG, "onWheelScrolled:abs:"+abs(offset) / denominator );
+
 
                 Object value;
                 if (scoreType.equals("PEG")) {
-                    value = makePegs().get(abs(offset) / 66);
+                    if (itemIndex >= pegs.size()) {
+                        return;
+                    }
+                    Log.d(TAG, "onWheelScrolled:scoreValue[peg]:"+pegs.get(itemIndex) );
+                    value = pegs.get(itemIndex);
+                    if (!SETTLED) {
+                        new SpinnerState().execute(mScoreNumberValue);
+                    }
                     mScoreNumberValue = value;
+
                     Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
                     mScoreNumber.setVisibility(View.VISIBLE);
                     mScoreNumber.setText(String.format(Locale.US, "%s", value));
                     updatePegDisplay(value);
                 } else if (scoreType.equals("SCORE")) {
-                    value = makeScores().get(abs(offset) / 66);
+                    if (itemIndex >= scores.size()) {
+                        return;
+                    }
+                    Log.d(TAG, "onWheelScrolled:scoreValue[score]:"+scores.get(itemIndex) );
+                    if (!SETTLED) {
+                        new SpinnerState().execute(mScoreNumberValue);
+                    }
+                    value = scores.get(itemIndex);
                     mScoreNumberValue = value;
                     Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
                     updateScoreDisplay(value);
@@ -973,10 +1024,11 @@ public class CameraActivity extends AppCompatActivity {
                 if (mMode != SAVING) {
                     return;
                 }
-                stopSoundScrolling(id);
+//                stopSoundScrolling(soundIdScrolling);
                 playSoundSelected(1);
                 playingScrollingSound = false;
                 scrolls = 0;
+                SETTLED = true;
 
 
             }
@@ -988,17 +1040,17 @@ public class CameraActivity extends AppCompatActivity {
                 if (mMode != SAVING) {
                     return;
                 }
+                SETTLED = false;
                 scrolls++;
                 Log.d(TAG, "onWheelScrollStateChanged:scrolls:"+scrolls);
                 Log.d(TAG, "onWheelScrollStateChanged:index:"+mScoreValue.getCurrentItemPosition());
-                Log.d(TAG, "onWheelScrollStateChanged:pegValue:"+makePegs().get(mScoreValue.getCurrentItemPosition()));
 
-                if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && scrolls > 14) {
-                    id = playSoundScrolling(1.1f);
+                if ( state == mScoreValue.SCROLL_STATE_SCROLLING && !playingScrollingSound && !SETTLED) {
+                    soundIdScrolling = playSoundScrolling(1.1f);
                     playingScrollingSound = true;
-                } else if (state == mScoreValue.SCROLL_STATE_IDLE ) {
+                } else if (state == mScoreValue.SCROLL_STATE_IDLE || SETTLED) {
                     playingScrollingSound = false;
-                    stopSoundScrolling(id);
+                    stopSoundScrolling(soundIdScrolling);
                 }
             }
         });
@@ -1037,12 +1089,78 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    public class SpinnerState extends AsyncTask<Object,Object, Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(Object... currentValue) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "spinnerState:reached-post-sleep:stoping sounds");
+            Log.d(TAG, "spinnerState:currentValue(currentValue):"+currentValue[0]);
+            Log.d(TAG, "spinnerState:mScoreNumberValue(newValue):"+mScoreNumberValue);
+
+            if (currentValue[0] instanceof Integer && mScoreNumberValue instanceof Integer) {
+                if ((abs((int)currentValue[0]) - (int)mScoreNumberValue) <=2 ) {
+                    SETTLED = true;
+                    return SETTLED;
+                } else {
+                    SETTLED = false;
+                    return SETTLED;
+                }
+            } else {
+                SETTLED = true;
+                return SETTLED;
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean settled)
+        {
+            Log.d(TAG, "settled:"+settled);
+//           if(settled) {
+////               stopSoundScrolling(soundIdScrolling);
+//               if (settledValue != mScoreNumberValue) {
+//                   settledValue = mScoreNumberValue;
+//               }
+//
+//               if (soundPool != null) {
+//                   soundPool.autoPause();
+//               }
+//
+//               scrolls = 0;
+//               playingScrollingSound = false;
+//               Log.d(TAG, "spinnerState:mScoreNumberValue(newValue):"+mScoreNumberValue);
+//               Log.d(TAG, "spinnerState:index(newValue):"+mScoreNumberValue);
+//               int index;
+//               if (settledValue instanceof Integer) {
+//                   if (scoreType.equals("PEG")) {
+//                       index = getPegIndex((int)settledValue);
+//                   } else {
+//                       index = getScoreIndex(settledValue);
+//                   }
+//               } else {
+//                   index = getScoreIndex("RH");
+//               }
+//               Log.d(TAG, "spinnerState:index(newValue):"+index);
+////               mScoreValue.setSelectedItemPosition(index);
+//
+//           } else {
+//               if (soundPool != null) {
+//                   soundPool.autoResume();
+//
+//               }
+//
+//           }
+        }
 
     }
 
-
-    private static class NamedImages {
+        private static class NamedImages {
         private ArrayList<NamedEntity> mQueue;
         private boolean mStop;
         private NamedEntity mNamedEntity;
