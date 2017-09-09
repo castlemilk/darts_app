@@ -145,7 +145,8 @@ public class Util {
             if (scoreType.contains("Peg")) {
                 pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
             } else {
-                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
+                pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
+//                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
             }
 
         } else {
@@ -153,7 +154,8 @@ public class Util {
             if (scoreType.contains("Peg")) {
                 pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
             } else {
-                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
+                pinFloatTop = pictureHeight - pinSizeInt * 1.03f - margin;
+//                pinFloatTop = pictureHeight - pinSizeInt * 0.8f - margin;
             }
         }
 

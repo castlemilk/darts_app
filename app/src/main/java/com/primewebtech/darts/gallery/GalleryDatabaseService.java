@@ -69,7 +69,12 @@ public class GalleryDatabaseService {
     }
     public void createHeadersSectionsGalleryDatasetByMonth() {
         pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
-        mDateOrganiser = new DateOrganiser(pictureDirectory);
+        if (pictureDirectory.exists()) {
+            mDateOrganiser = new DateOrganiser(pictureDirectory);
+        } else {
+            return;
+        }
+
         HeaderItem header = null;
         Date dom = new Date();
         int itemIndex = 0;
@@ -93,7 +98,11 @@ public class GalleryDatabaseService {
     }
     public void updateHeadersSectionsGalleryDatasetByMonth() {
         pictureDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Darts/");
-        mDateOrganiser = new DateOrganiser(pictureDirectory);
+        if (pictureDirectory.exists()) {
+            mDateOrganiser = new DateOrganiser(pictureDirectory);
+        } else {
+            return;
+        }
         HeaderItem header = null;
         Date dom = new Date();
         int itemIndex = 0;

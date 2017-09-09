@@ -159,7 +159,7 @@
     <dimen name="score_button_margin_top_three">140dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
     <dimen name="score_two_buttons_margin_top">65dp</dimen>
-    <dimen name="stats_summary_column_separation">75dp</dimen>
+    <dimen name="stats_summary_column_separation">47dp</dimen>
     <dimen name="stats_summary_row_spacing">10dp</dimen>
     <dimen name="stats_bubble_previous_column_spacing">20dp</dimen>
     <dimen name="stats_bubble_previous_row_spacing">35dp</dimen>

@@ -21,10 +21,10 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/row_40_d"
-        app:layout_constraintRight_toLeftOf="@+id/column_week"
-        android:layout_marginRight="@dimen/stats_summary_column_separation"
-        android:layout_marginEnd="@dimen/stats_summary_column_separation"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_marginLeft="@dimen/stats_summary_column_separation"
+        android:layout_marginStart="@dimen/stats_summary_column_separation"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/row_40" />
     <TextView
         android:id="@+id/column_week"
         android:layout_width="45dp"
@@ -35,12 +35,11 @@
         android:textSize="30sp"
         android:typeface="monospace"
         android:gravity="center"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/row_40"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toRightOf="@+id/column_day"
+        android:layout_marginLeft="@dimen/stats_summary_column_separation"
+        android:layout_marginStart="@dimen/stats_summary_column_separation" />
 
     <TextView
         android:id="@+id/column_month"

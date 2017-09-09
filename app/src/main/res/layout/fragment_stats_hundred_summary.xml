@@ -12,15 +12,15 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/stats_summary_column_separation"
-        android:layout_marginRight="@dimen/stats_summary_column_separation"
+        android:layout_marginStart="@dimen/stats_summary_column_separation"
+        android:layout_marginLeft="@dimen/stats_summary_column_separation"
         android:text="@string/_stats_d"
         android:textColor="@color/list_choice_normal_bg_light"
         android:textSize="30sp"
         android:gravity="center"
-        app:layout_constraintRight_toLeftOf="@+id/column_week"
         app:layout_constraintTop_toTopOf="@+id/column_week"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        app:layout_constraintLeft_toRightOf="@+id/row_100" />
     <TextView
         android:id="@+id/column_week"
         android:layout_width="45dp"
@@ -30,15 +30,11 @@
         android:textColor="@color/list_choice_normal_bg_light"
         android:textSize="30sp"
         android:gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toRightOf="@+id/row_100"
+        android:layout_marginStart="@dimen/stats_summary_column_separation"
+        android:layout_marginLeft="@dimen/stats_summary_column_separation"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="29dp"
+        app:layout_constraintLeft_toRightOf="@+id/column_day" />
 
     <TextView
         android:id="@+id/column_month"
