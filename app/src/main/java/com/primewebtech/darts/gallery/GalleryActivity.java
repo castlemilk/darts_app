@@ -53,7 +53,7 @@ public class GalleryActivity extends AppCompatActivity
      */
     private RecyclerView mRecyclerView;
     private FlexibleAdapter<AbstractFlexibleItem> mAdapter;
-    private int mColumnCount = 4;
+    private int mColumnCount = 3;
     public boolean inActionMode = false;
     public ActionMode mActionMode;
     public boolean selectedAll = false;
@@ -325,7 +325,7 @@ public class GalleryActivity extends AppCompatActivity
 //                     case R.layout.recycler_scrollable_footer_item:
 //                     case R.layout.recycler_scrollable_layout_item:
 //                     case R.layout.recycler_scrollable_uls_item:
-                     case R.layout.holder_header: return 4;
+                     case R.layout.holder_header: return 3;
                      default:
                          return 1;
                  }

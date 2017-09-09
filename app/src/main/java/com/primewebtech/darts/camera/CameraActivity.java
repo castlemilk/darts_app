@@ -52,6 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.primewebtech.darts.camera.Util.openBackFacingCamera;
 import static java.lang.Math.abs;
+import static java.lang.Math.round;
 
 public class CameraActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -113,6 +114,8 @@ public class CameraActivity extends AppCompatActivity {
     private int soundIdClick;
     private int scrolls = 0;
     private boolean playingScrollingSound = false;
+    private int min_offset;
+    boolean first = true;
 
 
     private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
@@ -930,6 +933,7 @@ public class CameraActivity extends AppCompatActivity {
     private void initScoreSpinner(String type) {
         List data = null;
 
+
         Log.d(TAG, "initScoreSpinner:type:"+type);
         switch (type) {
             case "Score":
@@ -959,7 +963,6 @@ public class CameraActivity extends AppCompatActivity {
         mScoreValue.setData(data);
         mScoreValue.setVisibleItemCount(3);
         mScoreValue.setSelectedItemPosition(0);
-        mScoreValue.getItemSpace();
         mScoreValue.setOnWheelChangeListener(new WheelPicker.OnWheelChangeListener() {
 
 
@@ -967,12 +970,21 @@ public class CameraActivity extends AppCompatActivity {
             List<Object> scores = makeScores();
             @Override
             public void onWheelScrolled(int offset) {
-                int denominator = mScoreValue.getItemSpace() * 2 + 2;
+                if (first && offset != 0) {
+                    min_offset = offset;
+                    first = false;
+                }
+                int denominator = round(mScoreValue.getHeight() / 3);
                 int itemIndex = abs(offset) / denominator;
 
-                Log.d(TAG, "onWheelScrolled:offset:"+offset);
-                Log.d(TAG, "onWheelScrolled:itemspacing:"+mScoreValue.getItemSpace());
-                Log.d(TAG, "onWheelScrolled:abs:"+abs(offset) / denominator );
+//                Log.d(TAG, "onWheelScrolled:offset:"+offset);
+//                Log.d(TAG, "onWheelScrolled:getMaximumWidthText:"+mScoreValue.getMaximumWidthText());
+//                Log.d(TAG, "onWheelScrolled:getItemTextSize:"+mScoreValue.getItemTextSize());
+//                Log.d(TAG, "onWheelScrolled:getHeight:"+mScoreValue.getHeight());
+//                Log.d(TAG, "onWheelScrolled:min_offset:"+min_offset);
+//                Log.d(TAG, "onWheelScrolled:getMaximumWidthTextPosition:"+mScoreValue.getMaximumWidthTextPosition());
+//                Log.d(TAG, "onWheelScrolled:itemspacing:"+mScoreValue.getItemSpace());
+//                Log.d(TAG, "onWheelScrolled:abs:"+abs(offset) / denominator );
 
 
                 Object value;
@@ -980,13 +992,13 @@ public class CameraActivity extends AppCompatActivity {
                     if (itemIndex >= pegs.size()) {
                         return;
                     }
-                    Log.d(TAG, "onWheelScrolled:scoreValue[peg]:"+pegs.get(itemIndex) );
+//                    Log.d(TAG, "onWheelScrolled:scoreValue[peg]:"+pegs.get(itemIndex) );
                     value = pegs.get(itemIndex);
                     if (!SETTLED) {
                     }
                     mScoreNumberValue = value;
 
-                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
+//                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:PEG:score");
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
                     mScoreNumber.setVisibility(View.VISIBLE);
                     mScoreNumber.setText(String.format(Locale.US, "%s", value));
@@ -995,12 +1007,12 @@ public class CameraActivity extends AppCompatActivity {
                     if (itemIndex >= scores.size()) {
                         return;
                     }
-                    Log.d(TAG, "onWheelScrolled:scoreValue[score]:"+scores.get(itemIndex) );
+//                    Log.d(TAG, "onWheelScrolled:scoreValue[score]:"+scores.get(itemIndex) );
                     if (!SETTLED) {
                     }
                     value = scores.get(itemIndex);
                     mScoreNumberValue = value;
-                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
+//                    Log.d(TAG, "ScoreSpinnerSelect:onItemSelected:updating:SCORE:score");
                     updateScoreDisplay(value);
                     mScoreTypeBackground.setVisibility(View.VISIBLE);
                     mScoreNumber.setVisibility(View.VISIBLE);
