@@ -219,7 +219,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             public void onClick(View view) {
                 Intent statsIntent = new Intent(OneDartActivity.this, StatsOneActivity.class);
                 Bundle b = new Bundle();
-                b.putString("type", String.valueOf(mPegs[mViewPager.getCurrentPosition()]));
+                b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentPosition()]);
                 prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
                 prefs.edit().putInt("POSITION", mViewPager.getCurrentPosition()).apply();
                 statsIntent.putExtras(b);
