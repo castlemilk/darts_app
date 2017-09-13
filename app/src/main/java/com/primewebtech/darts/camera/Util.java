@@ -130,7 +130,7 @@ public class Util {
         Double pinSize = pictureWidth * 0.3;
         final TypedValue outValue = new TypedValue();
         mContext.getApplicationContext().getResources().getValue(R.dimen.canvas_score_value_text_scale,outValue, true);
-        int textSize = (int) (pictureHeight * pin.getWidth() * 0.00013f);
+        int textSize = 32;
         int pinSizeInt = pinSize.intValue();
         Double logoWidth = pictureWidth * 0.42;
         Double logoHeight = pictureHeight * 0.15;
