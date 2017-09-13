@@ -160,6 +160,7 @@
     <dimen name="stats_bubble_previous_column_spacing">10dp</dimen>
     <dimen name="stats_bubble_previous_row_spacing">30dp</dimen>
     <dimen name="stats_margin_top">10dp</dimen>
+    <item name="canvas_score_value_text_scale" format="float" type="dimen">0.055</item>
 
 
 </resources>
