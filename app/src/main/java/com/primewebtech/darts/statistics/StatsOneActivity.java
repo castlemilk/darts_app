@@ -1,10 +1,14 @@
 package com.primewebtech.darts.statistics;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.primewebtech.darts.R;
+import com.primewebtech.darts.scoring.OneDartActivity;
 import com.primewebtech.darts.statistics.Fragments.StatsOneFragment;
 
 import org.malcdevelop.cyclicview.CyclicFragmentAdapter;
@@ -21,7 +25,10 @@ public class StatsOneActivity extends FragmentActivity{
      * for each of the peg bords, 4,2,... etc in the one score mode.
      */
     CyclicView mViewPager;
-    int pegValue;
+    private int pegValue;
+    SharedPreferences prefs = null;
+    private static final String TAG = StatsOneActivity.class.getSimpleName();
+    private boolean isFromScoring;
     int[] pegValues = {
             40,
             32,
@@ -31,26 +38,47 @@ public class StatsOneActivity extends FragmentActivity{
             4
     };
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        if (id == android.R.id.)
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    public interface OnBackClickListener {
+        boolean onBackClick();
+    }
+
+    private OnBackClickListener onBackClickListener;
+
+    public void setOnBackClickListener(OnBackClickListener onBackClickListener) {
+        this.onBackClickListener = onBackClickListener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (onBackClickListener != null && onBackClickListener.onBackClick()) {
+            return;
+        }
+        Log.d(TAG, "onBackPressed:clicked:isFromScoring:"+isFromScoring);
+        if (mViewPager != null && isFromScoring) {
+            int position = mViewPager.getCurrentPosition();
+            Log.d(TAG, "onBackPressed:clicked:cur_pos:"+position);
+            Intent scoreOneIntent = new Intent(StatsOneActivity.this, OneDartActivity.class);
+//            Bundle b = new Bundle();
+//            b.putInt("POSITION", position);
+            prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+            prefs.edit().putInt("POSITION", position).apply();
+            startActivity(scoreOneIntent);
+
+        }
+        super.onBackPressed();
+
+    }
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
 
         Bundle b = getIntent().getExtras();
-
+        isFromScoring = false;
         if (b != null) {
             pegValue = b.getInt("PEG_VALUE");
+            isFromScoring = b.getBoolean("IS_FROM_SCORING");
         }
 
         mViewPager = (CyclicView) findViewById(R.id.pager);

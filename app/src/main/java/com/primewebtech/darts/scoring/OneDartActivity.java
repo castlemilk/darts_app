@@ -220,10 +220,12 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 Intent statsIntent = new Intent(OneDartActivity.this, StatsOneActivity.class);
                 Bundle b = new Bundle();
                 b.putInt("PEG_VALUE", mPegs[mViewPager.getCurrentPosition()]);
+                b.putBoolean("IS_FROM_SCORING", true);
                 prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
                 prefs.edit().putInt("POSITION", mViewPager.getCurrentPosition()).apply();
                 statsIntent.putExtras(b);
                 startActivity(statsIntent);
+                finish();
             }
         });
     }

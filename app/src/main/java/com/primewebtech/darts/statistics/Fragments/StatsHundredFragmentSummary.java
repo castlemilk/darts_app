@@ -86,6 +86,7 @@ public class StatsHundredFragmentSummary extends Fragment {
                     statsIntent = new Intent(getActivity(), StatsHundredActivity.class);
                     Bundle b = new Bundle();
                     b.putInt("PEG_VALUE",pegValues[j]);
+                    b.putBoolean("IS_FROM_SCORING", false);
                     statsIntent.putExtras(b);
 
                     startActivity(statsIntent);

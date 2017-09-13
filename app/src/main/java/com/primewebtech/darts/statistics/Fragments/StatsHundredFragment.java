@@ -70,11 +70,13 @@ public class StatsHundredFragment extends Fragment {
     private String type;
     private int pegValue;
 
+
     public static StatsHundredFragment newInstance(int pegValue) {
         StatsHundredFragment statsHundredFragment = new StatsHundredFragment();
         Bundle args = new Bundle();
         args.putInt("PEG_VALUE", pegValue);
         statsHundredFragment.setArguments(args);
+
         return statsHundredFragment;
     }
 
@@ -85,6 +87,18 @@ public class StatsHundredFragment extends Fragment {
         pegValue = getArguments().getInt("PEG_VALUE");
 //        tf_ios = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/ios_reg.ttf");
         tf_pegValue = Typeface.createFromAsset(getActivity().getApplicationContext().getAssets(), "fonts/arlrbd.ttf");
+//        ((StatsHundredActivity) getActivity()).setOnBackClickListener(new StatsHundredActivity.OnBackClickListener() {
+//            @Override
+//            public boolean onBackClick() {
+//                if (condition) {
+//                    return false;
+//                }
+//
+//                // some codes
+//
+//                return true;
+//            }
+//        });
     }
 
     @Override

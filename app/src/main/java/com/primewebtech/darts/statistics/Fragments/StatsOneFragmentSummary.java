@@ -118,6 +118,7 @@ public class StatsOneFragmentSummary extends Fragment {
                     statsIntent = new Intent(getActivity(), StatsOneActivity.class);
                     Bundle b = new Bundle();
                     b.putInt("PEG_VALUE", pegValues[j]);
+                    b.putBoolean("IS_FROM_SCORING", false);
                     statsIntent.putExtras(b);
                     statsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(statsIntent);
