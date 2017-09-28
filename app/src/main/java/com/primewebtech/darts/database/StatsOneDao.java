@@ -82,7 +82,7 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public void savePB(int pegValue) {
 
         for (String period : periods) {
-            Log.d(TAG, "savePB:saving:period:"+periods);
+            Log.d(TAG, "savePB:saving:period:"+period);
             Log.d(TAG, "savePB:saving:pegValue:"+pegValue);
             int bestScore = getHighestScore(pegValue, period);
             Log.d(TAG, "savePB:saving:bestScore:"+bestScore);
@@ -110,14 +110,61 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
      * @param period
      * @return
      */
-    public int getHighestScoreForPeriodToday(int pegvalue, String period) {
+    public int getHighestScoreForPeriodTodayDaily(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=5; i++) {
+        int iterator = 6;
+        if (period.contains("DAY")) {
+            iterator = 7;
+        } else if (period.contains("WEEK")) {
+            iterator = 36;
+
+        } else {
+            iterator = 5;
+
+        }
+        for (int i = 0; i <=iterator; i++) {
             int score = getPreviousScore(pegvalue, period, i);
             if (score >= highestValue) {
                 highestValue = score;
             }
         }
+
+        return highestValue;
+    }
+    /**
+     * Calculates the highest scored based of what is shown in the stats summary window, which
+     * captures a window of 6 months.
+     * index 0 -> today/latest
+     * index 6 -> 6 months ago
+     * @param pegvalue
+     * @param period
+     * @return
+     */
+    public int getHighestScoreForPeriodToday(int pegvalue, String period) {
+        int highestValue = 0;
+        int iterator = 6;
+        if (period.contains("DAY")) {
+            iterator = 180;
+            int score = getPreviousScore(pegvalue, period, iterator);
+            highestValue = score;
+        } else if (period.contains("WEEK")) {
+            iterator = 36;
+            for (int i = 0; i <=iterator; i++) {
+                int score = getPreviousScore(pegvalue, period, i);
+                if (score >= highestValue) {
+                    highestValue = score;
+                }
+            }
+        } else {
+            iterator = 5;
+            for (int i = 0; i <=iterator; i++) {
+                int score = getPreviousScore(pegvalue, period, i);
+                if (score >= highestValue) {
+                    highestValue = score;
+                }
+            }
+        }
+
         return highestValue;
     }
     public int getHighestScore(int pegvalue, String period) {
@@ -351,10 +398,21 @@ public class StatsOneDao extends DatabaseContentProvider implements ScoreSchema 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         Log.d(TAG, "getPreviousScore:index:"+previousPeriodIndex);
         if (period.equals("DAY")){
-            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
-                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
-                    " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
-            Log.d(TAG, "getPreviousScore:DAY:Query:"+queryString);
+            String queryString;
+            if (previousPeriodIndex <= 7) {
+                // use this query when determing previous 7 day scores
+                queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                        " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                        " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
+                Log.d(TAG, "getPreviousScore:DAY:Query:"+queryString);
+            } else {
+                // use this query when determining max previous daily score over 6 months
+                queryString = " SELECT MAX(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                        " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                        " AND " + LAST_MODIFIED + " >= '" + getPreviousDay(previousPeriodIndex) + "';";
+                Log.d(TAG, "getPreviousScore:DAY:Query:"+queryString);
+            }
+
             cursor = super.rawQuery(queryString, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {

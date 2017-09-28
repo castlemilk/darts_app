@@ -156,20 +156,48 @@ public class StatsHundredDao extends DatabaseContentProvider implements ScoreSch
 
     public int getHighestScoreForPeriodToday(int pegvalue, String period) {
         int highestValue = 0;
-        for (int i = 0; i <=5; i++) {
-            int score = getPreviousScore(pegvalue, period, i);
-            if (score >= highestValue) {
-                highestValue = score;
+        int iterator = 6;
+        if (period.contains("DAY")) {
+            iterator = 180;
+            int score = getPreviousScore(pegvalue, period, iterator);
+            highestValue = score;
+        } else if (period.contains("WEEK")) {
+            iterator = 10;
+            for (int i = 0; i <=iterator; i++) {
+                int score = getPreviousScore(pegvalue, period, i);
+                if (score >= highestValue) {
+                    highestValue = score;
+                }
+            }
+        } else {
+            iterator = 5;
+            for (int i = 0; i <=iterator; i++) {
+                int score = getPreviousScore(pegvalue, period, i);
+                if (score >= highestValue) {
+                    highestValue = score;
+                }
             }
         }
+
         return highestValue;
     }
 
     public int getPreviousScore(int pegValue, String period, int previousPeriodIndex) {
         if (period.equals("DAY")){
-            final String queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
-                    " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
-                    " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
+            String queryString;
+            if (previousPeriodIndex <= 7) {
+                // use this query when determing previous 7 day scores
+                queryString = " SELECT SUM(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                        " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                        " AND " + LAST_MODIFIED + " = '" + getPreviousDay(previousPeriodIndex) + "';";
+                Log.d(TAG, "getPreviousScore:DAY:Query:"+queryString);
+            } else {
+                // use this query when determining max previous daily score over 6 months
+                queryString = " SELECT MAX(" + PEG_COUNT + ") FROM " + getScoreTableName() +
+                        " WHERE " + PEG_VALUE + "=" + String.valueOf(pegValue) +
+                        " AND " + LAST_MODIFIED + " >= '" + getPreviousDay(previousPeriodIndex) + "';";
+                Log.d(TAG, "getPreviousScore:DAY:Query:"+queryString);
+            }
             Log.d(TAG, "Query:day:"+queryString);
             cursor = super.rawQuery(queryString, null);
             if (cursor != null) {

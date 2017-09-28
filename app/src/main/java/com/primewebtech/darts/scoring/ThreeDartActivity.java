@@ -137,16 +137,16 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
-        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
-        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime_three", curTime);
-        Log.d(TAG, "CUR_TIME:"+curTime);
-        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
-        if ( !curTime.equals(lastResetTime)) {
-            Log.d(TAG, "NEW_DAY:resetting counts");
-            new InitialisePegValueTask().execute();
-            prefs.edit().putString("lastResetTime_three", curTime).apply();
-        }
+//        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+//        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+//        lastResetTime = prefs.getString("lastResetTime_three", curTime);
+//        Log.d(TAG, "CUR_TIME:"+curTime);
+//        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+//        if ( !curTime.equals(lastResetTime)) {
+//            Log.d(TAG, "NEW_DAY:resetting counts");
+//            new InitialisePegValueTask().execute();
+//            prefs.edit().putString("lastResetTime_three", curTime).apply();
+//        }
         updatePinBoard(0);
         initialisePager();
         initialiseCountButtons();
@@ -167,16 +167,16 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         pin = (ImageView) findViewById(R.id.pin);
         mPinValues = generatePinValues();
 
-        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
-        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
-        lastResetTime = prefs.getString("lastResetTime_three", curTime);
-        Log.d(TAG, "CUR_TIME:"+curTime);
-        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
-        if ( !curTime.equals(lastResetTime)) {
-            Log.d(TAG, "NEW_DAY:resetting counts");
-            new InitialisePegValueTask().execute();
-            prefs.edit().putString("lastResetTime_three", curTime).apply();
-        }
+//        curTime = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+//        prefs = getSharedPreferences("com.primewebtech.darts", MODE_PRIVATE);
+//        lastResetTime = prefs.getString("lastResetTime_three", curTime);
+//        Log.d(TAG, "CUR_TIME:"+curTime);
+//        Log.d(TAG, "LAST_RESET_TIME:"+lastResetTime);
+//        if ( !curTime.equals(lastResetTime)) {
+//            Log.d(TAG, "NEW_DAY:resetting counts");
+//            new InitialisePegValueTask().execute();
+//            prefs.edit().putString("lastResetTime_three", curTime).apply();
+//        }
 
         updatePinBoard(0);
         initialisePager();
@@ -325,14 +325,14 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
         mIncrementThree = (ImageButton) findViewById(R.id.increment_three);
         mIncrementThree.setSoundEffectsEnabled(false);
         int currentIndex = mViewPager.getCurrentPosition();
-        PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(currentIndex), TYPE_3);
+        PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getPegValue(mPinValues.get(currentIndex), TYPE_3);
         if (pegRecord != null) {
             mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", pegRecord.getPegCount()));
 
         } else {
             try {
                 PegRecord peg3 = new PegRecord(getDate(), TYPE_3, mPinValues.get(currentIndex), 0);
-                ScoreDatabase.mScoreThreeDoa.addTodayPegValue(peg3);
+                ScoreDatabase.mScoreThreeDoa.addPegValue(peg3);
                 mCountButtonThree.setText(String.format(Locale.getDefault(), "%d", peg3.getPegCount()));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -344,11 +344,11 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
                 //TODO: increment number via DB service
                 Log.d(TAG, "Increment button Clicked");
                 int currentIndex = mViewPager.getCurrentPosition();
-                PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(
+                PegRecord pegRecord = ScoreDatabase.mScoreThreeDoa.getPegValue(
                         mPinValues.get(currentIndex), TYPE_3);
                 if (pegRecord != null) {
 
-                    if (ScoreDatabase.mScoreThreeDoa.increaseTodayPegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
+                    if (ScoreDatabase.mScoreThreeDoa.increasePegValue(pegRecord.getPegValue(),TYPE_3,  1)) {
 
                         updateCountButtonTextSize(pegRecord.getPegCount()+1);
                         mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord.getPegCount()+1));
@@ -482,14 +482,14 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
             @Override
             public void onPositionChange(int i) {
                 updatePinBoard(mPinValues.get(i));
-                PegRecord pegRecord3 = ScoreDatabase.mScoreThreeDoa.getTodayPegValue(mPinValues.get(i), TYPE_3);
+                PegRecord pegRecord3 = ScoreDatabase.mScoreThreeDoa.getPegValue(mPinValues.get(i), TYPE_3);
                 if (pegRecord3 != null) {
                     updateCountButtonTextSize(pegRecord3.getPegCount());
                     mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", pegRecord3.getPegCount()));
                 } else {
                     PegRecord newPegRecord3 = new PegRecord(getDate(), TYPE_3 ,mPinValues.get(i) , 0);
                     try {
-                        ScoreDatabase.mScoreThreeDoa.addTodayPegValue(newPegRecord3);
+                        ScoreDatabase.mScoreThreeDoa.addPegValue(newPegRecord3);
                         mCountButtonThree.setText(String.format(Locale.getDefault(),"%d", 0));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -562,7 +562,7 @@ public class ThreeDartActivity extends AppCompatActivity implements ActionSchema
     public void initialisePegCounts() {
         for (int peg : mPinValues) {
             try {
-                ScoreDatabase.mScoreThreeDoa.addTodayPegValue(new PegRecord(getDate(), TYPE_3, peg, 0));
+                ScoreDatabase.mScoreThreeDoa.addPegValue(new PegRecord(getDate(), TYPE_3, peg, 0));
             } catch (IOException e) {
                 e.printStackTrace();
             }

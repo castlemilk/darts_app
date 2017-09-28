@@ -129,9 +129,11 @@ public class Util {
         int pictureHeight = rotatedImg.getHeight();
         Double pinSize = pictureWidth * 0.3;
         final TypedValue outValue = new TypedValue();
-        mContext.getApplicationContext().getResources().getValue(R.dimen.canvas_score_value_text_scale,outValue, true);
-        int textSize = 32;
+//        mContext.getApplicationContext().getResources().getValue(R.dimen.canvas_score_value_text_scale,outValue, true);
+
+//        int textSize = mContext.getApplicationContext().getResources().getDimensionPixelSize(R.dimen.canvas_score_value_text_size);
         int pinSizeInt = pinSize.intValue();
+        int textSize = (int) Math.round(pinSize * 0.24);
         Double logoWidth = pictureWidth * 0.42;
         Double logoHeight = pictureHeight * 0.15;
         int logoSizeIntWidth = logoWidth.intValue();
@@ -190,7 +192,7 @@ public class Util {
             Log.d("bytes:textHeight", Integer.toString(textHeight));
             Log.d("bytes:textSize", Integer.toString(textSize));
             int textPositionHeight = (int) (pinFloatTop +
-                    pinSizeInt / 2 - (textHeight/1.5));
+                    pinSizeInt / 2 - (textHeight/1.25));
             StaticLayout staticLayout = new StaticLayout(String.valueOf(score),
                     textPaint, pinSize.intValue(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
             comboImage.translate(pinFloatLeft, textPositionHeight);

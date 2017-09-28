@@ -32,11 +32,11 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
     public ScoreThreeDao(SQLiteDatabase database) {
         super(database);
     }
-    public boolean updateTodayPegValue(PegRecord scoreRecord) throws IOException {
+    public boolean updatePegValue(PegRecord scoreRecord) throws IOException {
         if (scoreRecord != null) {
-            String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND "+ TYPE_WHERE;
+            String selector = PEG_VALUE_WHERE+ " AND "+ TYPE_WHERE;
             String selectorArgs[] = new String[]{String.valueOf(scoreRecord.getPegValue()),
-                    getDateNow(), String.valueOf(scoreRecord.type)};
+                     String.valueOf(scoreRecord.type)};
             return super.update(getScoreTableName(), setContentValues(scoreRecord), selector,
                     selectorArgs) > 0;
         } else {
@@ -45,10 +45,10 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
 
 
     }
-    public boolean addTodayPegValue(PegRecord scoreRecord) throws IOException {
+    public boolean addPegValue(PegRecord scoreRecord) throws IOException {
         Log.d(TAG, "addPegValue:"+scoreRecord.toString());
-        if (getTodayPegValue(scoreRecord.pegValue, scoreRecord.type) != null) {
-            return updateTodayPegValue(scoreRecord);
+        if (getPegValue(scoreRecord.pegValue, scoreRecord.type) != null) {
+            return updatePegValue(scoreRecord);
         } else {
             return super.insert(getScoreTableName(), setContentValues(scoreRecord)) > 0;
         }
@@ -61,13 +61,13 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
         return dateFormat.format(now);
     }
 
-    public boolean increaseTodayPegValue(int pegValue, int type, int increment) {
+    public boolean increasePegValue(int pegValue, int type, int increment) {
         Log.d(TAG, "increaseTodayPegValue:pegValue:"+pegValue);
         Log.d(TAG, "increaseTodayPegValue:increment:"+increment);
-        PegRecord pegRecord = getTodayPegValue(pegValue, type);
-        final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
+        PegRecord pegRecord = getPegValue(pegValue, type);
+        final String selection = PEG_VALUE_WHERE+ " AND " + TYPE_WHERE;
         final String selectionArgs[] = { String.valueOf(pegValue),
-                getTodaysDate(), String.valueOf(type)};
+                String.valueOf(type)};
 
         if (pegRecord != null) {
             Log.d(TAG, "increaseTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
@@ -80,12 +80,12 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
             return false;
         }
     }
-    public boolean decreaseTodayPegValue(int pegValue, int type, int decrement) {
+    public boolean decreasePegValue(int pegValue, int type, int decrement) {
         Log.d(TAG, "decreaseTodayPegValue:pegValue:"+pegValue);
         Log.d(TAG, "decreaseTodayPegValue:decrement:"+decrement);
-        PegRecord pegRecord = getTodayPegValue(pegValue, type);
-        String selector = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE+ "AND " + TYPE_WHERE;
-        String selectorArgs[] = new String[]{String.valueOf(pegValue), getDateNow(), String.valueOf(type)};
+        PegRecord pegRecord = getPegValue(pegValue, type);
+        String selector = PEG_VALUE_WHERE+  "AND " + TYPE_WHERE;
+        String selectorArgs[] = new String[]{String.valueOf(pegValue), String.valueOf(type)};
 
         if (pegRecord != null) {
             Log.d(TAG, "decreasingTodayPegValue:currentPegCount:"+pegRecord.getPegCount());
@@ -107,11 +107,11 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
         if (action.actionType == ActionSchema.ADD) {
             Log.d(TAG, "rollbackScore:actionType:ADD");
             Log.d(TAG, "rollbackScore:actionType:DECREASING SCORE TO RESVERSE");
-            return decreaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            return decreasePegValue(action.pegValue, action.type, action.actionValue);
         } else {
             Log.d(TAG, "rollbackScore:actionType:DEL");
             Log.d(TAG, "rollbackScore:actionType:INCREASING SCORE TO RESVERSE");
-            return increaseTodayPegValue(action.pegValue, action.type, action.actionValue);
+            return increasePegValue(action.pegValue, action.type, action.actionValue);
         }
 
     }
@@ -143,18 +143,17 @@ public class ScoreThreeDao extends DatabaseContentProvider implements ScoreSchem
         Date yesterday = cal.getTime();
         return df.format(yesterday);
     }
-    public PegRecord getTodayPegValue(int pegValue, int type) {
+    public PegRecord getPegValue(int pegValue, int type) {
 
-        final String selection = PEG_VALUE_WHERE+ " AND "+ DATE_WHERE + " AND " + TYPE_WHERE;
+        final String selection = PEG_VALUE_WHERE+ " AND " + TYPE_WHERE;
         final String selectionArgs[] = { String.valueOf(pegValue),
-                getTodaysDate(), String.valueOf(type)};
+                 String.valueOf(type)};
 
         PegRecord pegRecord;
         Log.d(TAG, "getTodayPegValue:value:"+pegValue);
         Log.d(TAG, "getTodayPegValue:selection:"+selection);
         Log.d(TAG, "getTodayPegValue:selectionArgs:pegValue:"+selectionArgs[0]);
-        Log.d(TAG, "getTodayPegValue:selectionArgs:Date:"+selectionArgs[1]);
-        Log.d(TAG, "getTodayPegValue:selectionArgs:type:"+selectionArgs[2]);
+        Log.d(TAG, "getTodayPegValue:selectionArgs:type:"+selectionArgs[1]);
         cursor = super.query(getScoreTableName(), SCORE_COLUMNS, selection,selectionArgs, PEG_VALUE);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
