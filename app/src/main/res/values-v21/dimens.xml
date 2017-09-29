@@ -37,5 +37,6 @@
     <item name="back_icon_viewportwidth" type="dimen" format="string">36.0</item>
     <item name="back_icon_viewportheight" type="dimen" format="string">42.0</item>
     <dimen name="canvas_score_value_text_size">10sp</dimen>
+    <dimen name="gallery_banner_div">4dp</dimen>
     <item name="stats_summary_bubble_pegValue_text_100" type="dimen" format="float">20.0</item>
 </resources>

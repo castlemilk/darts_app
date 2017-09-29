@@ -75,10 +75,13 @@
         android:textStyle="bold"
         android:typeface="monospace"
         android:gravity="center"
+        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="74dp"
-        android:layout_marginLeft="15dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="69dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/row_40_d"

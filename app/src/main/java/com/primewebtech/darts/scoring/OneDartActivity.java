@@ -513,13 +513,13 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
             } else if (pegRecord.getPegCount() >= 100) {
                 mCountButton.setTextSize(13);
             } else if (pegRecord.getPegCount() > 1000) {
-                mCountButton.setTextSize(8);
+                mCountButton.setTextSize(4);
             }
         }
 
         Log.d(TAG, "updateCountIndicators:total:"+total);
         int index = 0;
-        if (total > 0 && total <= 1100) {
+        if (total > 0 && total < 1100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / (total + 1) );
@@ -543,7 +543,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
                 index++;
 
             }
-        } else if (total > 1100 && total <= 2100) {
+        } else if (total >= 1100 && total < 2100) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / ((total - 1000) + 1) );
@@ -573,7 +573,7 @@ public class OneDartActivity extends AppCompatActivity implements ActionSchema, 
 
             }
 
-        } else if (total > 2100 ) {
+        } else if (total >= 2100 ) {
             for (int circleIndicator : indicatorResources) {
 
                 Double rem = Math.floor((index + 1) * 100 / ((total - 2000) + 1) );

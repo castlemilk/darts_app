@@ -122,7 +122,7 @@
 
     <!-- homepage -->
     <dimen name="home_page_sore_mode_text">25sp</dimen>
-    <dimen name="home_page_nav_button_size">80dp</dimen>
+    <!--<dimen name="home_page_nav_button_size">100dp</dimen>-->
     <dimen name="text_size_large">20sp</dimen>
     <dimen name="text_size_large_one_dart">50sp</dimen>
     <dimen name="home_page_logo_margin_top">0dp</dimen>
@@ -132,7 +132,7 @@
     <dimen name="home_page_nav_button_width">170dp</dimen>
     <dimen name="home_page_nav_button_text_size">35sp</dimen>
     <dimen name="home_page_nav_button_margin_top">20dp</dimen>
-    <dimen name="home_page_gallery_button_margin_top">50dp</dimen>
+    <dimen name="home_page_gallery_button_margin_top">40dp</dimen>
     <dimen name="home_page_logo_margin_bottom">40dp</dimen>
 
     <!-- 56 + 8 small margin top -->
@@ -165,6 +165,7 @@
     <dimen name="stats_bubble_previous_row_spacing">35dp</dimen>
     <dimen name="stats_margin_top">20dp</dimen>
     <dimen name="canvas_score_value_text_size">10sp</dimen>
+    <dimen name="gallery_banner_div">4dp</dimen>
     <item name="canvas_score_value_text_scale" format="float" type="dimen">27</item>
 
 

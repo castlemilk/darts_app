@@ -118,7 +118,7 @@
 
     <!-- homepage -->
     <dimen name="home_page_sore_mode_text">25sp</dimen>
-    <dimen name="home_page_nav_button_size">70dp</dimen>
+    <dimen name="home_page_nav_button_size">80dp</dimen>
     <dimen name="home_page_logo_width">130dp</dimen>
     <dimen name="home_page_logo_height">150dp</dimen>
     <dimen name="home_page_logo_margin_top">26dp</dimen>
@@ -155,11 +155,12 @@
     <dimen name="score_button_margin_top_three">120dp</dimen>
     <dimen name="score_three_button_separation">18dp</dimen>
     <dimen name="score_two_buttons_margin_top">40dp</dimen>
-    <dimen name="stats_summary_column_separation">20dp</dimen>
+    <dimen name="stats_summary_column_separation">30dp</dimen>
     <dimen name="stats_summary_row_spacing">10dp</dimen>
     <dimen name="stats_bubble_previous_column_spacing">10dp</dimen>
     <dimen name="stats_bubble_previous_row_spacing">30dp</dimen>
     <dimen name="stats_margin_top">10dp</dimen>
+    <dimen name="gallery_banner_div">4dp</dimen>
     <item name="canvas_score_value_text_scale" format="float" type="dimen">0.055</item>
 
 
